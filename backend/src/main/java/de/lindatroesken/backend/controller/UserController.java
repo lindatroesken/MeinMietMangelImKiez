@@ -3,8 +3,10 @@ package de.lindatroesken.backend.controller;
 import de.lindatroesken.backend.api.User;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.UserService;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,12 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedList;
 import java.util.List;
 
+import static de.lindatroesken.backend.controller.UserController.CONTROLLER_TAG;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
+@Tag(name = CONTROLLER_TAG, description = "Provides CRUD operations for an User")
+@Api(tags = CONTROLLER_TAG)
 @CrossOrigin
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    public static final String CONTROLLER_TAG = "User Controller";
     private final UserService userService;
 
     @Autowired
@@ -28,7 +36,11 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @GetMapping(produces = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_NO_CONTENT, message = "No users found")
+    })
     public ResponseEntity<List<User>> findAll(){
         List<UserEntity> userEntityList = userService.findAll();
 
