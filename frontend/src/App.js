@@ -1,7 +1,12 @@
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import Login from './pages/Login'
 
 export default function App() {
-  return (<div>App will come soon...</div>
-  );
+  return (
+    <Router>
+      <Switch>
+        <Route path="/login" component={Login} />
+      </Switch>
+    </Router>
+  )
 }
-
