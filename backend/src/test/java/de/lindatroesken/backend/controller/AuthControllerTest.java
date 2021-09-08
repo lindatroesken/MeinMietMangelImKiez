@@ -2,7 +2,6 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.AccessToken;
 import de.lindatroesken.backend.api.Credentials;
-import de.lindatroesken.backend.api.User;
 import de.lindatroesken.backend.config.JwtConfig;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.repo.UserRepository;
@@ -91,6 +90,22 @@ class AuthControllerTest {
         assertThat(claims.getSubject(), is("testuser"));
     }
 
+    @Test
+    @DisplayName("POST with invalid user credentials should return status error ")
+    public void testPostInvalidLoginReturnsError(){
+        //GIVEN
+        String url = getUrl() + "/access_token";
+        Credentials credentials = Credentials.builder()
+                .username("testuser")
+                .password("12345").build();
+        HttpEntity httpEntity = new HttpEntity(credentials);
+
+        // WHEN
+        ResponseEntity<AccessToken> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, AccessToken.class);
+
+        // THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+    }
 
 
 }
