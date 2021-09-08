@@ -76,7 +76,7 @@ class AuthControllerTest {
         Credentials credentials = Credentials.builder()
                 .username("testuser")
                 .password("1234").build();
-        HttpEntity httpEntity = new HttpEntity(credentials);
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(credentials);
 
         // WHEN
         ResponseEntity<AccessToken> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, AccessToken.class);
@@ -98,7 +98,7 @@ class AuthControllerTest {
         Credentials credentials = Credentials.builder()
                 .username("testuser")
                 .password("12345").build();
-        HttpEntity httpEntity = new HttpEntity(credentials);
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(credentials);
 
         // WHEN
         ResponseEntity<AccessToken> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, AccessToken.class);
