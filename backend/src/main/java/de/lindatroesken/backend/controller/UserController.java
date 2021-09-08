@@ -9,13 +9,11 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static de.lindatroesken.backend.controller.UserController.CONTROLLER_TAG;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
@@ -51,6 +49,21 @@ public class UserController {
         return ResponseEntity.ok(map(userEntityList));
     }
 
+    @GetMapping(value = "{username}", produces = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_NO_CONTENT, message = "No user found")
+    })
+    public ResponseEntity<User> findUser(@PathVariable String username){
+        Optional<UserEntity> userEntityOptional = userService.findByUsername(username);
+
+        if(userEntityOptional.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(map(userEntityOptional.get()));
+    }
+
+
     private List<User> map(List<UserEntity> userEntityList) {
         List<User> userList = new LinkedList<>();
         for(UserEntity userEntity: userEntityList){
@@ -63,6 +76,7 @@ public class UserController {
 
     private User map(UserEntity userEntity) {
         return User.builder()
-                .username(userEntity.getUsername()).build();
+                .username(userEntity.getUsername())
+                .build();
     }
 }
