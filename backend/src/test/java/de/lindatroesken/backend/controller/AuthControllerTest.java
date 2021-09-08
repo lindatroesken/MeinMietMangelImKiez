@@ -1,6 +1,7 @@
 package de.lindatroesken.backend.controller;
 
-
+import de.lindatroesken.backend.api.AccessToken;
+import de.lindatroesken.backend.api.Credentials;
 import de.lindatroesken.backend.api.User;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.repo.UserRepository;
@@ -12,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import java.util.LinkedList;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-
+import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -24,15 +25,13 @@ import static org.hamcrest.Matchers.*;
         properties = "spring.profiles.active:h2",
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-public class UserControllerTest {
-
+class AuthControllerTest {
     @LocalServerPort
     private int port;
 
     private String getUrl(){
-        return "http://localhost:"+port+"/user";
+        return "http://localhost:"+port+"/auth";
     }
-
     @Autowired
     TestRestTemplate restTemplate;
 
@@ -64,45 +63,25 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET should return a list of all users in database (2 users)")
-    public void getListOfUsersShouldReturnTwoUsersForAdmin(){
+    @DisplayName("POST should return token (still a hard coded token, to be replaced!)")
+    public void testPostReturnsAccessToken(){
         //GIVEN
-
-        // credentials to be done in next step
-//        Credentials credentials = Credentials.builder()
-//                .username("admin")
-//                .password("1234")
-//                .build();
-
-        //WHEN
-        ParameterizedTypeReference<LinkedList<User>> responseType = new ParameterizedTypeReference<>() {};
-        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, null, responseType);
-
-
-        //THEN
-        assertThat(response.getStatusCode(), is(HttpStatus.OK));
-        assertThat(response.getBody(),is(notNullValue()));
-        assertThat(response.getBody().size(), is(2));
-    }
-
-    @Test
-    @DisplayName("GET /{username} should return a user from database")
-    public void testGetUserByUserNameReturnsUser(){
-        //GIVEN
-        String url = getUrl() + "/linda";
+        String url = getUrl() + "/access_token";
+        Credentials credentials = Credentials.builder()
+                .username("linda")
+                .password("1234").build();
         // WHEN
-        ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,null, User.class);
+        ResponseEntity<AccessToken> response = restTemplate.postForEntity(url, credentials, AccessToken.class);
+
         // THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
-        assertThat(response.getBody(),is(notNullValue()));
-        assertThat(response.getBody().getUsername(),is("linda"));
+        assertNotNull(response.getBody());
+        String token = response.getBody().getToken();
+        assertThat(token, is("1234"));
+
+
     }
 
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return headers;
-    }
 
 
 }
