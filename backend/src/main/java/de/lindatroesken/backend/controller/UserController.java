@@ -63,9 +63,13 @@ public class UserController {
 
     @GetMapping(value = "{username}", produces = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-            @ApiResponse(code = SC_NO_CONTENT, message = "No user found")
+            @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "Only logged in user with role 'admin' can view any user. A user with role 'user' can only view own account")
     })
-    public ResponseEntity<User> findUser(@PathVariable String username){
+    public ResponseEntity<User> findUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
+        if (!authUser.getRole().equals("admin")){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Optional<UserEntity> userEntityOptional = userService.findByUsername(username);
 
         if(userEntityOptional.isEmpty()){
