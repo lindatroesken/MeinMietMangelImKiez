@@ -1,9 +1,13 @@
 package de.lindatroesken.backend.controller;
 
 
+import de.lindatroesken.backend.api.Credentials;
 import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.config.JwtConfig;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.repo.UserRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +18,13 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -39,18 +49,21 @@ public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtConfig jwtConfig;
+
     @BeforeEach
     public void initializeDB(){
 
         UserEntity user1 = UserEntity.builder()
-                .username("linda")
+                .username("testuser")
                 .password("$2a$10$3k.oydYW4Tvi2kpz7twi2.J.bXQWudC4.jEeYz7eScdedmNrg7chG")
                 .role("user")
                 .build();
         userRepository.save(user1);
 
         UserEntity user2 = UserEntity.builder()
-                .username("admin")
+                .username("testadmin")
                 .password("$2a$10$3k.oydYW4Tvi2kpz7twi2.J.bXQWudC4.jEeYz7eScdedmNrg7chG")
                 .role("admin")
                 .build();
@@ -64,19 +77,14 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET should return a list of all users in database (2 users)")
-    public void getListOfUsersShouldReturnTwoUsersForAdmin(){
+    @DisplayName("GET should return a list of all users in database (2 users), if logged in as admin")
+    public void TestGetListOfUsersShouldReturnTwoUsersForAdmin(){
         //GIVEN
-
-        // credentials to be done in next step
-//        Credentials credentials = Credentials.builder()
-//                .username("admin")
-//                .password("1234")
-//                .build();
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testadmin", "admin"));
 
         //WHEN
         ParameterizedTypeReference<LinkedList<User>> responseType = new ParameterizedTypeReference<>() {};
-        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, null, responseType);
+        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
 
 
         //THEN
@@ -86,21 +94,64 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /{username} should return a user from database")
+    @DisplayName("GET for unauthorized user should return http status 401 UNAUTHORIZED")
+    public void testGetListOfUsersShouldReturnError401(){
+        //GIVEN
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+
+        //WHEN
+        ParameterizedTypeReference<LinkedList<User>> responseType = new ParameterizedTypeReference<>() {};
+        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+    }
+
+    @Test
+    @DisplayName("GET /{username} should return a user from database, if logged in as admin")
     public void testGetUserByUserNameReturnsUser(){
         //GIVEN
-        String url = getUrl() + "/linda";
+        String url = getUrl() + "/testuser";
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testadmin", "admin"));
         // WHEN
-        ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,null, User.class);
+        ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,httpEntity, User.class);
         // THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(),is(notNullValue()));
-        assertThat(response.getBody().getUsername(),is("linda"));
+        assertThat(response.getBody().getUsername(),is("testuser"));
     }
 
-    private HttpHeaders getHttpHeaders() {
+
+    @Test
+    @DisplayName("GET /{username} for unauthorized user should return http status 401 UNAUTHORIZED")
+    public void testGetUserByUserNameShouldReturnError401(){
+        //GIVEN
+        String url = getUrl() + "/testuser";
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+        // WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,httpEntity, User.class);
+        // THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+
+    }
+
+    private HttpHeaders authorizedHeader(String username, String role){
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("role", role);
+        Instant now = Instant.now();
+        Date iat = Date.from(now);
+        Date exp = Date.from(now.plus(Duration.ofMinutes(jwtConfig.getExpiresAfterMinutes())));
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(iat)
+                .setExpiration(exp)
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecret())
+                .compact();
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+
         return headers;
     }
 

@@ -21,3 +21,8 @@ spring:
 server:
   servlet:
     context-path: "/api"
+
+security:
+  jwt:
+    secret: "super-secret"
+    expiresAfterMinutes: 30
