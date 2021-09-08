@@ -78,7 +78,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("GET should return a list of all users in database (2 users), if logged in as admin")
-    public void getListOfUsersShouldReturnTwoUsersForAdmin(){
+    public void TestGetListOfUsersShouldReturnTwoUsersForAdmin(){
         //GIVEN
         HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testadmin", "admin"));
 
@@ -91,6 +91,20 @@ public class UserControllerTest {
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(),is(notNullValue()));
         assertThat(response.getBody().size(), is(2));
+    }
+
+    @Test
+    @DisplayName("GET for unauthorized user should return http status 401 UNAUTHORIZED")
+    public void testGetListOfUsersShouldReturnError401(){
+        //GIVEN
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+
+        //WHEN
+        ParameterizedTypeReference<LinkedList<User>> responseType = new ParameterizedTypeReference<>() {};
+        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
     }
 
     @Test
@@ -107,10 +121,18 @@ public class UserControllerTest {
         assertThat(response.getBody().getUsername(),is("testuser"));
     }
 
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return headers;
+
+    @Test
+    @DisplayName("GET /{username} for unauthorized user should return http status 401 UNAUTHORIZED")
+    public void testGetUserByUserNameShouldReturnError401(){
+        //GIVEN
+        String url = getUrl() + "/testuser";
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+        // WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,httpEntity, User.class);
+        // THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+
     }
 
     private HttpHeaders authorizedHeader(String username, String role){
