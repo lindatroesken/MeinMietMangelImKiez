@@ -3,7 +3,6 @@ import Main from '../components/Main'
 import { useState } from 'react'
 import TextField from '../components/TextField'
 import Header from '../components/Header'
-import { Redirect } from 'react-router-dom'
 
 const initialState = {
   description: '',
