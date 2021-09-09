@@ -2,6 +2,8 @@ import Page from '../components/Page'
 import Main from '../components/Main'
 import { useState } from 'react'
 import TextField from '../components/TextField'
+import Header from '../components/Header'
+import { Redirect } from 'react-router-dom'
 
 const initialState = {
   description: '',
@@ -17,7 +19,7 @@ export default function MaengelForm({ user, ...props }) {
 
   return (
     <Page>
-      <h1>Neuen Mangel erfassen</h1>
+      <Header title="Neuen Mangel erfassen" user={user} />
       <Main as="form">
         <TextField
           name="description"

@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken'
 import Home from './pages/Home'
 import ProtectedRoute from './auth/ProtectedRoute'
 import MaengelForm from './pages/MaengelForm'
+import PersonalMaengelList from './pages/PersonalMaengelList'
 
 export default function App() {
   const [token, setToken] = useState()
@@ -25,9 +26,16 @@ export default function App() {
         <Route exact path="/">
           <Home user={user} />
         </Route>
-        <ProtectedRoute user={user} path="/maengel/new">
-          <MaengelForm user={user} />
-        </ProtectedRoute>
+        {user && (
+          <ProtectedRoute user={user} path={`/${user.username}/maengel/new`}>
+            <MaengelForm user={user} />
+          </ProtectedRoute>
+        )}
+        {user && (
+          <ProtectedRoute user={user} path={`/${user.username}/maengel/list`}>
+            <PersonalMaengelList user={user} />
+          </ProtectedRoute>
+        )}
       </Switch>
     </Router>
   )
