@@ -1,4 +1,3 @@
-import styled from 'styled-components/macro'
 import Page from '../components/Page'
 import Header from '../components/Header'
 import Main from '../components/Main'
