@@ -1,7 +1,7 @@
 import styled from 'styled-components/macro'
 import Label from './Label'
 export default function TextField({
-  type = 'String',
+  type,
   value,
   onChange,
   name,
