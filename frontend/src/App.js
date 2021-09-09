@@ -3,6 +3,9 @@ import Login from './pages/Login'
 import { getToken } from './services/api-service'
 import { useState } from 'react'
 import jwt from 'jsonwebtoken'
+import Home from './pages/Home'
+import ProtectedRoute from './auth/ProtectedRoute'
+import MaengelForm from './pages/MaengelForm'
 
 export default function App() {
   const [token, setToken] = useState()
@@ -21,6 +24,12 @@ export default function App() {
         <Route path="/login">
           <Login onLogin={login} token={token} user={user} />
         </Route>
+        <Route exact path="/">
+          <Home user={user} />
+        </Route>
+        <ProtectedRoute user={user} path="/maengel/new">
+          <MaengelForm user={user} />
+        </ProtectedRoute>
       </Switch>
     </Router>
   )
