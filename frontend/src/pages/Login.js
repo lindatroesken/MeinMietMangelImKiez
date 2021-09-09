@@ -5,13 +5,15 @@ import TextField from '../components/TextField'
 import { useState } from 'react'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
+import { Redirect } from 'react-router-dom'
+import Header from '../components/Header'
 
 const initialState = {
   username: '',
   password: '',
 }
 
-export default function Login({ onLogin, token }) {
+export default function Login({ onLogin, token, user }) {
   const [credentials, setCredentials] = useState(initialState)
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
@@ -38,11 +40,11 @@ export default function Login({ onLogin, token }) {
     console.log(error)
   }
   if (token) {
-    console.log('Token:', token)
+    return <Redirect to="/" />
   }
   return (
     <Page>
-      <h1>Login</h1>
+      <Header title="Login" user={user} />
       {loading && <Loading />}
       {!loading && (
         <Main as="form" onSubmit={handleSubmit}>
