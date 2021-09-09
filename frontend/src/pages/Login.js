@@ -5,6 +5,7 @@ import TextField from '../components/TextField'
 import { useState } from 'react'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
+import { Redirect } from 'react-router-dom'
 
 const initialState = {
   username: '',
@@ -38,7 +39,7 @@ export default function Login({ onLogin, token }) {
     console.log(error)
   }
   if (token) {
-    console.log('Token:', token)
+    return <Redirect to="/" />
   }
   return (
     <Page>
