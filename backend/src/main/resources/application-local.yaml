@@ -1,0 +1,5 @@
+profile:
+  datasource:
+    url: postgresql://localhost:5432/maengelDB
+    user: admin
+    pass: 12345
