@@ -3,6 +3,8 @@ package de.lindatroesken.backend.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -13,6 +15,10 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity {
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private final Set<MangelEntity> mangelList = new HashSet<>();
 
     @Id
     @GeneratedValue
