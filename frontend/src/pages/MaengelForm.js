@@ -23,6 +23,8 @@ const initialState = {
 
 export default function MaengelForm({ user, ...props }) {
   const [mangel, setMangel] = useState(initialState)
+  const [error, setError] = useState()
+  const [loading, setLoading] = useState(false)
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
@@ -41,7 +43,7 @@ export default function MaengelForm({ user, ...props }) {
   return (
     <Page>
       <Header title="Neuen Mangel erfassen" user={user} />
-      <Main as="form">
+      <Main as="form" onSubmit={handleSubmit}>
         <TextField
           name="description"
           value={mangel.description}
