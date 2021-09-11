@@ -5,3 +5,14 @@ export const getToken = credentials =>
     .post('/api/auth/access_token', credentials)
     .then(response => response.data)
     .then(dto => dto.token)
+
+const headers = token => ({
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
+
+export const getMangelList = (token, username) =>
+  axios
+    .get(`/api/mangel/${username}`, headers(token))
+    .then(response => response.data)
