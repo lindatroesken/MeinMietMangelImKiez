@@ -33,7 +33,7 @@ export default function App() {
         )}
         {user && (
           <ProtectedRoute user={user} path={`/${user.username}/maengel/list`}>
-            <PersonalMaengelList user={user} />
+            <PersonalMaengelList user={user} token={token} />
           </ProtectedRoute>
         )}
       </Switch>
