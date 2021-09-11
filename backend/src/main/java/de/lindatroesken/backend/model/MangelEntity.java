@@ -18,6 +18,11 @@ public class MangelEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="user_id")
+    private UserEntity userEntity;
+
+
     @Column(name="description", columnDefinition="TEXT")
     private String description;
 

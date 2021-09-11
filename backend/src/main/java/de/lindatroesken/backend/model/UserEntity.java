@@ -16,8 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserEntity {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "userEntity")
     private final Set<MangelEntity> mangelList = new HashSet<>();
 
     @Id
