@@ -16,3 +16,8 @@ export const getMangelList = (token, username) =>
   axios
     .get(`/api/mangel/${username}`, headers(token))
     .then(response => response.data)
+
+export const postMangel = (token, username, mangel) =>
+  axios
+    .post(`/api/mangel/${username}`, mangel, headers(token))
+    .then(response => response.data)
