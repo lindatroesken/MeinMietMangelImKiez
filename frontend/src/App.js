@@ -4,7 +4,8 @@ import Home from './pages/Home'
 import ProtectedRoute from './auth/ProtectedRoute'
 import MaengelForm from './pages/MaengelForm'
 import PersonalMaengelList from './pages/PersonalMaengelList'
-import AuthProvider, { useAuth } from './auth/AuthProvider'
+import AuthProvider from './auth/AuthProvider'
+import Logout from './pages/Logout'
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route exact path="/" component={Home} />
+          <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/maengel/new" component={MaengelForm} />
           <ProtectedRoute
             path="/maengel/list"
