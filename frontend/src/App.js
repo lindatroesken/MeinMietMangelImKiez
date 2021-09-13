@@ -29,7 +29,7 @@ export default function App() {
         </Route>
         {user && (
           <ProtectedRoute user={user} path={`/${user.username}/maengel/new`}>
-            <MaengelForm user={user} />
+            <MaengelForm user={user} token={token} />
           </ProtectedRoute>
         )}
         {user && (

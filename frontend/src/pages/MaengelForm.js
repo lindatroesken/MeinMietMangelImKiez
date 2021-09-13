@@ -21,7 +21,7 @@ const initialState = {
   dateNoticed: new Date(),
 }
 
-export default function MaengelForm({ user, ...props }) {
+export default function MaengelForm({ token, user, ...props }) {
   const [mangel, setMangel] = useState(initialState)
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
