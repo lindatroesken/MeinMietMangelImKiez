@@ -14,6 +14,7 @@ export default function App() {
 
   const user = claims && {
     username: claims.sub,
+    role: claims.role,
   }
   const login = credentials => getToken(credentials).then(setToken)
 
@@ -28,12 +29,12 @@ export default function App() {
         </Route>
         {user && (
           <ProtectedRoute user={user} path={`/${user.username}/maengel/new`}>
-            <MaengelForm user={user} />
+            <MaengelForm user={user} token={token} />
           </ProtectedRoute>
         )}
         {user && (
           <ProtectedRoute user={user} path={`/${user.username}/maengel/list`}>
-            <PersonalMaengelList user={user} />
+            <PersonalMaengelList user={user} token={token} />
           </ProtectedRoute>
         )}
       </Switch>
