@@ -12,7 +12,12 @@ export default function DateField({ value, onChange, name, title, ...props }) {
     <Label {...props}>
       {title}
       {/*<DatePicker name={name} onChange={onChange} value={value} />*/}
-      <DatePicker name={name} onChange={onChange} selected={value} />
+      <DatePicker
+        name={name}
+        onChange={onChange}
+        selected={value}
+        dateFormat="dd/MM/yyyy"
+      />
       {/*<Input type="date" value={value} onChange={onChange} name={name} />*/}
     </Label>
   )
