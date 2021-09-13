@@ -49,7 +49,7 @@ public class MangelController {
             return ResponseEntity.ok(map(mangelEntityList));
         }
 
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        throw new UnauthorizedUserException("Only admins can view a list of mangel and user can only view own mangel overview");
     }
 
     @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
@@ -62,7 +62,7 @@ public class MangelController {
             MangelEntity mangelEntityCreated = mangelService.createMangel(username, map(newMangel));
             return ResponseEntity.ok(map(mangelEntityCreated));
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        throw new UnauthorizedUserException("Only logged in user can create a mangel in own list");
     }
 
     private List<Mangel> map(List<MangelEntity> mangelEntityList) {

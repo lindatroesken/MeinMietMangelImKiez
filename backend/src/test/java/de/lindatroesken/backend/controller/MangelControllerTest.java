@@ -28,6 +28,7 @@ import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 
 @SpringBootTest(
@@ -97,6 +98,7 @@ class MangelControllerTest {
 
         //THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(),is(notNullValue()));
         assertThat(response.getBody().size(), is(1));
         assertThat(response.getBody().get(0).getDescription(), is("Aufzug geht nicht"));
         assertThat(response.getBody().get(0).getDateNoticed(), is(DATE.toString()));
@@ -104,6 +106,7 @@ class MangelControllerTest {
     }
 
     @Test
+    @DisplayName("POST new mangel with valid credentials should return new mangel")
     void testCreateNewMangel() {
         //GIVEN
         String username = "testuser";
@@ -112,13 +115,14 @@ class MangelControllerTest {
                 .description("Heizung")
                 .dateNoticed(DATE.toString())
                 .build();
-        HttpEntity<Mangel> httpEntity = new HttpEntity(newMangel, authorizedHeader(username, "user"));
+        HttpEntity<Mangel> httpEntity = new HttpEntity<>(newMangel, authorizedHeader(username, "user"));
 
         //WHEN
         ResponseEntity<Mangel> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Mangel.class);
 
         //THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(),is(notNullValue()));
         assertThat(response.getBody().getDescription(), is("Heizung"));
 
     }

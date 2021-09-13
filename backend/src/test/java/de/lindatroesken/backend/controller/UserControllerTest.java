@@ -21,10 +21,7 @@ import org.springframework.http.*;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -95,16 +92,19 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("GET for unauthorized user should return http status 401 UNAUTHORIZED")
+
     public void testGetListOfUsersShouldReturnError401(){
         //GIVEN
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+        HttpEntity<Void> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
 
         //WHEN
-        ParameterizedTypeReference<LinkedList<User>> responseType = new ParameterizedTypeReference<>() {};
-        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
+        ParameterizedTypeReference<List<User>> responseType = new ParameterizedTypeReference<>() {};
+        ResponseEntity<List<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
 
         //THEN
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+        assertThat(response.getBody(), is(nullValue()));
+
     }
 
     @Test

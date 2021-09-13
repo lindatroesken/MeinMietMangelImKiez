@@ -65,6 +65,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         private final String message;
         private final int status;
 
-        }
+    }
 
 }
