@@ -26,7 +26,7 @@ export default function PersonalMaengelList() {
       .then(mangelList => setMangelList(mangelList))
       .catch(error => setError(error))
       .finally(() => setLoading(false))
-  }, [])
+  }, [user, token])
 
   return (
     <Page>
