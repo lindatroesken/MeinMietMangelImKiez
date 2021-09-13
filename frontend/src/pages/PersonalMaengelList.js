@@ -1,7 +1,6 @@
 import Page from '../components/Page'
 import Header from '../components/Header'
 import Main from '../components/Main'
-import { Redirect } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { getMangelList } from '../services/api-service'
 import Loading from '../components/Loading'
@@ -25,12 +24,6 @@ export default function PersonalMaengelList({ user, token, ...props }) {
       .catch(error => setError(error))
       .finally(() => setLoading(false))
   }, [])
-
-  if (!user) {
-    return <Redirect to="/" />
-  }
-
-  console.log(mangelList)
 
   return (
     <Page>
