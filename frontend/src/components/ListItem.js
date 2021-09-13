@@ -1,3 +1,3 @@
 export default function ListItem({ key, mangel }) {
-  return <li key={key}>{mangel.description}</li>
+  return <li id={key}>{mangel.description}</li>
 }
