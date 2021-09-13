@@ -36,7 +36,7 @@ export default function PersonalMaengelList({ user, token, ...props }) {
           {mangelList.length > 0 && (
             <ul>
               {mangelList.map((mangel, index) => {
-                return <ListItem key={index} mangel={mangel} />
+                return <ListItem id={index} mangel={mangel} />
               })}
             </ul>
           )}

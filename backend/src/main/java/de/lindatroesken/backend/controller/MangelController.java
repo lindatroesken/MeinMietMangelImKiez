@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class MangelController {
     @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
-            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only create a mangel for own user")
     })
     public ResponseEntity<Mangel> createNewMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Mangel newMangel){
         if(authUser.getUsername().equals(username)){
@@ -77,14 +78,12 @@ public class MangelController {
     private MangelEntity map(Mangel mangel){
         return MangelEntity.builder()
                 .description(mangel.getDescription())
-//                .dateNoticed(LocalDateTime.parse(mangel.getDateNoticed()))
-                .dateNoticed(mangel.getDateNoticed())
+                .dateNoticed(ZonedDateTime.parse(mangel.getDateNoticed()))
                 .build();
     }
     private Mangel map(MangelEntity mangelEntity) {
         return Mangel.builder()
-//                .dateNoticed(mangelEntity.getDateNoticed().toString())
-                .dateNoticed(mangelEntity.getDateNoticed())
+                .dateNoticed(mangelEntity.getDateNoticed().toString())
                 .description(mangelEntity.getDescription())
                 .build();
     }

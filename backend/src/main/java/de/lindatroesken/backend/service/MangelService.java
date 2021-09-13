@@ -9,9 +9,8 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -29,17 +28,15 @@ public class MangelService {
 
     public List<MangelEntity> findAllForUser(String username) {
 
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow();
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
 
         return mangelRepository.findByUserEntity(userEntity);
 
     }
 
     public MangelEntity createMangel(String username, MangelEntity newMangelEntity) {
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow();
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
         newMangelEntity.setUserEntity(userEntity);
-        userEntity.addMangel(newMangelEntity);
-        userRepository.save(userEntity);
-        return newMangelEntity;
+        return mangelRepository.save(newMangelEntity);
     }
 }
