@@ -37,8 +37,6 @@ export default function MaengelForm() {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
   }
 
-  // console.log(mangel.dateNoticed)
-
   const handleMangelDateChange = value => {
     console.log(Date.parse(value))
     console.log(value)
@@ -54,7 +52,10 @@ export default function MaengelForm() {
     postMangel(token, user.username, mangel)
       .then(response => console.log(response))
       .catch(setError)
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setLoading(false)
+        setMangel(initialState)
+      })
   }
 
   return (
