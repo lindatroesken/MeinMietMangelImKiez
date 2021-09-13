@@ -5,6 +5,11 @@ import TextField from '../components/TextField'
 import Header from '../components/Header'
 import DateField from '../components/DateField'
 import Button from '../components/Button'
+import Loading from '../components/Loading'
+import Error from '../components/Error'
+import { postMangel } from '../services/api-service'
+// import { Redirect } from 'react-router-dom'
+// import moment from 'moment'
 
 // const milliseconds = Date.now()
 // const dateObject = new Date(milliseconds)
@@ -33,32 +38,46 @@ export default function MaengelForm({ token, user, ...props }) {
   // console.log(mangel.dateNoticed)
 
   const handleMangelDateChange = value => {
+    console.log(Date.parse(value))
     console.log(value)
+    // const formattedDate = value && Date.parse(value)
+    // this.setState({value: formattedDate})
+    // this.props.onChange(formattedDate)
     setMangel({ ...mangel, dateNoticed: value })
   }
   const handleSubmit = event => {
     event.preventDefault()
+    setLoading(true)
+    setError()
+    postMangel(token, user.username, mangel)
+      .then(response => console.log(response))
+      .catch(setError)
+      .finally(() => setLoading(false))
   }
 
   return (
     <Page>
       <Header title="Neuen Mangel erfassen" user={user} />
-      <Main as="form" onSubmit={handleSubmit}>
-        <TextField
-          name="description"
-          value={mangel.description}
-          onChange={handleMangelChange}
-          title="Beschreibung"
-        />
-        <DateField
-          type="date"
-          name="dateNoticed"
-          value={mangel.dateNoticed}
-          onChange={handleMangelDateChange}
-          title="Festegestellt am"
-        />
-        <Button>speichern</Button>
-      </Main>
+      {loading && <Loading />}
+      {!loading && (
+        <Main as="form" onSubmit={handleSubmit}>
+          <TextField
+            name="description"
+            value={mangel.description}
+            onChange={handleMangelChange}
+            title="Beschreibung"
+          />
+          <DateField
+            type="date"
+            name="dateNoticed"
+            value={mangel.dateNoticed}
+            onChange={handleMangelDateChange}
+            title="Festegestellt am"
+          />
+          <Button>speichern</Button>
+        </Main>
+      )}
+      {error && <Error>{error.message}</Error>}
     </Page>
   )
 }
