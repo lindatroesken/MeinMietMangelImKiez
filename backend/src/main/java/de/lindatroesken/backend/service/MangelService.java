@@ -34,4 +34,12 @@ public class MangelService {
         return mangelRepository.findByUserEntity(userEntity);
 
     }
+
+    public MangelEntity createMangel(String username, MangelEntity newMangelEntity) {
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow();
+        newMangelEntity.setUserEntity(userEntity);
+        userEntity.addMangel(newMangelEntity);
+        userRepository.save(userEntity);
+        return newMangelEntity;
+    }
 }

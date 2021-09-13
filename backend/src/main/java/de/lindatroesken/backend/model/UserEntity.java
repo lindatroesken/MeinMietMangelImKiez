@@ -16,8 +16,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserEntity {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, mappedBy = "userEntity")
-    private final Set<MangelEntity> mangelList = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userEntity", fetch = FetchType.EAGER)
+    private Set<MangelEntity> mangelList;
 
     @Id
     @GeneratedValue
@@ -32,6 +32,16 @@ public class UserEntity {
 
     @Column(name = "user_role")
     private String role;
+
+    public void addMangel(MangelEntity mangelEntity) {
+        mangelList.add(mangelEntity);
+        mangelEntity.setUserEntity(this);
+    }
+
+    public void removeComment(MangelEntity mangelEntity) {
+        mangelList.remove(mangelEntity);
+        mangelEntity.setUserEntity(null);
+    }
 
 
     @Override

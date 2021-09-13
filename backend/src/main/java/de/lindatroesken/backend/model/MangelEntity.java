@@ -3,7 +3,6 @@ package de.lindatroesken.backend.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.Instant;
 
 @Entity
 @Table(name = "mangel")
@@ -18,7 +17,7 @@ public class MangelEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private UserEntity userEntity;
 
@@ -27,7 +26,8 @@ public class MangelEntity {
     private String description;
 
     @Column(name = "date_noticed")
-    private Instant dateNoticed;
+//    private LocalDateTime dateNoticed;
+    private String dateNoticed;
 
     @Override
     public int hashCode() {
