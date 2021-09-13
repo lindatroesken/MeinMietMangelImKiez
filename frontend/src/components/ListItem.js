@@ -1,4 +1,3 @@
-export default function ListItem({ mangel }) {
-  console.log(mangel)
-  return <li>{mangel.description}</li>
+export default function ListItem({ key, mangel }) {
+  return <li key={key}>{mangel.description}</li>
 }
