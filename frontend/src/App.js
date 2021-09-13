@@ -14,6 +14,7 @@ export default function App() {
 
   const user = claims && {
     username: claims.sub,
+    role: claims.role,
   }
   const login = credentials => getToken(credentials).then(setToken)
 
