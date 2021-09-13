@@ -101,8 +101,6 @@ class MangelControllerTest {
         assertThat(response.getBody(),is(notNullValue()));
         assertThat(response.getBody().size(), is(1));
         assertThat(response.getBody().get(0).getDescription(), is("Aufzug geht nicht"));
-        assertThat(response.getBody().get(0).getDateNoticed(), is(DATE.toString()));
-
     }
 
     @Test
