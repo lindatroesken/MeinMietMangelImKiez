@@ -38,7 +38,7 @@ public class UserEntity {
         mangelEntity.setUserEntity(this);
     }
 
-    public void removeComment(MangelEntity mangelEntity) {
+    public void removeMangel(MangelEntity mangelEntity) {
         mangelList.remove(mangelEntity);
         mangelEntity.setUserEntity(null);
     }
