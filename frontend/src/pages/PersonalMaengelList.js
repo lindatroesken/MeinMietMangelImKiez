@@ -23,6 +23,7 @@ export default function PersonalMaengelList({ user, token, ...props }) {
       .then(mangelList => setMangelList(mangelList))
       .catch(error => setError(error))
       .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
