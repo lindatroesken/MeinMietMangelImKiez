@@ -4,6 +4,7 @@ import de.lindatroesken.backend.api.Credentials;
 import de.lindatroesken.backend.api.Mangel;
 import de.lindatroesken.backend.config.JwtConfig;
 import de.lindatroesken.backend.model.MangelEntity;
+import de.lindatroesken.backend.model.Status;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.repo.MangelRepository;
 import de.lindatroesken.backend.repo.UserRepository;
@@ -72,6 +73,9 @@ class MangelControllerTest {
         MangelEntity mangel1 = MangelEntity.builder()
                 .description("Aufzug geht nicht")
                 .dateNoticed(DATE)
+                .status(Status.OPEN)
+                .dateFixed(null)
+                .category("")
                 .userEntity(user1)
                 .build();
 
@@ -112,6 +116,7 @@ class MangelControllerTest {
         Mangel newMangel = Mangel.builder()
                 .description("Heizung")
                 .dateNoticed(DATE.toString())
+                .status("OPEN")
                 .build();
         HttpEntity<Mangel> httpEntity = new HttpEntity<>(newMangel, authorizedHeader(username, "user"));
 
