@@ -2,6 +2,7 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.Mangel;
 import de.lindatroesken.backend.model.MangelEntity;
+import de.lindatroesken.backend.model.Status;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.MangelService;
 import io.swagger.annotations.Api;
@@ -78,6 +79,8 @@ public class MangelController {
     private MangelEntity map(Mangel mangel){
         return MangelEntity.builder()
                 .description(mangel.getDescription())
+                .category(mangel.getCategory())
+                .status(Status.valueOf(mangel.getStatus()))
                 .dateNoticed(ZonedDateTime.parse(mangel.getDateNoticed()))
                 .build();
     }
@@ -85,6 +88,9 @@ public class MangelController {
         return Mangel.builder()
                 .dateNoticed(mangelEntity.getDateNoticed().toString())
                 .description(mangelEntity.getDescription())
+                .category(mangelEntity.getCategory())
+                .status(mangelEntity.getStatus().toString())
+                .id(mangelEntity.getId())
                 .build();
     }
 
