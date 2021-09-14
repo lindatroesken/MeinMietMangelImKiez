@@ -23,8 +23,11 @@ import { useAuth } from '../auth/AuthProvider'
 // const humanDateFormat = '2021-09-01' //2019-12-9 10:30:15
 
 const initialState = {
+  category: '',
   description: '',
   dateNoticed: new Date(),
+  dateFixed: null,
+  status: 'OPEN',
 }
 
 export default function MaengelForm() {
@@ -69,6 +72,18 @@ export default function MaengelForm() {
             value={mangel.description}
             onChange={handleMangelChange}
             title="Beschreibung"
+          />
+          <TextField
+            name="status"
+            value={mangel.status}
+            onChange={handleMangelChange}
+            title="Status"
+          />
+          <TextField
+            name="category"
+            value={mangel.category}
+            onChange={handleMangelChange}
+            title="Kategorie"
           />
           <DateField
             type="date"

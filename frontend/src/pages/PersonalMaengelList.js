@@ -4,9 +4,9 @@ import Main from '../components/Main'
 import { useEffect, useState } from 'react'
 import { getMangelList } from '../services/api-service'
 import Loading from '../components/Loading'
-import ListItem from '../components/ListItem'
 import Error from '../components/Error'
 import { useAuth } from '../auth/AuthProvider'
+import MangelTable from '../components/MangelTable'
 
 const initialState = {
   description: '',
@@ -34,14 +34,7 @@ export default function PersonalMaengelList() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          <h3>Meine Mängelübersicht</h3>
-          {mangelList.length > 0 && (
-            <ul>
-              {mangelList.map((mangel, index) => {
-                return <ListItem id={index} mangel={mangel} />
-              })}
-            </ul>
-          )}
+          {mangelList.length > 0 && <MangelTable data={mangelList} />}
         </Main>
       )}
       {error && <Error>{error.message}</Error>}

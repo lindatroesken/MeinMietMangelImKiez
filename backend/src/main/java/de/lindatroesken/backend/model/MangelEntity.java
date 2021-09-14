@@ -29,6 +29,16 @@ public class MangelEntity {
     @Column(name = "date_noticed")
     private ZonedDateTime dateNoticed;
 
+    @Column(name = "date_fixed")
+    private ZonedDateTime dateFixed;
+
+    @Column(name = "category")
+    private String category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
+
 
     @Override
     public int hashCode() {
