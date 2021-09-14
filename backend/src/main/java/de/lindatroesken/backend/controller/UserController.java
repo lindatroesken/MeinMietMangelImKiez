@@ -24,6 +24,7 @@ import java.util.Optional;
 import static de.lindatroesken.backend.controller.UserController.CONTROLLER_TAG;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @Tag(name = CONTROLLER_TAG, description = "Provides CRUD operations for an User")
@@ -58,7 +59,7 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok(map(userEntityList));
+        return ok(map(userEntityList));
     }
 
     @GetMapping(value = "{username}", produces = APPLICATION_JSON_VALUE)
@@ -77,7 +78,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(map(userEntityOptional.get()));
+        return ok(map(userEntityOptional.get()));
     }
 
 
