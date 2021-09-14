@@ -15,16 +15,6 @@ import {
   mangelStatusOptions,
 } from '../services/mangel-service'
 
-// const milliseconds = Date.now()
-// const dateObject = new Date(milliseconds)
-// const options = {
-//   year: 'numeric',
-//   month: 'numeric',
-//   day: 'numeric',
-// }
-// // const humanDateFormat = dateObject.toLocaleString('en-en', options) //2019-12-9 10:30:15
-// const humanDateFormat = '2021-09-01' //2019-12-9 10:30:15
-
 const initialState = {
   category: '',
   description: '',
@@ -44,11 +34,6 @@ export default function MaengelForm() {
   }
 
   const handleMangelDateChange = value => {
-    console.log(Date.parse(value))
-    console.log(value)
-    // const formattedDate = value && Date.parse(value)
-    // this.setState({value: formattedDate})
-    // this.props.onChange(formattedDate)
     setMangel({ ...mangel, dateNoticed: value })
   }
   const handleSubmit = event => {
