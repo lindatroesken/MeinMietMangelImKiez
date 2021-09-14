@@ -7,9 +7,7 @@ export default function MangelTable({ data }) {
   const columns = useMemo(
     () => [
       {
-        // first group - TV Show
         Header: 'Meine Mängelübersicht',
-        // First group columns
         columns: [
           {
             Header: 'Seit',
@@ -19,6 +17,10 @@ export default function MangelTable({ data }) {
           {
             Header: 'Beschreibung',
             accessor: 'description',
+          },
+          {
+            Header: 'Status',
+            accessor: 'status',
           },
         ],
       },
