@@ -9,8 +9,11 @@ import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { postMangel } from '../services/api-service'
 import { useAuth } from '../auth/AuthProvider'
-// import { Redirect } from 'react-router-dom'
-// import moment from 'moment'
+import Select from '../components/Select'
+import {
+  mangelCategoryOptions,
+  mangelStatusOptions,
+} from '../services/mangel-service'
 
 // const milliseconds = Date.now()
 // const dateObject = new Date(milliseconds)
@@ -67,21 +70,17 @@ export default function MaengelForm() {
       {loading && <Loading />}
       {!loading && (
         <Main as="form" onSubmit={handleSubmit}>
-          <TextField
-            name="description"
-            value={mangel.description}
-            onChange={handleMangelChange}
-            title="Beschreibung"
-          />
-          <TextField
+          <Select
             name="status"
             value={mangel.status}
+            values={mangelStatusOptions}
             onChange={handleMangelChange}
             title="Status"
           />
-          <TextField
+          <Select
             name="category"
             value={mangel.category}
+            values={mangelCategoryOptions}
             onChange={handleMangelChange}
             title="Kategorie"
           />
@@ -91,6 +90,12 @@ export default function MaengelForm() {
             value={mangel.dateNoticed}
             onChange={handleMangelDateChange}
             title="Festegestellt am"
+          />
+          <TextField
+            name="description"
+            value={mangel.description}
+            onChange={handleMangelChange}
+            title="Beschreibung"
           />
           <Button>speichern</Button>
         </Main>
