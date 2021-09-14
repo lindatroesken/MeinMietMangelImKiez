@@ -6,12 +6,15 @@ import { getMangelList } from '../services/api-service'
 import Loading from '../components/Loading'
 import ListItem from '../components/ListItem'
 import Error from '../components/Error'
+import { useAuth } from '../auth/AuthProvider'
 
 const initialState = {
   description: '',
 }
 
-export default function PersonalMaengelList({ user, token, ...props }) {
+export default function PersonalMaengelList() {
+  const { user, token } = useAuth()
+
   const [mangelList, setMangelList] = useState(initialState)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
@@ -23,12 +26,11 @@ export default function PersonalMaengelList({ user, token, ...props }) {
       .then(mangelList => setMangelList(mangelList))
       .catch(error => setError(error))
       .finally(() => setLoading(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [user, token])
 
   return (
     <Page>
-      <Header title="Meine Mängelübersicht" user={user} />
+      <Header title="Meine Mängelübersicht" />
       {loading && <Loading />}
       {!loading && (
         <Main>

@@ -1,7 +1,9 @@
 import styled from 'styled-components/macro'
 import Navbar from './Navbar'
+import { useAuth } from '../auth/AuthProvider'
 
-export default function Header({ user, title, ...props }) {
+export default function Header({ title, ...props }) {
+  const { user } = useAuth()
   return (
     <Wrapper {...props}>
       <h3>

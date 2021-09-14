@@ -8,6 +8,7 @@ import Button from '../components/Button'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { postMangel } from '../services/api-service'
+import { useAuth } from '../auth/AuthProvider'
 // import { Redirect } from 'react-router-dom'
 // import moment from 'moment'
 
@@ -26,7 +27,8 @@ const initialState = {
   dateNoticed: new Date(),
 }
 
-export default function MaengelForm({ token, user, ...props }) {
+export default function MaengelForm() {
+  const { user, token } = useAuth()
   const [mangel, setMangel] = useState(initialState)
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
@@ -34,8 +36,6 @@ export default function MaengelForm({ token, user, ...props }) {
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
   }
-
-  // console.log(mangel.dateNoticed)
 
   const handleMangelDateChange = value => {
     console.log(Date.parse(value))
@@ -52,12 +52,15 @@ export default function MaengelForm({ token, user, ...props }) {
     postMangel(token, user.username, mangel)
       .then(response => console.log(response))
       .catch(setError)
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setLoading(false)
+        setMangel(initialState)
+      })
   }
 
   return (
     <Page>
-      <Header title="Neuen Mangel erfassen" user={user} />
+      <Header title="Neuen Mangel erfassen" />
       {loading && <Loading />}
       {!loading && (
         <Main as="form" onSubmit={handleSubmit}>

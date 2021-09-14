@@ -1,13 +1,15 @@
 package de.lindatroesken.backend.controller;
 
-
 import de.lindatroesken.backend.api.Credentials;
-import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.api.Mangel;
 import de.lindatroesken.backend.config.JwtConfig;
+import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
+import de.lindatroesken.backend.repo.MangelRepository;
 import de.lindatroesken.backend.repo.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.hibernate.type.ZonedDateTimeType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,24 +23,29 @@ import org.springframework.http.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.*;
 
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
 
 @SpringBootTest(
         properties = "spring.profiles.active:h2",
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-public class UserControllerTest {
+class MangelControllerTest {
 
     @LocalServerPort
     private int port;
 
     private String getUrl(){
-        return "http://localhost:"+port+"/user";
+        return "http://localhost:"+port+"/mangel";
     }
+
+    private final ZonedDateTime DATE = ZonedDateTime.now();
+    private final String USERNAME = "testuser";
 
     @Autowired
     TestRestTemplate restTemplate;
@@ -47,11 +54,13 @@ public class UserControllerTest {
     private UserRepository userRepository;
 
     @Autowired
+    private MangelRepository mangelRepository;
+
+    @Autowired
     private JwtConfig jwtConfig;
 
     @BeforeEach
     public void initializeDB(){
-
         UserEntity user1 = UserEntity.builder()
                 .username("testuser")
                 .password("$2a$10$3k.oydYW4Tvi2kpz7twi2.J.bXQWudC4.jEeYz7eScdedmNrg7chG")
@@ -59,12 +68,14 @@ public class UserControllerTest {
                 .build();
         userRepository.save(user1);
 
-        UserEntity user2 = UserEntity.builder()
-                .username("testadmin")
-                .password("$2a$10$3k.oydYW4Tvi2kpz7twi2.J.bXQWudC4.jEeYz7eScdedmNrg7chG")
-                .role("admin")
+
+        MangelEntity mangel1 = MangelEntity.builder()
+                .description("Aufzug geht nicht")
+                .dateNoticed(DATE)
+                .userEntity(user1)
                 .build();
-        userRepository.save(user2);
+
+        mangelRepository.save(mangel1);
 
     }
 
@@ -74,64 +85,43 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET should return a list of all users in database (2 users), if logged in as admin")
-    public void TestGetListOfUsersShouldReturnTwoUsersForAdmin(){
+    @DisplayName("GET all mangel with valid credentials should return own mangel list")
+    void testFindAllByUser() {
         //GIVEN
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testadmin", "admin"));
+        String username = "testuser";
+        String url = getUrl() + "/" + username;
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(username, "user"));
 
         //WHEN
-        ParameterizedTypeReference<LinkedList<User>> responseType = new ParameterizedTypeReference<>() {};
-        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
-
+        ParameterizedTypeReference<List<Mangel>> responseType = new ParameterizedTypeReference<>() {};
+        ResponseEntity<List<Mangel>> response= restTemplate.exchange(url, HttpMethod.GET, httpEntity, responseType);
 
         //THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(),is(notNullValue()));
-        assertThat(response.getBody().size(), is(2));
+        assertThat(response.getBody().size(), is(1));
+        assertThat(response.getBody().get(0).getDescription(), is("Aufzug geht nicht"));
     }
 
     @Test
-    @DisplayName("GET for unauthorized user should return http status 401 UNAUTHORIZED")
-
-    public void testGetListOfUsersShouldReturnError401(){
+    @DisplayName("POST new mangel with valid credentials should return new mangel")
+    void testCreateNewMangel() {
         //GIVEN
-        HttpEntity<Void> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+        String username = "testuser";
+        String url = getUrl() + "/" + username;
+        Mangel newMangel = Mangel.builder()
+                .description("Heizung")
+                .dateNoticed(DATE.toString())
+                .build();
+        HttpEntity<Mangel> httpEntity = new HttpEntity<>(newMangel, authorizedHeader(username, "user"));
 
         //WHEN
-        ParameterizedTypeReference<List<User>> responseType = new ParameterizedTypeReference<>() {};
-        ResponseEntity<List<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
+        ResponseEntity<Mangel> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Mangel.class);
 
         //THEN
-        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
-        assertThat(response.getBody(), is(nullValue()));
-
-    }
-
-    @Test
-    @DisplayName("GET /{username} should return a user from database, if logged in as admin")
-    public void testGetUserByUserNameReturnsUser(){
-        //GIVEN
-        String url = getUrl() + "/testuser";
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testadmin", "admin"));
-        // WHEN
-        ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,httpEntity, User.class);
-        // THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(),is(notNullValue()));
-        assertThat(response.getBody().getUsername(),is("testuser"));
-    }
-
-
-    @Test
-    @DisplayName("GET /{username} for unauthorized user should return http status 401 UNAUTHORIZED")
-    public void testGetUserByUserNameShouldReturnError401(){
-        //GIVEN
-        String url = getUrl() + "/testuser";
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
-        // WHEN
-        ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,httpEntity, User.class);
-        // THEN
-        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+        assertThat(response.getBody().getDescription(), is("Heizung"));
 
     }
 
@@ -154,6 +144,4 @@ public class UserControllerTest {
 
         return headers;
     }
-
-
 }

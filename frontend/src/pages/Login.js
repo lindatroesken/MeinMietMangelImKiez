@@ -7,13 +7,15 @@ import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { Redirect } from 'react-router-dom'
 import Header from '../components/Header'
+import { useAuth } from '../auth/AuthProvider'
 
 const initialState = {
   username: '',
   password: '',
 }
 
-export default function Login({ onLogin, token, user }) {
+export default function Login() {
+  const { login, user } = useAuth()
   const [credentials, setCredentials] = useState(initialState)
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
@@ -30,7 +32,7 @@ export default function Login({ onLogin, token, user }) {
     console.log(credentials)
     setLoading(true)
     setError()
-    onLogin(credentials).catch(error => {
+    login(credentials).catch(error => {
       setError(error)
       setLoading(false)
     })
@@ -39,12 +41,12 @@ export default function Login({ onLogin, token, user }) {
   if (error) {
     console.log(error)
   }
-  if (token) {
+  if (user) {
     return <Redirect to="/" />
   }
   return (
     <Page>
-      <Header title="Login" user={user} />
+      <Header title="Login" />
       {loading && <Loading />}
       {!loading && (
         <Main as="form" onSubmit={handleSubmit}>
@@ -64,7 +66,7 @@ export default function Login({ onLogin, token, user }) {
           <Button> login </Button>
         </Main>
       )}
-      {error && <Error>Error</Error>}
+      {error && <Error>{error.message}</Error>}
     </Page>
   )
 }

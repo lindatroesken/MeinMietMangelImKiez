@@ -49,7 +49,7 @@ public class UserController {
     })
     public ResponseEntity<List<User>> findAll(@AuthenticationPrincipal UserEntity authUser){
         if (!authUser.getRole().equals("admin")) {
-            System.out.println("UNAUTHORIZED");
+//            throw new UnauthorizedUserException("Only admins are allowed to view all user");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         List<UserEntity> userEntityList = userService.findAll();
@@ -64,10 +64,11 @@ public class UserController {
     @GetMapping(value = "{username}", produces = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
-            @ApiResponse(code = SC_UNAUTHORIZED, message = "Only logged in user with role 'admin' can view any user. A user with role 'user' can only view own account")
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "Only logged in user with role 'admin' can view any user")
     })
     public ResponseEntity<User> findUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
         if (!authUser.getRole().equals("admin")){
+//            throw new UnauthorizedUserException("Only admins are allowed to find a user");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Optional<UserEntity> userEntityOptional = userService.findByUsername(username);

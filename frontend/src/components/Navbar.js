@@ -9,8 +9,9 @@ export default function Navbar({ user, ...props }) {
         Home{' '}
       </NavLink>
       {!user && <NavLink to="/login"> Login </NavLink>}
-      {user && <NavLink to={`/${user.username}/maengel/new`}> Neu </NavLink>}
-      {user && <NavLink to={`/${user.username}/maengel/list`}> Liste </NavLink>}
+      {user && <NavLink to="/logout"> Logout </NavLink>}
+      {user && <NavLink to="/maengel/new"> Neu </NavLink>}
+      {user && <NavLink to="/maengel/list"> Liste </NavLink>}
     </Wrapper>
   )
 }
