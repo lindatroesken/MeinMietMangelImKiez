@@ -9,18 +9,11 @@ import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { postMangel } from '../services/api-service'
 import { useAuth } from '../auth/AuthProvider'
-// import { Redirect } from 'react-router-dom'
-// import moment from 'moment'
-
-// const milliseconds = Date.now()
-// const dateObject = new Date(milliseconds)
-// const options = {
-//   year: 'numeric',
-//   month: 'numeric',
-//   day: 'numeric',
-// }
-// // const humanDateFormat = dateObject.toLocaleString('en-en', options) //2019-12-9 10:30:15
-// const humanDateFormat = '2021-09-01' //2019-12-9 10:30:15
+import Select from '../components/Select'
+import {
+  mangelCategoryOptions,
+  mangelStatusOptions,
+} from '../services/mangel-service'
 
 const initialState = {
   category: '',
@@ -41,11 +34,6 @@ export default function MaengelForm() {
   }
 
   const handleMangelDateChange = value => {
-    console.log(Date.parse(value))
-    console.log(value)
-    // const formattedDate = value && Date.parse(value)
-    // this.setState({value: formattedDate})
-    // this.props.onChange(formattedDate)
     setMangel({ ...mangel, dateNoticed: value })
   }
   const handleSubmit = event => {
@@ -67,21 +55,17 @@ export default function MaengelForm() {
       {loading && <Loading />}
       {!loading && (
         <Main as="form" onSubmit={handleSubmit}>
-          <TextField
-            name="description"
-            value={mangel.description}
-            onChange={handleMangelChange}
-            title="Beschreibung"
-          />
-          <TextField
+          <Select
             name="status"
             value={mangel.status}
+            values={mangelStatusOptions}
             onChange={handleMangelChange}
             title="Status"
           />
-          <TextField
+          <Select
             name="category"
             value={mangel.category}
+            values={mangelCategoryOptions}
             onChange={handleMangelChange}
             title="Kategorie"
           />
@@ -91,6 +75,12 @@ export default function MaengelForm() {
             value={mangel.dateNoticed}
             onChange={handleMangelDateChange}
             title="Festegestellt am"
+          />
+          <TextField
+            name="description"
+            value={mangel.description}
+            onChange={handleMangelChange}
+            title="Beschreibung"
           />
           <Button>speichern</Button>
         </Main>
