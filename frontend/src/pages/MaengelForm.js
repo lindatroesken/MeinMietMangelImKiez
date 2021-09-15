@@ -15,6 +15,7 @@ import {
   mangelStatusOptions,
   initialMangelStates,
 } from '../services/mangel-service'
+import TextArea from '../components/TextArea'
 
 export default function MaengelForm() {
   const { user, token } = useAuth()
@@ -74,6 +75,12 @@ export default function MaengelForm() {
             value={mangel.description}
             onChange={handleMangelChange}
             title="Beschreibung"
+          />
+          <TextArea
+            name="details"
+            value={mangel.details}
+            onChange={handleMangelChange}
+            title="Details"
           />
           <Button>speichern</Button>
         </Main>

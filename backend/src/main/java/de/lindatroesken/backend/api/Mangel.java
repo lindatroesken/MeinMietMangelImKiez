@@ -20,7 +20,10 @@ public class Mangel {
     @ApiModelProperty(example = "Heizungsausfall in der gesamten Wohnung", notes = "A description of the problem")
     private String description;
 
-    @ApiModelProperty(notes = "date of first problem occurance")
+    @ApiModelProperty(notes = "more details, if there is more to say")
+    private String details;
+
+    @ApiModelProperty(notes = "date of first problem occurrence")
     private String dateNoticed;
 
     @ApiModelProperty(notes = "date of problem solved")
