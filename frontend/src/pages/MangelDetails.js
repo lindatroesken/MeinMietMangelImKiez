@@ -29,7 +29,9 @@ export default function MangelDetails() {
 
   return (
     <Page>
-      <Header title={`Mangel Details of user ${user.username}`} />
+      <Header
+        title={`Mangel Details of user ${user.username} for Mangel of category ${mangel.category}`}
+      />
       {loading && <Loading />}
       {!loading && (
         <Main>
