@@ -61,7 +61,10 @@ public class MangelController {
     })
     public ResponseEntity<Mangel> findMangelById(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id){
         MangelEntity mangelEntity = mangelService.findMangelById(id);
-        return ok(map(mangelEntity));
+        if(mangelEntity.getUserEntity().getUsername().equals(authUser.getUsername())){
+            return ok(map(mangelEntity));
+        }
+        throw new UnauthorizedUserException("User can only view own mangel");
     }
 
     @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
