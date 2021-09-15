@@ -13,19 +13,12 @@ import Select from '../components/Select'
 import {
   mangelCategoryOptions,
   mangelStatusOptions,
+  initialMangelStates,
 } from '../services/mangel-service'
-
-const initialState = {
-  category: '',
-  description: '',
-  dateNoticed: new Date(),
-  dateFixed: null,
-  status: 'OPEN',
-}
 
 export default function MaengelForm() {
   const { user, token } = useAuth()
-  const [mangel, setMangel] = useState(initialState)
+  const [mangel, setMangel] = useState(initialMangelStates)
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
 
@@ -45,7 +38,7 @@ export default function MaengelForm() {
       .catch(setError)
       .finally(() => {
         setLoading(false)
-        setMangel(initialState)
+        setMangel(initialMangelStates)
       })
   }
 
