@@ -6,6 +6,7 @@ import MaengelForm from './pages/MaengelForm'
 import PersonalMaengelList from './pages/PersonalMaengelList'
 import AuthProvider from './auth/AuthProvider'
 import Logout from './pages/Logout'
+import MangelDetails from './pages/MangelDetails'
 
 export default function App() {
   return (
@@ -16,6 +17,10 @@ export default function App() {
           <Route exact path="/" component={Home} />
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/maengel/new" component={MaengelForm} />
+          <ProtectedRoute
+            path="/maengel/details/:id"
+            component={MangelDetails}
+          />
           <ProtectedRoute
             path="/maengel/list"
             component={PersonalMaengelList}

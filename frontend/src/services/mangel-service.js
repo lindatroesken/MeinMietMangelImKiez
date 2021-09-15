@@ -11,3 +11,13 @@ export const mangelCategoryOptions = [
   'Müll',
   'Sonstiges',
 ]
+
+export const initialMangelStates = {
+  category: '',
+  description: '',
+  dateNoticed: new Date(),
+  dateFixed: null,
+  status: 'OPEN',
+  id: null,
+}
+

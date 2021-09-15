@@ -39,4 +39,8 @@ public class MangelService {
         newMangelEntity.setUserEntity(userEntity);
         return mangelRepository.save(newMangelEntity);
     }
+
+    public MangelEntity findMangelById(Long id) {
+        return mangelRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Mangel not found"));
+    }
 }

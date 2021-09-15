@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static de.lindatroesken.backend.controller.MangelController.CONTROLLER_TAG;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
@@ -39,7 +40,7 @@ public class MangelController {
         this.mangelService = mangelService;
     }
 
-    @GetMapping(value = "{username}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "all/{username}", produces = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
@@ -51,6 +52,16 @@ public class MangelController {
         }
 
         throw new UnauthorizedUserException("Only admins can view a list of mangel and user can only view own mangel overview");
+    }
+
+    @GetMapping(value = "{id}", produces = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
+    })
+    public ResponseEntity<Mangel> findMangelById(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id){
+        MangelEntity mangelEntity = mangelService.findMangelById(id);
+        return ok(map(mangelEntity));
     }
 
     @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)

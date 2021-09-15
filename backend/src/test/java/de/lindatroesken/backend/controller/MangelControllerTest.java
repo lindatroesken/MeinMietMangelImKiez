@@ -93,7 +93,7 @@ class MangelControllerTest {
     void testFindAllByUser() {
         //GIVEN
         String username = "testuser";
-        String url = getUrl() + "/" + username;
+        String url = getUrl() + "/all/" + username;
         HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(username, "user"));
 
         //WHEN

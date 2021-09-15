@@ -1,6 +1,10 @@
 import React from 'react'
 import { useTable } from 'react-table'
+import { useHistory } from 'react-router-dom'
+
 export default function Table({ columns, data }) {
+  const history = useHistory()
+
   // Use the useTable Hook to send the columns and data to build the table
   const {
     getTableProps, // table props from react-table
@@ -14,7 +18,8 @@ export default function Table({ columns, data }) {
   })
 
   const handleOnClick = row => {
-    console.log(row.original)
+    const path = `/maengel/details/${row.original.id}`
+    history.push(path)
   }
   /* 
     Render the UI for your table
