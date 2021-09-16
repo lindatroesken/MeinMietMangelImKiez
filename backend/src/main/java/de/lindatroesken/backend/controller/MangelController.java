@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import static de.lindatroesken.backend.controller.MangelController.CONTROLLER_TAG;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
@@ -61,7 +60,10 @@ public class MangelController {
     })
     public ResponseEntity<Mangel> findMangelById(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id){
         MangelEntity mangelEntity = mangelService.findMangelById(id);
-        return ok(map(mangelEntity));
+        if(mangelEntity.getUserEntity().getUsername().equals(authUser.getUsername())){
+            return ok(map(mangelEntity));
+        }
+        throw new UnauthorizedUserException("User can only view own mangel");
     }
 
     @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
@@ -90,6 +92,7 @@ public class MangelController {
     private MangelEntity map(Mangel mangel){
         return MangelEntity.builder()
                 .description(mangel.getDescription())
+                .details(mangel.getDetails())
                 .category(mangel.getCategory())
                 .status(Status.valueOf(mangel.getStatus()))
                 .dateNoticed(ZonedDateTime.parse(mangel.getDateNoticed()))
@@ -99,6 +102,7 @@ public class MangelController {
         return Mangel.builder()
                 .dateNoticed(mangelEntity.getDateNoticed().toString())
                 .description(mangelEntity.getDescription())
+                .details(mangelEntity.getDetails())
                 .category(mangelEntity.getCategory())
                 .status(mangelEntity.getStatus().toString())
                 .id(mangelEntity.getId())

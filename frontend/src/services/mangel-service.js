@@ -15,9 +15,9 @@ export const mangelCategoryOptions = [
 export const initialMangelStates = {
   category: '',
   description: '',
+  details: '',
   dateNoticed: new Date(),
   dateFixed: null,
   status: 'OPEN',
   id: null,
 }
-

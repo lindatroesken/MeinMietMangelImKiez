@@ -18,12 +18,14 @@ public class MangelEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="user_id")
     private UserEntity userEntity;
 
+    @Column(name="details", columnDefinition="TEXT")
+    private String details;
 
-    @Column(name="description", columnDefinition="TEXT")
+    @Column(name="description")
     private String description;
 
     @Column(name = "date_noticed")

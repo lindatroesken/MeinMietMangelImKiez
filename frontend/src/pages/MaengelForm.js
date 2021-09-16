@@ -13,19 +13,13 @@ import Select from '../components/Select'
 import {
   mangelCategoryOptions,
   mangelStatusOptions,
+  initialMangelStates,
 } from '../services/mangel-service'
-
-const initialState = {
-  category: '',
-  description: '',
-  dateNoticed: new Date(),
-  dateFixed: null,
-  status: 'OPEN',
-}
+import TextArea from '../components/TextArea'
 
 export default function MaengelForm() {
   const { user, token } = useAuth()
-  const [mangel, setMangel] = useState(initialState)
+  const [mangel, setMangel] = useState(initialMangelStates)
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
 
@@ -45,7 +39,7 @@ export default function MaengelForm() {
       .catch(setError)
       .finally(() => {
         setLoading(false)
-        setMangel(initialState)
+        setMangel(initialMangelStates)
       })
   }
 
@@ -81,6 +75,12 @@ export default function MaengelForm() {
             value={mangel.description}
             onChange={handleMangelChange}
             title="Beschreibung"
+          />
+          <TextArea
+            name="details"
+            value={mangel.details}
+            onChange={handleMangelChange}
+            title="Details"
           />
           <Button>speichern</Button>
         </Main>
