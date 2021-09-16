@@ -1,6 +1,7 @@
 import React from 'react'
 import { useTable } from 'react-table'
 import { useHistory } from 'react-router-dom'
+import styled from 'styled-components/macro'
 
 export default function Table({ columns, data }) {
   const history = useHistory()
@@ -26,7 +27,7 @@ export default function Table({ columns, data }) {
     - react-table doesn't have UI, it's headless. We just need to put the react-table props from the Hooks, and it will do its magic automatically
   */
   return (
-    <table {...getTableProps()}>
+    <StyledTable {...getTableProps()}>
       <thead>
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()}>
@@ -48,6 +49,21 @@ export default function Table({ columns, data }) {
           )
         })}
       </tbody>
-    </table>
+    </StyledTable>
   )
 }
+
+const StyledTable = styled.table`
+  background-color: var(--background-dark);
+  padding: var(--size-l);
+
+  thead {
+  }
+  tbody {
+    tr {
+      td {
+        padding: var(--size-s);
+      }
+    }
+  }
+`
