@@ -20,7 +20,7 @@ public class ContactLoggerEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "mangel")
+    @JoinColumn(name = "mangel_entity")
     private MangelEntity mangelEntity;
 
     @Enumerated(EnumType.STRING)

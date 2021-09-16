@@ -20,7 +20,7 @@ public class MangelEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="user")
+    @JoinColumn(name="user_entity")
     private UserEntity userEntity;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mangelEntity", fetch = FetchType.EAGER)
