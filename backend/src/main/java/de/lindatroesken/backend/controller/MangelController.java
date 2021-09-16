@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -95,12 +97,13 @@ public class MangelController {
                 .details(mangel.getDetails())
                 .category(mangel.getCategory())
                 .status(Status.valueOf(mangel.getStatus()))
-                .dateNoticed(ZonedDateTime.parse(mangel.getDateNoticed()))
+                .dateNoticed(ZonedDateTime.ofInstant(Instant.ofEpochMilli(mangel.getDateNoticed()),
+                        ZoneId.systemDefault()))
                 .build();
     }
     private Mangel map(MangelEntity mangelEntity) {
         return Mangel.builder()
-                .dateNoticed(mangelEntity.getDateNoticed().toString())
+                .dateNoticed(mangelEntity.getDateNoticed().toInstant().toEpochMilli())
                 .description(mangelEntity.getDescription())
                 .details(mangelEntity.getDetails())
                 .category(mangelEntity.getCategory())

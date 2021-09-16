@@ -28,7 +28,7 @@ export default function MaengelForm() {
   }
 
   const handleMangelDateChange = value => {
-    setMangel({ ...mangel, dateNoticed: value })
+    setMangel({ ...mangel, dateNoticed: value.getTime() })
   }
   const handleSubmit = event => {
     event.preventDefault()

@@ -16,7 +16,7 @@ export const initialMangelStates = {
   category: '',
   description: '',
   details: '',
-  dateNoticed: new Date(),
+  dateNoticed: new Date().getTime(),
   dateFixed: null,
   status: 'OPEN',
   id: null,

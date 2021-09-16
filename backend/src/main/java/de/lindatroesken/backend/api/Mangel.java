@@ -24,7 +24,7 @@ public class Mangel {
     private String details;
 
     @ApiModelProperty(notes = "date of first problem occurrence")
-    private String dateNoticed;
+    private Long dateNoticed;
 
     @ApiModelProperty(notes = "date of problem solved")
     private String dateFixed;
