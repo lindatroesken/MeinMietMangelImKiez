@@ -46,6 +46,7 @@ class MangelControllerTest {
     }
 
     private final ZonedDateTime DATE = ZonedDateTime.now();
+    private final Long DATESECONDS = ZonedDateTime.now().toEpochSecond();
     private final String USERNAME = "testuser";
 
     @Autowired
@@ -115,7 +116,7 @@ class MangelControllerTest {
         String url = getUrl() + "/" + username;
         Mangel newMangel = Mangel.builder()
                 .description("Heizung")
-                .dateNoticed(DATE.toString())
+                .dateNoticed(DATESECONDS)
                 .status("OPEN")
                 .build();
         HttpEntity<Mangel> httpEntity = new HttpEntity<>(newMangel, authorizedHeader(username, "user"));

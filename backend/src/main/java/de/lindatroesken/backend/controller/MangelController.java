@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,9 +49,8 @@ public class MangelController {
     public ResponseEntity<List<Mangel>> findAllByUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
         if(authUser.getUsername().equals(username) || authUser.getRole().equals("admin")){
             List<MangelEntity> mangelEntityList = mangelService.findAllForUser(username);
-            return ok(map(mangelEntityList));
+            return ok(mapMangel(mangelEntityList));
         }
-
         throw new UnauthorizedUserException("Only admins can view a list of mangel and user can only view own mangel overview");
     }
 
@@ -61,9 +62,22 @@ public class MangelController {
     public ResponseEntity<Mangel> findMangelById(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id){
         MangelEntity mangelEntity = mangelService.findMangelById(id);
         if(mangelEntity.getUserEntity().getUsername().equals(authUser.getUsername())){
-            return ok(map(mangelEntity));
+            return ok(mapMangel(mangelEntity));
         }
         throw new UnauthorizedUserException("User can only view own mangel");
+    }
+
+    @PutMapping(value = "{id}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
+    })
+    public ResponseEntity<Mangel> updateMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id, @RequestBody Mangel updateMangel){
+        if(updateMangel.getId().equals(id)){
+            MangelEntity changedMangelEntity = mangelService.updateMangel(id, mapMangel(updateMangel));
+            return ok(mapMangel(changedMangelEntity));
+        }
+        throw new IllegalArgumentException("Mangel and ID does not belong together");
     }
 
     @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
@@ -73,34 +87,35 @@ public class MangelController {
     })
     public ResponseEntity<Mangel> createNewMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Mangel newMangel){
         if(authUser.getUsername().equals(username)){
-            MangelEntity mangelEntityCreated = mangelService.createMangel(username, map(newMangel));
-            return ok(map(mangelEntityCreated));
+            MangelEntity mangelEntityCreated = mangelService.createMangel(username, mapMangel(newMangel));
+            return ok(mapMangel(mangelEntityCreated));
         }
         throw new UnauthorizedUserException("Only logged in user can create a mangel in own list");
     }
 
-    private List<Mangel> map(List<MangelEntity> mangelEntityList) {
+    private List<Mangel> mapMangel(List<MangelEntity> mangelEntityList) {
         List<Mangel> mangelList = new LinkedList<>();
         for (MangelEntity mangelEntity : mangelEntityList){
-            Mangel mangel = map(mangelEntity);
+            Mangel mangel = mapMangel(mangelEntity);
             mangelList.add(mangel);
         }
         return mangelList;
 
     }
 
-    private MangelEntity map(Mangel mangel){
+    private MangelEntity mapMangel(Mangel mangel){
         return MangelEntity.builder()
                 .description(mangel.getDescription())
                 .details(mangel.getDetails())
                 .category(mangel.getCategory())
                 .status(Status.valueOf(mangel.getStatus()))
-                .dateNoticed(ZonedDateTime.parse(mangel.getDateNoticed()))
+                .dateNoticed(ZonedDateTime.ofInstant(Instant.ofEpochMilli(mangel.getDateNoticed()),
+                        ZoneId.systemDefault()))
                 .build();
     }
-    private Mangel map(MangelEntity mangelEntity) {
+    private Mangel mapMangel(MangelEntity mangelEntity) {
         return Mangel.builder()
-                .dateNoticed(mangelEntity.getDateNoticed().toString())
+                .dateNoticed(mangelEntity.getDateNoticed().toInstant().toEpochMilli())
                 .description(mangelEntity.getDescription())
                 .details(mangelEntity.getDetails())
                 .category(mangelEntity.getCategory())

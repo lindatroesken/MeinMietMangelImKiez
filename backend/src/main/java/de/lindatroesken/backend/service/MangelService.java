@@ -43,4 +43,30 @@ public class MangelService {
     public MangelEntity findMangelById(Long id) {
         return mangelRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Mangel not found"));
     }
+
+    public MangelEntity updateMangel(Long id, MangelEntity changedMangel) {
+        MangelEntity existingMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+
+        if (changedMangel.getCategory() != null) {
+            existingMangel.setCategory(changedMangel.getCategory());
+        }
+        if (changedMangel.getStatus() != null) {
+            existingMangel.setStatus(changedMangel.getStatus());
+        }
+        if (changedMangel.getDescription() != null){
+            existingMangel.setDescription(changedMangel.getDescription());
+        }
+        if (changedMangel.getDateNoticed() != null){
+            existingMangel.setDateNoticed(changedMangel.getDateNoticed());
+        }
+        if (changedMangel.getDetails() != null){
+            existingMangel.setDetails(changedMangel.getDetails());
+        }
+        if (changedMangel.getDateFixed() != null){
+            existingMangel.setDateFixed(changedMangel.getDateFixed());
+        }
+        return mangelRepository.save(existingMangel);
+
+
+    }
 }

@@ -7,6 +7,7 @@ export default function TextArea({
   onChange,
   name,
   title,
+  readOnly,
   ...props
 }) {
   return (
@@ -18,6 +19,7 @@ export default function TextArea({
         value={value}
         onChange={onChange}
         name={name}
+        readOnly={readOnly}
       />
     </Label>
   )

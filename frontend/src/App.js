@@ -6,7 +6,6 @@ import MaengelForm from './pages/MaengelForm'
 import PersonalMaengelList from './pages/PersonalMaengelList'
 import AuthProvider from './auth/AuthProvider'
 import Logout from './pages/Logout'
-import MangelDetails from './pages/MangelDetails'
 
 export default function App() {
   return (
@@ -16,11 +15,20 @@ export default function App() {
           <Route path="/login" component={Login} />
           <Route exact path="/" component={Home} />
           <ProtectedRoute path="/logout" component={Logout} />
-          <ProtectedRoute path="/maengel/new" component={MaengelForm} />
-          <ProtectedRoute
-            path="/maengel/details/:id"
-            component={MangelDetails}
-          />
+          <ProtectedRoute path="/maengel/new">
+            <MaengelForm
+              initialMode="new"
+              readOnly={false}
+              title="Neuen Mangel erfassen"
+            />
+          </ProtectedRoute>
+          <ProtectedRoute path="/maengel/details/:id">
+            <MaengelForm
+              initialMode="view"
+              readOnly={true}
+              title="Mangel Details"
+            />
+          </ProtectedRoute>
           <ProtectedRoute
             path="/maengel/list"
             component={PersonalMaengelList}
