@@ -45,6 +45,8 @@ public class MangelService {
     }
 
     public MangelEntity updateMangel(Long id, MangelEntity changedMangel) {
+//        MangelEntity originalMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+//        MangelEntity existingMangel = copyMangelEntity(originalMangel);
         MangelEntity existingMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
 
         if (changedMangel.getCategory() != null) {
@@ -65,8 +67,25 @@ public class MangelService {
         if (changedMangel.getDateFixed() != null){
             existingMangel.setDateFixed(changedMangel.getDateFixed());
         }
+        if (changedMangel.getContactLoggerList() != null){
+            existingMangel.setContactLoggerList(changedMangel.getContactLoggerList());
+        }
         return mangelRepository.save(existingMangel);
 
 
     }
+
+    private MangelEntity copyMangelEntity(MangelEntity originalMangel) {
+        return MangelEntity.builder()
+                .id(originalMangel.getId())
+                .details(originalMangel.getDetails())
+                .category(originalMangel.getCategory())
+                .status(originalMangel.getStatus())
+                .description(originalMangel.getDescription())
+                .dateFixed(originalMangel.getDateFixed())
+                .userEntity(originalMangel.getUserEntity())
+                .dateNoticed(originalMangel.getDateNoticed())
+                .build();
+    }
+
 }
