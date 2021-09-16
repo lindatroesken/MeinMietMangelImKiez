@@ -38,9 +38,6 @@ export default function Login() {
     })
   }
 
-  if (error) {
-    console.log(error)
-  }
   if (user) {
     return <Redirect to="/" />
   }

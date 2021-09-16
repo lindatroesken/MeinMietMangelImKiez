@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import Page from '../components/Page'
 import Main from '../components/Main'
 import TextField from '../components/TextField'
@@ -20,9 +20,11 @@ import {
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
+  const history = useHistory()
   const { id } = useParams()
   const [mode, setMode] = useState(initialMode)
   const [mangel, setMangel] = useState(initialMangelStates)
+  const [mangelSaved, setMangelSaved] = useState()
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
@@ -31,7 +33,10 @@ export default function MaengelForm({ initialMode, title }) {
     console.log(mode)
     if (mode === 'new') {
       setReadOnly(false)
-      setMangel(initialMangelStates)
+      setMangel({
+        ...initialMangelStates,
+        dateNoticed: new Date().getTime(),
+      })
     } else if (mode === 'view') {
       setReadOnly(true)
       getMangelById(token, id)
@@ -59,19 +64,17 @@ export default function MaengelForm({ initialMode, title }) {
     event.preventDefault()
     setLoading(true)
     setError()
-    console.log(mangel.dateNoticed)
     postMangel(token, user.username, mangel)
-      .then(response => console.log(response))
       .catch(setError)
       .finally(() => {
         setLoading(false)
-        setMangel(initialMangelStates)
+        history.push('/mangel/list')
       })
   }
 
   const switchToEdit = () => {
-    console.log('should switch to edit')
     setMode('edit')
+    setMangelSaved(mangel)
   }
 
   const submitChanges = event => {
@@ -79,16 +82,15 @@ export default function MaengelForm({ initialMode, title }) {
     setLoading(true)
     setError()
     putMangel(token, id, mangel)
-      .then(response => console.log('Response: ', response))
+      .then(setMangelSaved)
       .catch(setError)
       .finally(() => {
         setLoading(false)
       })
-
-    console.log('submit changes, tbd.')
   }
+
   const cancelChanges = () => {
-    console.log('reset changes, tbd')
+    setMangel(mangelSaved)
   }
 
   return (
