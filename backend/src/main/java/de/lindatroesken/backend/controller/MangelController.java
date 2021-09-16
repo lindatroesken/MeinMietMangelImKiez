@@ -49,9 +49,8 @@ public class MangelController {
     public ResponseEntity<List<Mangel>> findAllByUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
         if(authUser.getUsername().equals(username) || authUser.getRole().equals("admin")){
             List<MangelEntity> mangelEntityList = mangelService.findAllForUser(username);
-            return ok(map(mangelEntityList));
+            return ok(mapMangel(mangelEntityList));
         }
-
         throw new UnauthorizedUserException("Only admins can view a list of mangel and user can only view own mangel overview");
     }
 
@@ -63,7 +62,7 @@ public class MangelController {
     public ResponseEntity<Mangel> findMangelById(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id){
         MangelEntity mangelEntity = mangelService.findMangelById(id);
         if(mangelEntity.getUserEntity().getUsername().equals(authUser.getUsername())){
-            return ok(map(mangelEntity));
+            return ok(mapMangel(mangelEntity));
         }
         throw new UnauthorizedUserException("User can only view own mangel");
     }
@@ -75,23 +74,23 @@ public class MangelController {
     })
     public ResponseEntity<Mangel> createNewMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Mangel newMangel){
         if(authUser.getUsername().equals(username)){
-            MangelEntity mangelEntityCreated = mangelService.createMangel(username, map(newMangel));
-            return ok(map(mangelEntityCreated));
+            MangelEntity mangelEntityCreated = mangelService.createMangel(username, mapMangel(newMangel));
+            return ok(mapMangel(mangelEntityCreated));
         }
         throw new UnauthorizedUserException("Only logged in user can create a mangel in own list");
     }
 
-    private List<Mangel> map(List<MangelEntity> mangelEntityList) {
+    private List<Mangel> mapMangel(List<MangelEntity> mangelEntityList) {
         List<Mangel> mangelList = new LinkedList<>();
         for (MangelEntity mangelEntity : mangelEntityList){
-            Mangel mangel = map(mangelEntity);
+            Mangel mangel = mapMangel(mangelEntity);
             mangelList.add(mangel);
         }
         return mangelList;
 
     }
 
-    private MangelEntity map(Mangel mangel){
+    private MangelEntity mapMangel(Mangel mangel){
         return MangelEntity.builder()
                 .description(mangel.getDescription())
                 .details(mangel.getDetails())
@@ -101,7 +100,7 @@ public class MangelController {
                         ZoneId.systemDefault()))
                 .build();
     }
-    private Mangel map(MangelEntity mangelEntity) {
+    private Mangel mapMangel(MangelEntity mangelEntity) {
         return Mangel.builder()
                 .dateNoticed(mangelEntity.getDateNoticed().toInstant().toEpochMilli())
                 .description(mangelEntity.getDescription())
