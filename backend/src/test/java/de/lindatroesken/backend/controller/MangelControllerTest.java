@@ -115,7 +115,6 @@ class MangelControllerTest {
         String url = getUrl() + "/" + username;
         Mangel newMangel = Mangel.builder()
                 .description("Heizung")
-                .dateNoticed(DATE.toString())
                 .status("OPEN")
                 .build();
         HttpEntity<Mangel> httpEntity = new HttpEntity<>(newMangel, authorizedHeader(username, "user"));
