@@ -45,7 +45,7 @@ export default function MaengelForm({ initialMode, title }) {
     } else {
       setReadOnly(false)
     }
-  }, [mode, initialMode, token])
+  }, [mode, initialMode, token, id])
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
