@@ -17,7 +17,7 @@ public class Mangel {
     @ApiModelProperty(notes = "id of issue")
     private Long id;
 
-    @ApiModelProperty(example = "Heizungsausfall in der gesamten Wohnung", notes = "A description of the problem")
+    @ApiModelProperty(notes = "A description of the problem")
     private String description;
 
     @ApiModelProperty(notes = "more details, if there is more to say")
@@ -35,5 +35,7 @@ public class Mangel {
     @ApiModelProperty(notes = "category of issue")
     private String category;
 
+    @ApiModelProperty(notes = "logger for contact to landlord")
+    private ContactLogger contactLogger;
 
 }
