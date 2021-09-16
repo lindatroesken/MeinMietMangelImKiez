@@ -35,7 +35,7 @@ public class Mangel {
     @ApiModelProperty(notes = "category of issue")
     private String category;
 
-    @ApiModelProperty(notes = "logger for contact to landlord")
-    private ContactLogger contactLogger;
+//    @ApiModelProperty(notes = "logger for contact to landlord")
+//    private ContactLogger contactLogger;
 
 }
