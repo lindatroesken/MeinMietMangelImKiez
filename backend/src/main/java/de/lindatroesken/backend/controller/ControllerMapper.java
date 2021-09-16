@@ -1,8 +1,9 @@
 package de.lindatroesken.backend.controller;
 
-import de.lindatroesken.backend.api.ContactLog;
+import de.lindatroesken.backend.api.ContactLogger;
 import de.lindatroesken.backend.api.Mangel;
 import de.lindatroesken.backend.model.ContactLoggerEntity;
+import de.lindatroesken.backend.model.ContactType;
 import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.Status;
 
@@ -11,7 +12,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 abstract class ControllerMapper {
 
@@ -25,6 +25,46 @@ abstract class ControllerMapper {
 
     }
 
+    public List<ContactLoggerEntity> mapContactLoggerListToEntity(List<ContactLogger> contactLoggerList) {
+        List<ContactLoggerEntity> contactLoggerEntityList = new LinkedList<>();
+        if (contactLoggerList != null){
+            for (ContactLogger contactLogger : contactLoggerList) {
+                ContactLoggerEntity contactLoggerEntity = mapContactLogger(contactLogger);
+                contactLoggerEntityList.add(contactLoggerEntity);
+            }
+        }
+        return contactLoggerEntityList;
+    }
+
+    public List<ContactLogger> mapContactLoggerListFromEntity(List<ContactLoggerEntity> contactLoggerEntityList){
+        List<ContactLogger> contactLoggerList = new LinkedList<>();
+        if (contactLoggerEntityList != null){
+            for (ContactLoggerEntity contactLoggerEntity : contactLoggerEntityList){
+                ContactLogger contactLogger = mapContactLogger(contactLoggerEntity);
+                contactLoggerList.add(contactLogger);
+            }
+        }
+        return contactLoggerList;
+    }
+
+    public ContactLoggerEntity mapContactLogger(ContactLogger contactLogger){
+        return ContactLoggerEntity.builder()
+                .id(contactLogger.getId())
+                .contactType(ContactType.valueOf(contactLogger.getContactType()))
+                .dateContacted(convertLongToZonedDateTime(contactLogger.getDateContacted()))
+                .contactNote(contactLogger.getContactNote())
+                .build();
+    }
+    public ContactLogger mapContactLogger(ContactLoggerEntity contactLoggerEntity){
+        return ContactLogger.builder()
+                .id(contactLoggerEntity.getId())
+                .contactNote(contactLoggerEntity.getContactNote())
+                .contactType(contactLoggerEntity.getContactType().toString())
+                .dateContacted(convertZonedDateTimeToLong(contactLoggerEntity.getDateContacted()))
+                .build();
+    }
+
+
 
     public MangelEntity mapMangel(Mangel mangel){
         return MangelEntity.builder()
@@ -33,6 +73,7 @@ abstract class ControllerMapper {
                 .category(mangel.getCategory())
                 .status(Status.valueOf(mangel.getStatus()))
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
+                .contactLoggerList(mapContactLoggerListToEntity(mangel.getContactLoggerList()))
                 .build();
     }
     public Mangel mapMangel(MangelEntity mangelEntity) {
@@ -42,6 +83,7 @@ abstract class ControllerMapper {
                 .details(mangelEntity.getDetails())
                 .category(mangelEntity.getCategory())
                 .status(mangelEntity.getStatus().toString())
+                .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
                 .id(mangelEntity.getId())
                 .build();
     }

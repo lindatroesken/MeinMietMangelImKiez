@@ -3,7 +3,9 @@ package de.lindatroesken.backend.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -17,7 +19,7 @@ import java.util.Set;
 public class UserEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userEntity", fetch = FetchType.EAGER)
-    private Set<MangelEntity> mangelList;
+    private List<MangelEntity> mangelList;
 
     @Id
     @GeneratedValue
