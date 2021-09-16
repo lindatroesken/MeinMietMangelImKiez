@@ -6,12 +6,19 @@ export default function TextField({
   onChange,
   name,
   title,
+  readOnly,
   ...props
 }) {
   return (
     <Label {...props}>
       {title}
-      <Input type={type} value={value} onChange={onChange} name={name} />
+      <Input
+        type={type}
+        value={value}
+        onChange={onChange}
+        name={name}
+        readOnly={readOnly}
+      />
     </Label>
   )
 }

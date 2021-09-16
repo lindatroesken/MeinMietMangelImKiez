@@ -8,12 +8,18 @@ export default function Select({
   onChange,
   value,
   values,
+  readOnly,
   ...props
 }) {
   return (
     <Label {...props}>
       {title}
-      <SelectStyled name={name} value={value} onChange={onChange}>
+      <SelectStyled
+        name={name}
+        value={value}
+        onChange={onChange}
+        disabled={readOnly}
+      >
         <option value="">bitte wählen...</option>
         {values.map(value => (
           <option key={value} value={value}>
