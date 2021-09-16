@@ -8,7 +8,7 @@ import DateField from '../components/DateField'
 import Button from '../components/Button'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
-import { postMangel } from '../services/api-service'
+import { getMangelById, postMangel, putMangel } from '../services/api-service'
 import { useAuth } from '../auth/AuthProvider'
 import Select from '../components/Select'
 import TextArea from '../components/TextArea'
@@ -54,10 +54,12 @@ export default function MaengelForm({ initialMode, title }) {
   const handleMangelDateChange = value => {
     setMangel({ ...mangel, dateNoticed: value.getTime() })
   }
-  const handleSubmit = event => {
+
+  const submitNew = event => {
     event.preventDefault()
     setLoading(true)
     setError()
+    console.log(mangel.dateNoticed)
     postMangel(token, user.username, mangel)
       .then(response => console.log(response))
       .catch(setError)
@@ -67,12 +69,34 @@ export default function MaengelForm({ initialMode, title }) {
       })
   }
 
+  const switchToEdit = () => {
+    console.log('should switch to edit')
+    setMode('edit')
+  }
+
+  const submitChanges = event => {
+    event.preventDefault()
+    setLoading(true)
+    setError()
+    putMangel(token, id, mangel)
+      .then(response => console.log('Response: ', response))
+      .catch(setError)
+      .finally(() => {
+        setLoading(false)
+      })
+
+    console.log('submit changes, tbd.')
+  }
+  const cancelChanges = () => {
+    console.log('reset changes, tbd')
+  }
+
   return (
     <Page>
-      <Header title="Neuen Mangel erfassen" />
+      <Header title={mode} />
       {loading && <Loading />}
       {!loading && (
-        <Main as="form" onSubmit={handleSubmit}>
+        <Main as="form">
           <Select
             name="status"
             value={mangel.status}
@@ -89,6 +113,7 @@ export default function MaengelForm({ initialMode, title }) {
             title="Kategorie"
             readOnly={readOnly}
           />
+
           <DateField
             type="date"
             name="dateNoticed"
@@ -97,6 +122,7 @@ export default function MaengelForm({ initialMode, title }) {
             title="Festegestellt am"
             readOnly={readOnly}
           />
+
           <TextField
             name="description"
             value={mangel.description}
@@ -111,7 +137,26 @@ export default function MaengelForm({ initialMode, title }) {
             title="Details"
             readOnly={readOnly}
           />
-          <Button>speichern</Button>
+          {mode === 'new' && (
+            <Button type="button" onClick={submitNew}>
+              speichern
+            </Button>
+          )}
+          {mode === 'view' && (
+            <Button type="button" onClick={switchToEdit}>
+              edit
+            </Button>
+          )}
+          {mode === 'edit' && (
+            <Button type="button" onClick={submitChanges}>
+              Änderungen speichern
+            </Button>
+          )}
+          {mode === 'edit' && (
+            <Button type="button" onClick={cancelChanges}>
+              Änderungen verwerfen
+            </Button>
+          )}
         </Main>
       )}
       {error && <Error>{error.message}</Error>}

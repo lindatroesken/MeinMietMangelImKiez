@@ -67,6 +67,19 @@ public class MangelController {
         throw new UnauthorizedUserException("User can only view own mangel");
     }
 
+    @PutMapping(value = "{id}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
+    })
+    public ResponseEntity<Mangel> updateMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id, @RequestBody Mangel updateMangel){
+        if(updateMangel.getId().equals(id)){
+            MangelEntity changedMangelEntity = mangelService.updateMangel(id, mapMangel(updateMangel));
+            return ok(mapMangel(changedMangelEntity));
+        }
+        throw new IllegalArgumentException("Mangel and ID does not belong together");
+    }
+
     @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
