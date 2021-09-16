@@ -18,7 +18,7 @@ export default function Table({ columns, data }) {
   })
 
   const handleOnClick = row => {
-    const path = `/maengel/details/${row.original.id}`
+    const path = `/mangel/details/${row.original.id}`
     history.push(path)
   }
   /* 

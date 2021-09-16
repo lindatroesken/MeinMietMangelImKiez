@@ -15,24 +15,21 @@ export default function App() {
           <Route path="/login" component={Login} />
           <Route exact path="/" component={Home} />
           <ProtectedRoute path="/logout" component={Logout} />
-          <ProtectedRoute path="/maengel/new">
+          <ProtectedRoute path="/mangel/new">
             <MaengelForm
               initialMode="new"
               readOnly={false}
               title="Neuen Mangel erfassen"
             />
           </ProtectedRoute>
-          <ProtectedRoute path="/maengel/details/:id">
+          <ProtectedRoute path="/mangel/details/:id">
             <MaengelForm
               initialMode="view"
               readOnly={true}
               title="Mangel Details"
             />
           </ProtectedRoute>
-          <ProtectedRoute
-            path="/maengel/list"
-            component={PersonalMaengelList}
-          />
+          <ProtectedRoute path="/mangel/list" component={PersonalMaengelList} />
         </Switch>
       </Router>
     </AuthProvider>
