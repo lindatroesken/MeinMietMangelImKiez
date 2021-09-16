@@ -2,7 +2,6 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.Mangel;
 import de.lindatroesken.backend.model.MangelEntity;
-import de.lindatroesken.backend.model.Status;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.MangelService;
 import io.swagger.annotations.Api;
@@ -14,10 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.LinkedList;
 import java.util.List;
 
 import static de.lindatroesken.backend.controller.MangelController.CONTROLLER_TAG;
@@ -31,7 +26,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 @CrossOrigin
 @RestController
 @RequestMapping("/mangel")
-public class MangelController {
+public class MangelController extends ControllerMapper {
     public static final String CONTROLLER_TAG = "Mangel Controller";
 
     private final MangelService mangelService;
@@ -91,37 +86,6 @@ public class MangelController {
             return ok(mapMangel(mangelEntityCreated));
         }
         throw new UnauthorizedUserException("Only logged in user can create a mangel in own list");
-    }
-
-    private List<Mangel> mapMangel(List<MangelEntity> mangelEntityList) {
-        List<Mangel> mangelList = new LinkedList<>();
-        for (MangelEntity mangelEntity : mangelEntityList){
-            Mangel mangel = mapMangel(mangelEntity);
-            mangelList.add(mangel);
-        }
-        return mangelList;
-
-    }
-
-    private MangelEntity mapMangel(Mangel mangel){
-        return MangelEntity.builder()
-                .description(mangel.getDescription())
-                .details(mangel.getDetails())
-                .category(mangel.getCategory())
-                .status(Status.valueOf(mangel.getStatus()))
-                .dateNoticed(ZonedDateTime.ofInstant(Instant.ofEpochMilli(mangel.getDateNoticed()),
-                        ZoneId.systemDefault()))
-                .build();
-    }
-    private Mangel mapMangel(MangelEntity mangelEntity) {
-        return Mangel.builder()
-                .dateNoticed(mangelEntity.getDateNoticed().toInstant().toEpochMilli())
-                .description(mangelEntity.getDescription())
-                .details(mangelEntity.getDetails())
-                .category(mangelEntity.getCategory())
-                .status(mangelEntity.getStatus().toString())
-                .id(mangelEntity.getId())
-                .build();
     }
 
 }
