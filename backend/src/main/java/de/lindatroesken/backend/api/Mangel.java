@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -35,7 +37,7 @@ public class Mangel {
     @ApiModelProperty(notes = "category of issue")
     private String category;
 
-//    @ApiModelProperty(notes = "logger for contact to landlord")
-//    private ContactLogger contactLogger;
+    @ApiModelProperty(notes = "logger for contact to landlord")
+    private List<ContactLogger> contactLoggerList;
 
 }

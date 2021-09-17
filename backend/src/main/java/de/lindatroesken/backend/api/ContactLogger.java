@@ -7,14 +7,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContactLogger {
-    @ApiModelProperty(notes = "list of contacts to landlord")
-    private List<ContactLog> contactLogList;
+    @ApiModelProperty(notes = "id of issue")
+    private Long id;
+    @ApiModelProperty(notes = "type of contact, e.g. email, phone, letter, ...")
+    private String contactType;
+    @ApiModelProperty(notes = "date of contact")
+    private Long dateContacted;
+    @ApiModelProperty(notes = "some notes")
+    private String contactNote;
+
 }
