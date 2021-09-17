@@ -1,5 +1,6 @@
 package de.lindatroesken.backend.service;
 
+import de.lindatroesken.backend.model.ContactLoggerEntity;
 import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.repo.MangelRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.LinkedList;
 import java.util.List;
 
 @Getter
@@ -34,10 +36,26 @@ public class MangelService {
 
     }
 
-    public MangelEntity createMangel(String username, MangelEntity newMangelEntity) {
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+    public MangelEntity createMangelWithContactLoggerList(String username, MangelEntity newMangelEntity, List<ContactLoggerEntity> newContactLoggerList) {
+        MangelEntity createdMangelEntity = createMangel(username, newMangelEntity);
+        return addContactLoggerList(createdMangelEntity, newContactLoggerList);
+    }
+
+    public MangelEntity createMangel(String username, MangelEntity newMangelEntity){
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
         newMangelEntity.setUserEntity(userEntity);
         return mangelRepository.save(newMangelEntity);
+    }
+
+    public MangelEntity addContactLoggerList(MangelEntity mangelEntity, List<ContactLoggerEntity> contactLoggerList){
+        List<ContactLoggerEntity> createdContactLoggerList = new LinkedList<>();
+        for (ContactLoggerEntity contactLoggerEntity : contactLoggerList){
+            contactLoggerEntity.setMangelEntity(mangelEntity);
+            createdContactLoggerList.add(contactLoggerEntity);
+        }
+        mangelEntity.setContactLoggerList(createdContactLoggerList);
+        return mangelRepository.save(mangelEntity);
+
     }
 
     public MangelEntity findMangelById(Long id) {

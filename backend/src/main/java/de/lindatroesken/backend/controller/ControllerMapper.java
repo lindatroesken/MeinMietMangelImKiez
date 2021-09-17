@@ -73,7 +73,6 @@ abstract class ControllerMapper {
                 .category(mangel.getCategory())
                 .status(Status.valueOf(mangel.getStatus()))
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
-                .contactLoggerList(mapContactLoggerListToEntity(mangel.getContactLoggerList()))
                 .build();
     }
     public Mangel mapMangel(MangelEntity mangelEntity) {
@@ -83,7 +82,6 @@ abstract class ControllerMapper {
                 .details(mangelEntity.getDetails())
                 .category(mangelEntity.getCategory())
                 .status(mangelEntity.getStatus().toString())
-                .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
                 .id(mangelEntity.getId())
                 .build();
     }
