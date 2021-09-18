@@ -8,7 +8,12 @@ import DateField from '../components/DateField'
 import Button from '../components/Button'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
-import { getMangelById, postMangel, putMangel } from '../services/api-service'
+import {
+  getMangelById,
+  postContactLog,
+  postMangel,
+  putMangel,
+} from '../services/api-service'
 import { useAuth } from '../auth/AuthProvider'
 import Select from '../components/Select'
 import TextArea from '../components/TextArea'
@@ -16,7 +21,10 @@ import {
   mangelCategoryOptions,
   mangelStatusOptions,
   initialMangelStates,
+  initialContactState,
 } from '../services/mangel-service'
+import ContactTable from '../components/ContactTable'
+import AddContact from '../components/AddContact'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -24,10 +32,19 @@ export default function MaengelForm({ initialMode, title }) {
   const { id } = useParams()
   const [mode, setMode] = useState(initialMode)
   const [mangel, setMangel] = useState(initialMangelStates)
+  const [contactLogger, setContactLogger] = useState({})
   const [mangelSaved, setMangelSaved] = useState()
   const [error, setError] = useState()
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
+  const [viewAddContact, setViewAddContact] = useState(false)
+
+  const resetContactLogger = () => {
+    setContactLogger({
+      ...initialContactState,
+      dateContacted: new Date().getTime(),
+    })
+  }
 
   useEffect(() => {
     console.log(mode)
@@ -36,12 +53,15 @@ export default function MaengelForm({ initialMode, title }) {
       setMangel({
         ...initialMangelStates,
         dateNoticed: new Date().getTime(),
+        contactLoggerList: [],
       })
+      resetContactLogger()
     } else if (mode === 'view') {
       setReadOnly(true)
       getMangelById(token, id)
         .then(dto => {
           setMangel(dto)
+          resetContactLogger()
         })
         .catch(setError)
         .finally(() => {
@@ -50,18 +70,80 @@ export default function MaengelForm({ initialMode, title }) {
     } else {
       setReadOnly(false)
     }
-  }, [mode, initialMode, token, id])
+  }, [mode, token, id])
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
+    console.log(mangel)
   }
 
   const handleMangelDateChange = value => {
     setMangel({ ...mangel, dateNoticed: value.getTime() })
   }
 
+  const handleContactChange = event => {
+    setContactLogger({
+      ...contactLogger,
+      [event.target.name]: event.target.value,
+    })
+  }
+
+  const handleContactDateChange = value => {
+    setContactLogger({
+      ...contactLogger,
+      dateContacted: value.getTime(),
+    })
+  }
+
+  const handleAddAndSave = () => {
+    console.log(mode)
+    if (mode === 'new') {
+      console.log('add contactLog to Mangel...')
+      // const contactLoggerList = []
+      const contactLoggerList = mangel.contactLoggerList
+      contactLoggerList.push(contactLogger)
+      setMangel({ ...mangel, contactLoggerList: contactLoggerList })
+      setViewAddContact(false)
+      resetContactLogger()
+    } else if (mode === 'view') {
+      console.log('save contactLog to Mangel existing mangel...')
+      // save contactLog and update mangel
+      const contactLoggerList = mangel.contactLoggerList
+      contactLoggerList.push(contactLogger)
+      setMangel({ ...mangel, contactLoggerList: contactLoggerList })
+      setLoading(true)
+      setError()
+      postContactLog(token, id, contactLogger)
+        .then(setMangel)
+        .catch(setError)
+        .finally(() => {
+          setViewAddContact(false)
+          setLoading(false)
+          resetContactLogger()
+        })
+    } else if (mode === 'edit') {
+      console.log('add contactLog to Mangel...')
+      const contactLoggerList = mangel.contactLoggerList
+      contactLoggerList.push(contactLogger)
+      setMangel({ ...mangel, contactLoggerList: contactLoggerList })
+      setViewAddContact(false)
+      resetContactLogger()
+    } else {
+      console.log('unknown mode')
+    }
+  }
+
+  const handleDeleteContact = () => {
+    console.log('delete clicked, tbd')
+  }
+
+  const handleEditContact = () => {
+    console.log('edit clicked, tbd')
+  }
+
   const submitNew = event => {
     event.preventDefault()
+    console.log(mangel)
     setLoading(true)
     setError()
     postMangel(token, user.username, mangel)
@@ -89,13 +171,23 @@ export default function MaengelForm({ initialMode, title }) {
       })
   }
 
+  const handleContactDetailsEdit = listItem => {
+    console.log('clicked: ', listItem.original.id, 'should be edited')
+    setContactLogger({ ...listItem.original })
+    setViewAddContact(true)
+  }
+
   const cancelChanges = () => {
     setMangel(mangelSaved)
   }
 
+  const toggleViewAddContact = () => {
+    setViewAddContact(!viewAddContact)
+  }
+
   return (
     <Page>
-      <Header title={mode} />
+      <Header title={title ? title : mode} />
       {loading && <Loading />}
       {!loading && (
         <Main as="form">
@@ -121,7 +213,7 @@ export default function MaengelForm({ initialMode, title }) {
             name="dateNoticed"
             value={mangel.dateNoticed}
             onChange={handleMangelDateChange}
-            title="Festegestellt am"
+            title="Festgestellt am"
             readOnly={readOnly}
           />
 
@@ -139,6 +231,29 @@ export default function MaengelForm({ initialMode, title }) {
             title="Details"
             readOnly={readOnly}
           />
+          {mangel.contactLoggerList.length > 0 && (
+            <ContactTable
+              data={mangel.contactLoggerList}
+              handleContactDetailsEdit={handleContactDetailsEdit}
+            />
+          )}
+
+          <Button type="button" onClick={toggleViewAddContact}>
+            Protokolliere Kontakt zum Vermieter (show/hide)
+          </Button>
+
+          {viewAddContact && (
+            <AddContact
+              contactLogger={contactLogger}
+              mode={mode}
+              handleContactChange={handleContactChange}
+              handleContactDateChange={handleContactDateChange}
+              handleAddAndSave={handleAddAndSave}
+              handleDeleteContact={handleDeleteContact}
+              handleEditContact={handleEditContact}
+            />
+          )}
+
           {mode === 'new' && (
             <Button type="button" onClick={submitNew}>
               speichern

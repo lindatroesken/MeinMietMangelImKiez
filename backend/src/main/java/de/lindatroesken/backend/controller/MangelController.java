@@ -1,5 +1,6 @@
 package de.lindatroesken.backend.controller;
 
+import de.lindatroesken.backend.api.ContactLogger;
 import de.lindatroesken.backend.api.Mangel;
 import de.lindatroesken.backend.model.ContactLoggerEntity;
 import de.lindatroesken.backend.model.MangelEntity;
@@ -50,7 +51,7 @@ public class MangelController extends ControllerMapper {
         throw new UnauthorizedUserException("Only admins can view a list of mangel and user can only view own mangel overview");
     }
 
-    @GetMapping(value = "{id}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "one/{id}", produces = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
@@ -63,22 +64,21 @@ public class MangelController extends ControllerMapper {
         throw new UnauthorizedUserException("User can only view own mangel");
     }
 
-    @PutMapping(value = "{id}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PutMapping(value = "update/{id}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
     })
     public ResponseEntity<Mangel> updateMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long id, @RequestBody Mangel updateMangel){
         if(updateMangel.getId().equals(id)){
-            MangelEntity changedMangelEntity = mangelService.updateMangel(id, mapMangel(updateMangel));
+            MangelEntity changedMangelEntity = mangelService.updateMangel(id, authUser.getUsername(), mapMangel(updateMangel));
             return ok(mapMangel(changedMangelEntity));
         }
         throw new IllegalArgumentException("Mangel and ID does not belong together");
     }
 
-    @PostMapping(value = "{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "new/{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
-            @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only create a mangel for own user")
     })
     public ResponseEntity<Mangel> createNewMangelWithContactLogger(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Mangel newMangel){
@@ -90,5 +90,15 @@ public class MangelController extends ControllerMapper {
         }
         throw new UnauthorizedUserException("Only logged in user can create a mangel in own list");
     }
+
+    @PostMapping(value = "add/{mangelId}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only edit a mangel for own user")
+    })
+    public ResponseEntity<Mangel> addContactLogToMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long mangelId, @RequestBody ContactLogger contactLogger){
+        MangelEntity updatedMangel = mangelService.addContactLoggerToList(mangelId, authUser.getUsername(), mapContactLogger(contactLogger));
+        return ok(mapMangel(updatedMangel));
+    }
+
 
 }

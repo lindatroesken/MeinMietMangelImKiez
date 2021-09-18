@@ -11,8 +11,14 @@ export const mangelCategoryOptions = [
   'Müll',
   'Sonstiges',
 ]
-export const contactTypeOptions = ['PHONE', 'MAIL', 'LETTER', 'FAX', 'FORM']
+export const contactTypeOptions = ['PHONE', 'EMAIL', 'LETTER', 'FAX', 'FORM']
 
+export const initialContactState = {
+  id: null,
+  dateContacted: null,
+  contactType: '',
+  contactNote: '',
+}
 export const initialMangelStates = {
   category: '',
   description: '',
@@ -21,12 +27,5 @@ export const initialMangelStates = {
   dateFixed: null,
   status: 'OPEN',
   id: null,
-  contactLoggerList: [
-    {
-      id: null,
-      dateContacted: null,
-      contactType: '',
-      contactNote: '',
-    },
-  ],
+  contactLoggerList: [],
 }

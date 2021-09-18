@@ -7,6 +7,7 @@ import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { useAuth } from '../auth/AuthProvider'
 import MangelTable from '../components/MangelTable'
+import { useHistory } from 'react-router-dom'
 
 const initialState = {
   description: '',
@@ -14,7 +15,7 @@ const initialState = {
 
 export default function PersonalMaengelList() {
   const { user, token } = useAuth()
-
+  const history = useHistory()
   const [mangelList, setMangelList] = useState(initialState)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
@@ -28,13 +29,23 @@ export default function PersonalMaengelList() {
       .finally(() => setLoading(false))
   }, [user, token])
 
+  const handleGoToDetails = listItem => {
+    const path = `/mangel/details/${listItem.original.id}`
+    history.push(path)
+  }
+
   return (
     <Page>
       <Header title="Meine Mängelübersicht" />
       {loading && <Loading />}
       {!loading && (
         <Main>
-          {mangelList.length > 0 && <MangelTable data={mangelList} />}
+          {mangelList.length > 0 && (
+            <MangelTable
+              data={mangelList}
+              handleGoToDetails={handleGoToDetails}
+            />
+          )}
         </Main>
       )}
       {error && <Error>{error.message}</Error>}

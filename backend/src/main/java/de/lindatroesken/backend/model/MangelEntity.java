@@ -45,6 +45,11 @@ public class MangelEntity {
     @Column(name = "status")
     private Status status;
 
+    public void add(ContactLoggerEntity contactLoggerEntity){
+        contactLoggerList.add(contactLoggerEntity);
+        contactLoggerEntity.setMangelEntity(this);
+    }
+
     @Override
     public int hashCode() {
         return super.hashCode();

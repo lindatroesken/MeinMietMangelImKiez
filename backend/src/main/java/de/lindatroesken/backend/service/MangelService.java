@@ -1,5 +1,6 @@
 package de.lindatroesken.backend.service;
 
+import de.lindatroesken.backend.controller.UnauthorizedUserException;
 import de.lindatroesken.backend.model.ContactLoggerEntity;
 import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
@@ -62,12 +63,30 @@ public class MangelService {
         return mangelRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Mangel not found"));
     }
 
-    public MangelEntity updateMangel(Long id, MangelEntity changedMangel) {
+    public MangelEntity addContactLoggerToList(Long mangelId, String username, ContactLoggerEntity newContactLogger) {
+        MangelEntity existingMangel = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        if (!existingMangel.getUserEntity().getUsername().equals(username)){
+            throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
+        }
+        existingMangel.add(newContactLogger);
+
+
+//        List<ContactLoggerEntity> contactLoggerEntityList = existingMangel.getContactLoggerList();
+//        contactLoggerEntityList.add(newContactLogger);
+//        existingMangel.setContactLoggerList(contactLoggerEntityList);
+        return mangelRepository.save(existingMangel);
+
+    }
+
+    public MangelEntity updateMangel(Long mangelId, String username, MangelEntity changedMangel) {
 //        MangelEntity originalMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
 //        MangelEntity existingMangel = copyMangelEntity(originalMangel);
-        MangelEntity existingMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        MangelEntity existingMangel = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        if (!existingMangel.getUserEntity().getUsername().equals(username)){
+            throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
+        }
 
-        if (changedMangel.getCategory() != null) {
+        if (changedMangel.getCategory() != null && !changedMangel.getCategory().equals(existingMangel.getCategory())) {
             existingMangel.setCategory(changedMangel.getCategory());
         }
         if (changedMangel.getStatus() != null) {
@@ -89,8 +108,6 @@ public class MangelService {
             existingMangel.setContactLoggerList(changedMangel.getContactLoggerList());
         }
         return mangelRepository.save(existingMangel);
-
-
     }
 
     private MangelEntity copyMangelEntity(MangelEntity originalMangel) {
@@ -105,5 +122,6 @@ public class MangelService {
                 .dateNoticed(originalMangel.getDateNoticed())
                 .build();
     }
+
 
 }

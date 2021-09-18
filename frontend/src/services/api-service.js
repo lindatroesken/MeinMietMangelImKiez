@@ -19,13 +19,20 @@ export const getMangelList = (token, username) =>
 
 export const postMangel = (token, username, mangel) =>
   axios
-    .post(`/api/mangel/${username}`, mangel, headers(token))
+    .post(`/api/mangel/new/${username}`, mangel, headers(token))
     .then(response => response.data)
 
 export const putMangel = (token, id, mangel) =>
   axios
-    .put(`/api/mangel/${id}`, mangel, headers(token))
+    .put(`/api/mangel/update/${id}`, mangel, headers(token))
     .then(response => response.data)
 
 export const getMangelById = (token, id) =>
-  axios.get(`/api/mangel/${id}`, headers(token)).then(response => response.data)
+  axios
+    .get(`/api/mangel/one/${id}`, headers(token))
+    .then(response => response.data)
+
+export const postContactLog = (token, id, contactLogger) =>
+  axios
+    .post(`/api/mangel/add/${id}`, contactLogger, headers(token))
+    .then(response => response.data)

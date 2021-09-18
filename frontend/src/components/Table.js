@@ -1,11 +1,8 @@
 import React from 'react'
 import { useTable } from 'react-table'
-import { useHistory } from 'react-router-dom'
 import styled from 'styled-components/macro'
 
-export default function Table({ columns, data }) {
-  const history = useHistory()
-
+export default function Table({ columns, data, handleOnListItemClick }) {
   // Use the useTable Hook to send the columns and data to build the table
   const {
     getTableProps, // table props from react-table
@@ -18,14 +15,11 @@ export default function Table({ columns, data }) {
     data,
   })
 
-  const handleOnClick = row => {
-    const path = `/mangel/details/${row.original.id}`
-    history.push(path)
-  }
-  /* 
-    Render the UI for your table
-    - react-table doesn't have UI, it's headless. We just need to put the react-table props from the Hooks, and it will do its magic automatically
-  */
+  // const handleOnListItemClick = listItem => {
+  //   const path = `/mangel/details/${listItem.original.id}`
+  //   history.push(path)
+  // }
+
   return (
     <StyledTable {...getTableProps()}>
       <thead>
@@ -41,7 +35,10 @@ export default function Table({ columns, data }) {
         {rows.map((row, i) => {
           prepareRow(row)
           return (
-            <tr {...row.getRowProps()} onClick={() => handleOnClick(row)}>
+            <tr
+              {...row.getRowProps()}
+              onClick={() => handleOnListItemClick(row)}
+            >
               {row.cells.map(cell => {
                 return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
               })}
