@@ -70,10 +70,6 @@ public class MangelService {
         }
         existingMangel.add(newContactLogger);
 
-
-//        List<ContactLoggerEntity> contactLoggerEntityList = existingMangel.getContactLoggerList();
-//        contactLoggerEntityList.add(newContactLogger);
-//        existingMangel.setContactLoggerList(contactLoggerEntityList);
         return mangelRepository.save(existingMangel);
 
     }
