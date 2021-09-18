@@ -45,7 +45,6 @@ public class MangelEntity {
     @Column(name = "status")
     private Status status;
 
-
     @Override
     public int hashCode() {
         return super.hashCode();

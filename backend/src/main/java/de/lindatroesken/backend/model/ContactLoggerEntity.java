@@ -33,4 +33,14 @@ public class ContactLoggerEntity {
     @Column(name = "contact_note")
     private String contactNote;
 
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

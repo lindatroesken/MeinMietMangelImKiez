@@ -1,6 +1,7 @@
 package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.Mangel;
+import de.lindatroesken.backend.model.ContactLoggerEntity;
 import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.MangelService;
@@ -80,9 +81,11 @@ public class MangelController extends ControllerMapper {
             @ApiResponse(code = SC_NO_CONTENT, message = "No user found"),
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only create a mangel for own user")
     })
-    public ResponseEntity<Mangel> createNewMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Mangel newMangel){
+    public ResponseEntity<Mangel> createNewMangelWithContactLogger(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Mangel newMangel){
         if(authUser.getUsername().equals(username)){
-            MangelEntity mangelEntityCreated = mangelService.createMangel(username, mapMangel(newMangel));
+            MangelEntity mangelEntity = mapMangel(newMangel);
+            List<ContactLoggerEntity> contactLoggerEntityList = mapContactLoggerListToEntity(newMangel.getContactLoggerList());
+            MangelEntity mangelEntityCreated = mangelService.createMangelWithContactLoggerList(username, mangelEntity, contactLoggerEntityList);
             return ok(mapMangel(mangelEntityCreated));
         }
         throw new UnauthorizedUserException("Only logged in user can create a mangel in own list");

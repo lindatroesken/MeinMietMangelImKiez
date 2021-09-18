@@ -1,13 +1,8 @@
 package de.lindatroesken.backend.model;
 
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 
 @Entity
 @Table(name = "app_user")
@@ -34,17 +29,6 @@ public class UserEntity {
 
     @Column(name = "user_role")
     private String role;
-
-    public void addMangel(MangelEntity mangelEntity) {
-        mangelList.add(mangelEntity);
-        mangelEntity.setUserEntity(this);
-    }
-
-    public void removeMangel(MangelEntity mangelEntity) {
-        mangelList.remove(mangelEntity);
-        mangelEntity.setUserEntity(null);
-    }
-
 
     @Override
     public boolean equals(Object o) {
