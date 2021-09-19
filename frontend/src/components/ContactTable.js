@@ -1,26 +1,25 @@
 import React, { useMemo } from 'react'
-
-import Table from './Table'
 import TimeAgo from 'react-timeago'
+import Table from './Table'
 
-export default function MangelTable({ data, handleGoToDetails }) {
+export default function ContactTable({ data, handleContactDetailsEdit }) {
   const columns = useMemo(
     () => [
       {
-        Header: 'Meine Mängelübersicht',
+        Header: 'Mein Kontaktprotokoll',
         columns: [
           {
-            Header: 'Seit',
-            accessor: 'dateNoticed',
+            Header: 'Datum',
+            accessor: 'dateContacted',
             Cell: ({ cell: { value } }) => <TimeAgo date={value} />,
           },
           {
-            Header: 'Kategorie',
-            accessor: 'category',
+            Header: 'Kontakt',
+            accessor: 'contactType',
           },
           {
-            Header: 'Status',
-            accessor: 'status',
+            Header: 'Notiz',
+            accessor: 'contactNote',
           },
         ],
       },
@@ -32,7 +31,7 @@ export default function MangelTable({ data, handleGoToDetails }) {
     <Table
       columns={columns}
       data={data}
-      handleOnListItemClick={handleGoToDetails}
+      handleOnListItemClick={handleContactDetailsEdit}
     />
   )
 }

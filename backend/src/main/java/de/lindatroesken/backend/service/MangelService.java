@@ -1,8 +1,10 @@
 package de.lindatroesken.backend.service;
 
+import de.lindatroesken.backend.controller.UnauthorizedUserException;
 import de.lindatroesken.backend.model.ContactLoggerEntity;
 import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
+import de.lindatroesken.backend.repo.ContactLoggerRepository;
 import de.lindatroesken.backend.repo.MangelRepository;
 import de.lindatroesken.backend.repo.UserRepository;
 import lombok.Getter;
@@ -21,11 +23,13 @@ public class MangelService {
 
     private MangelRepository mangelRepository;
     private UserRepository userRepository;
+    private ContactLoggerRepository contactLoggerRepository;
 
     @Autowired
-    public MangelService(MangelRepository mangelRepository, UserRepository userRepository) {
+    public MangelService(MangelRepository mangelRepository, UserRepository userRepository, ContactLoggerRepository contactLoggerRepository) {
         this.mangelRepository = mangelRepository;
         this.userRepository = userRepository;
+        this.contactLoggerRepository = contactLoggerRepository;
     }
 
     public List<MangelEntity> findAllForUser(String username) {
@@ -62,12 +66,50 @@ public class MangelService {
         return mangelRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Mangel not found"));
     }
 
-    public MangelEntity updateMangel(Long id, MangelEntity changedMangel) {
+    public MangelEntity addContactLoggerToList(Long mangelId, String username, ContactLoggerEntity newContactLogger) {
+        MangelEntity existingMangel = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        if (!existingMangel.getUserEntity().getUsername().equals(username)){
+            throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
+        }
+        existingMangel.add(newContactLogger);
+
+        return mangelRepository.save(existingMangel);
+    }
+
+    public MangelEntity updateContactLogger(Long mangelId, String username, ContactLoggerEntity changedContactLogger) {
+        MangelEntity existingMangel = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        if (!existingMangel.getUserEntity().getUsername().equals(username)){
+            throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
+        }
+        ContactLoggerEntity existingContactLogger = contactLoggerRepository.findById(changedContactLogger.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Contact log not found"));
+
+        if (changedContactLogger.getContactNote() != null){
+            existingContactLogger.setContactNote(changedContactLogger.getContactNote());
+        }
+        if (changedContactLogger.getContactType() != null){
+            existingContactLogger.setContactType(changedContactLogger.getContactType());
+        }
+        if (changedContactLogger.getDateContacted() != null){
+            existingContactLogger.setDateContacted(changedContactLogger.getDateContacted());
+        }
+
+        contactLoggerRepository.save(existingContactLogger);
+
+        return existingMangel;
+
+
+    }
+
+    public MangelEntity updateMangel(Long mangelId, String username, MangelEntity changedMangel) {
 //        MangelEntity originalMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
 //        MangelEntity existingMangel = copyMangelEntity(originalMangel);
-        MangelEntity existingMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        MangelEntity existingMangel = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        if (!existingMangel.getUserEntity().getUsername().equals(username)){
+            throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
+        }
 
-        if (changedMangel.getCategory() != null) {
+        if (changedMangel.getCategory() != null && !changedMangel.getCategory().equals(existingMangel.getCategory())) {
             existingMangel.setCategory(changedMangel.getCategory());
         }
         if (changedMangel.getStatus() != null) {
@@ -89,8 +131,6 @@ public class MangelService {
             existingMangel.setContactLoggerList(changedMangel.getContactLoggerList());
         }
         return mangelRepository.save(existingMangel);
-
-
     }
 
     private MangelEntity copyMangelEntity(MangelEntity originalMangel) {
@@ -106,4 +146,30 @@ public class MangelService {
                 .build();
     }
 
+
+    public ContactLoggerEntity deleteContactLog(String username, Long mangelId, Long contactId) {
+        userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedUserException("User can only delete own contact log"));
+        ContactLoggerEntity existingContactLog = contactLoggerRepository.findById(contactId).orElseThrow(() -> new EntityNotFoundException("Contact log not found"));
+        MangelEntity mangelEntity = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        if (!existingContactLog.getMangelEntity().getId().equals(mangelId)){
+            throw new IllegalArgumentException("MangelId and contactId do not fit");
+        }
+        mangelRepository.save(mangelEntity.remove(existingContactLog));
+
+        return existingContactLog;
+
+
+    }
+
+    public MangelEntity deleteMangel(String username, Long mangelId) {
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(() -> new UnauthorizedUserException("User not found"));
+        MangelEntity deleteMangelEntity = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
+        if (!deleteMangelEntity.getUserEntity().getUsername().equals(username)){
+            throw new UnauthorizedUserException("User can only delete own mangel");
+        }
+        userRepository.save(userEntity.remove(deleteMangelEntity));
+        deleteMangelEntity.setId(null);
+        return deleteMangelEntity;
+
+    }
 }

@@ -30,6 +30,12 @@ public class UserEntity {
     @Column(name = "user_role")
     private String role;
 
+    public UserEntity remove(MangelEntity mangelEntity){
+        mangelList.remove(mangelEntity);
+        mangelEntity.setUserEntity(null);
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -45,13 +45,27 @@ public class MangelEntity {
     @Column(name = "status")
     private Status status;
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
+    public void add(ContactLoggerEntity contactLoggerEntity){
+        contactLoggerList.add(contactLoggerEntity);
+        contactLoggerEntity.setMangelEntity(this);
+    }
+
+    public MangelEntity remove(ContactLoggerEntity contactLoggerEntity){
+        contactLoggerList.remove(contactLoggerEntity);
+        contactLoggerEntity.setMangelEntity(null);
+        return this;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MangelEntity that = (MangelEntity) o;
+        return id.equals(that.id);
     }
 }

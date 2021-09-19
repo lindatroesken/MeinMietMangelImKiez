@@ -83,6 +83,7 @@ abstract class ControllerMapper {
                 .category(mangelEntity.getCategory())
                 .status(mangelEntity.getStatus().toString())
                 .id(mangelEntity.getId())
+                .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
                 .build();
     }
 
