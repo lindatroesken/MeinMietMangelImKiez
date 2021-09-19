@@ -7,7 +7,6 @@ import Select from './Select'
 
 export default function AddContact({
   contactLogger,
-  mode,
   handleContactChange,
   handleContactDateChange,
   handleAddAndSave,
@@ -39,12 +38,12 @@ export default function AddContact({
         title="Notiz"
         readOnly={false}
       />
-      {mode === 'new' && (
+      {contactLogger.id === null && (
         <Button type="button" onClick={handleAddAndSave}>
           zufügen
         </Button>
       )}
-      {mode !== 'new' && (
+      {contactLogger.id !== null && (
         <div>
           <Button type="button" onClick={handleEditContact}>
             speichern
