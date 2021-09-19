@@ -9,9 +9,12 @@ import Button from '../components/Button'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
 import {
+  deleteContactLog,
+  deleteMangel,
   getMangelById,
   postContactLog,
   postMangel,
+  putContactLog,
   putMangel,
 } from '../services/api-service'
 import { useAuth } from '../auth/AuthProvider'
@@ -38,12 +41,19 @@ export default function MaengelForm({ initialMode, title }) {
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
+  const [sizeContactList, setSizeContactList] = useState(0)
 
   const resetContactLogger = () => {
     setContactLogger({
       ...initialContactState,
       dateContacted: new Date().getTime(),
     })
+  }
+
+  const reloadContactList = () => {
+    console.log('list should be reloaded...')
+    setSizeContactList(mangel.contactLoggerList.length)
+    console.log(sizeContactList)
   }
 
   useEffect(() => {
@@ -105,8 +115,9 @@ export default function MaengelForm({ initialMode, title }) {
       setMangel({ ...mangel, contactLoggerList: contactLoggerList })
       setViewAddContact(false)
       resetContactLogger()
+      reloadContactList()
     } else if (mode === 'view') {
-      console.log('save contactLog to Mangel existing mangel...')
+      console.log('save contactLog to existing mangel...')
       // save contactLog and update mangel
       const contactLoggerList = mangel.contactLoggerList
       contactLoggerList.push(contactLogger)
@@ -120,6 +131,7 @@ export default function MaengelForm({ initialMode, title }) {
           setViewAddContact(false)
           setLoading(false)
           resetContactLogger()
+          reloadContactList()
         })
     } else if (mode === 'edit') {
       console.log('add contactLog to Mangel...')
@@ -128,20 +140,48 @@ export default function MaengelForm({ initialMode, title }) {
       setMangel({ ...mangel, contactLoggerList: contactLoggerList })
       setViewAddContact(false)
       resetContactLogger()
+      reloadContactList()
     } else {
       console.log('unknown mode')
     }
   }
 
   const handleDeleteContact = () => {
-    console.log('delete clicked, tbd')
+    console.log('delete contctLog clicked...')
+    setLoading(true)
+    setError()
+    deleteContactLog(token, id, contactLogger.id)
+      .then(r => {
+        console.log(r, ' deleted')
+        getMangelById(token, id).then(() => reloadContactList())
+      })
+      .catch(setError)
+      .finally(() => {
+        setViewAddContact(false)
+        setLoading(false)
+        resetContactLogger()
+      })
   }
 
   const handleEditContact = () => {
-    console.log('edit clicked, tbd')
+    console.log('save edited contactLog...')
+    // save contactLog and update mangel
+    setLoading(true)
+    setError()
+    putContactLog(token, id, contactLogger)
+      .then(setMangel)
+      .catch(setError)
+      .finally(() => {
+        setViewAddContact(false)
+        setLoading(false)
+        resetContactLogger()
+      })
+
+    console.log('edit')
+    console.log('List should be rendered again, still not working. How?')
   }
 
-  const submitNew = event => {
+  const handleSubmitNew = event => {
     event.preventDefault()
     console.log(mangel)
     setLoading(true)
@@ -154,12 +194,12 @@ export default function MaengelForm({ initialMode, title }) {
       })
   }
 
-  const switchToEdit = () => {
+  const handleSwitchToEdit = () => {
     setMode('edit')
     setMangelSaved(mangel)
   }
 
-  const submitChanges = event => {
+  const handleSubmitChanges = event => {
     event.preventDefault()
     setLoading(true)
     setError()
@@ -171,13 +211,25 @@ export default function MaengelForm({ initialMode, title }) {
       })
   }
 
+  const handleDeleteMangel = () => {
+    setLoading(true)
+    setError()
+    deleteMangel(token, id)
+      .then(response => console.log('deleted: ', response))
+      .catch(setError)
+      .finally(() => {
+        setLoading(false)
+        history.push('/mangel/list')
+      })
+  }
+
   const handleContactDetailsEdit = listItem => {
     console.log('clicked: ', listItem.original.id, 'should be edited')
     setContactLogger({ ...listItem.original })
     setViewAddContact(true)
   }
 
-  const cancelChanges = () => {
+  const handleCancelChanges = () => {
     setMangel(mangelSaved)
   }
 
@@ -231,7 +283,7 @@ export default function MaengelForm({ initialMode, title }) {
             title="Details"
             readOnly={readOnly}
           />
-          {mangel.contactLoggerList.length > 0 && (
+          {sizeContactList > 0 && (
             <ContactTable
               data={mangel.contactLoggerList}
               handleContactDetailsEdit={handleContactDetailsEdit}
@@ -255,24 +307,27 @@ export default function MaengelForm({ initialMode, title }) {
           )}
 
           {mode === 'new' && (
-            <Button type="button" onClick={submitNew}>
+            <Button type="button" onClick={handleSubmitNew}>
               speichern
             </Button>
           )}
           {mode === 'view' && (
-            <Button type="button" onClick={switchToEdit}>
-              edit
+            <Button type="button" onClick={handleSwitchToEdit}>
+              bearbeiten
             </Button>
           )}
           {mode === 'edit' && (
-            <Button type="button" onClick={submitChanges}>
-              Änderungen speichern
-            </Button>
-          )}
-          {mode === 'edit' && (
-            <Button type="button" onClick={cancelChanges}>
-              Änderungen verwerfen
-            </Button>
+            <div>
+              <Button type="button" onClick={handleSubmitChanges}>
+                Änderungen speichern
+              </Button>
+              <Button type="button" onClick={handleCancelChanges}>
+                Änderungen verwerfen
+              </Button>
+              <Button type="button" onClick={handleDeleteMangel}>
+                Mangel löschen
+              </Button>
+            </div>
           )}
         </Main>
       )}
