@@ -36,11 +36,14 @@ public class ContactLoggerEntity {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return getId().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ContactLoggerEntity that = (ContactLoggerEntity) o;
+        return id.equals(that.id);
     }
 }

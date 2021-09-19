@@ -50,13 +50,22 @@ public class MangelEntity {
         contactLoggerEntity.setMangelEntity(this);
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
+    public MangelEntity remove(ContactLoggerEntity contactLoggerEntity){
+        contactLoggerList.remove(contactLoggerEntity);
+        contactLoggerEntity.setMangelEntity(null);
+        return this;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MangelEntity that = (MangelEntity) o;
+        return id.equals(that.id);
     }
 }

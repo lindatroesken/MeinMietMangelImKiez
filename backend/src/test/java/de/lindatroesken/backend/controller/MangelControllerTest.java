@@ -94,7 +94,7 @@ class MangelControllerTest {
     void testFindAllByUser() {
         //GIVEN
         String username = "testuser";
-        String url = getUrl() + "/all/" + username;
+        String url = getUrl() + "/findall/" + username;
         HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(username, "user"));
 
         //WHEN
@@ -113,7 +113,7 @@ class MangelControllerTest {
     void testCreateNewMangel() {
         //GIVEN
         String username = "testuser";
-        String url = getUrl() + "/" + username;
+        String url = getUrl() + "/new/" + username;
         Mangel newMangel = Mangel.builder()
                 .description("Heizung")
                 .dateNoticed(DATESECONDS)
