@@ -11,8 +11,10 @@ import java.time.Instant;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 abstract class ControllerMapper {
 
@@ -26,8 +28,8 @@ abstract class ControllerMapper {
 
     }
 
-    public List<ContactLoggerEntity> mapContactLoggerListToEntity(List<ContactLogger> contactLoggerList) {
-        List<ContactLoggerEntity> contactLoggerEntityList = new LinkedList<>();
+    public Set<ContactLoggerEntity> mapContactLoggerListToEntity(List<ContactLogger> contactLoggerList) {
+        Set<ContactLoggerEntity> contactLoggerEntityList = new HashSet<>();
         if (contactLoggerList != null){
             for (ContactLogger contactLogger : contactLoggerList) {
                 ContactLoggerEntity contactLoggerEntity = mapContactLogger(contactLogger);
@@ -37,7 +39,7 @@ abstract class ControllerMapper {
         return contactLoggerEntityList;
     }
 
-    public List<ContactLogger> mapContactLoggerListFromEntity(List<ContactLoggerEntity> contactLoggerEntityList){
+    public List<ContactLogger> mapContactLoggerListFromEntity(Set<ContactLoggerEntity> contactLoggerEntityList){
         List<ContactLogger> contactLoggerList = new LinkedList<>();
         if (contactLoggerEntityList != null){
             for (ContactLoggerEntity contactLoggerEntity : contactLoggerEntityList){

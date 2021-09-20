@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 import static de.lindatroesken.backend.controller.MangelController.CONTROLLER_TAG;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -92,7 +93,7 @@ public class MangelController extends ControllerMapper {
     public ResponseEntity<Mangel> createNewMangelWithContactLogger(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Mangel newMangel){
         if(authUser.getUsername().equals(username)){
             MangelEntity mangelEntity = mapMangel(newMangel);
-            List<ContactLoggerEntity> contactLoggerEntityList = mapContactLoggerListToEntity(newMangel.getContactLoggerList());
+            Set<ContactLoggerEntity> contactLoggerEntityList = mapContactLoggerListToEntity(newMangel.getContactLoggerList());
             MangelEntity mangelEntityCreated = mangelService.createMangelWithContactLoggerList(username, mangelEntity, contactLoggerEntityList);
             return ok(mapMangel(mangelEntityCreated));
         }
