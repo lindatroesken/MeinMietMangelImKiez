@@ -20,11 +20,8 @@ export default function Select({
         onChange={onChange}
         disabled={readOnly}
       >
-        <option value="" disabled>
-          bitte wählen...
-        </option>
         {values.map(value => (
-          <option key={value} value={value}>
+          <option key={value} value={value} disabled={!value}>
             {value}
           </option>
         ))}

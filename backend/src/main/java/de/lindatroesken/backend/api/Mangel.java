@@ -28,6 +28,9 @@ public class Mangel {
     @ApiModelProperty(notes = "date of first problem occurrence")
     private Long dateNoticed;
 
+    @ApiModelProperty(notes = "remind in xxx days")
+    private int remindMeInDays;
+
     @ApiModelProperty(notes = "date of problem solved")
     private String dateFixed;
 
@@ -39,5 +42,8 @@ public class Mangel {
 
     @ApiModelProperty(notes = "logger for contact to landlord")
     private List<ContactLogger> contactLoggerList;
+
+    @ApiModelProperty(notes = "mangel is due (not done and remind date elapsed")
+    private boolean isDue;
 
 }

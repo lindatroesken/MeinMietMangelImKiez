@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -34,7 +35,7 @@ public class MangelService {
 
     public List<MangelEntity> findAllForUser(String username) {
 
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return mangelRepository.findByUserEntity(userEntity);
 
@@ -112,24 +113,30 @@ public class MangelService {
         if (changedMangel.getCategory() != null && !changedMangel.getCategory().equals(existingMangel.getCategory())) {
             existingMangel.setCategory(changedMangel.getCategory());
         }
-        if (changedMangel.getStatus() != null) {
+        if (changedMangel.getStatus() != null && !changedMangel.getStatus().equals(existingMangel.getStatus())) {
             existingMangel.setStatus(changedMangel.getStatus());
         }
-        if (changedMangel.getDescription() != null){
+        if (changedMangel.getDescription() != null && !changedMangel.getDescription().equals(existingMangel.getDescription())){
             existingMangel.setDescription(changedMangel.getDescription());
         }
-        if (changedMangel.getDateNoticed() != null){
+        if (changedMangel.getDateNoticed() != null && !changedMangel.getDateNoticed().equals(existingMangel.getDateNoticed())){
             existingMangel.setDateNoticed(changedMangel.getDateNoticed());
         }
-        if (changedMangel.getDetails() != null){
+        if (changedMangel.getDetails() != null && !changedMangel.getDetails().equals(existingMangel.getDetails())){
             existingMangel.setDetails(changedMangel.getDetails());
         }
-        if (changedMangel.getDateFixed() != null){
+        if (changedMangel.getDateFixed() != null && !changedMangel.getDateFixed().equals(existingMangel.getDateFixed())){
             existingMangel.setDateFixed(changedMangel.getDateFixed());
         }
-        if (changedMangel.getContactLoggerList() != null){
+        if (changedMangel.getContactLoggerList() != null && !changedMangel.getContactLoggerList().equals(existingMangel.getContactLoggerList())){
             existingMangel.setContactLoggerList(changedMangel.getContactLoggerList());
         }
+        if (changedMangel.getDateReminder() != null && !changedMangel.getDateReminder().equals(existingMangel.getDateReminder())){
+            existingMangel.setDateReminder(changedMangel.getDateReminder());
+        }
+
+        existingMangel.setDue(changedMangel.isDue());
+
         return mangelRepository.save(existingMangel);
     }
 
@@ -171,5 +178,9 @@ public class MangelService {
         deleteMangelEntity.setId(null);
         return deleteMangelEntity;
 
+    }
+
+    public List<MangelEntity> findAllDueForUser(String username) {
+      return findAllForUser(username).stream().filter(mangelEntity -> mangelEntity.isDue()).collect(Collectors.toList());
     }
 }

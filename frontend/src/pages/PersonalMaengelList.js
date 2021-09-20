@@ -8,15 +8,12 @@ import Error from '../components/Error'
 import { useAuth } from '../auth/AuthProvider'
 import MangelTable from '../components/MangelTable'
 import { useHistory } from 'react-router-dom'
-
-const initialState = {
-  description: '',
-}
+import { initialMangelStates } from '../services/mangel-service'
 
 export default function PersonalMaengelList() {
   const { user, token } = useAuth()
   const history = useHistory()
-  const [mangelList, setMangelList] = useState(initialState)
+  const [mangelList, setMangelList] = useState(initialMangelStates)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
 
@@ -44,6 +41,7 @@ export default function PersonalMaengelList() {
             <MangelTable
               data={mangelList}
               handleGoToDetails={handleGoToDetails}
+              title="Meine Mängel"
             />
           )}
         </Main>
