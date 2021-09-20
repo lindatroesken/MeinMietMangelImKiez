@@ -10,6 +10,7 @@ import { getMangelListDue } from '../services/api-service'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { initialMangelStates } from '../services/mangel-service'
+import MangelReminder from '../components/MangelReminder'
 
 export default function Home() {
   const { user, token } = useAuth()
@@ -42,13 +43,7 @@ export default function Home() {
       {!loading && (
         <Main>
           <h1>Willkommen {user ? user.username : ''}</h1>
-          {user && (
-            <p>
-              {mangelList.length === 1
-                ? `${mangelList.length} fälliger Mangel`
-                : `${mangelList.length} fällige Mängel`}
-            </p>
-          )}
+          {user && <MangelReminder mangelList={mangelList} />}
           {mangelList.length > 0 && (
             <MangelTable
               data={mangelList}
