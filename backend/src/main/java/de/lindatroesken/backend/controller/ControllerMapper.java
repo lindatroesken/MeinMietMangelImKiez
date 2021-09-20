@@ -87,7 +87,7 @@ abstract class ControllerMapper {
                 .status(mangelEntity.getStatus().toString())
                 .id(mangelEntity.getId())
                 .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
-//                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
+                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
                 .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
                 .build();
     }
