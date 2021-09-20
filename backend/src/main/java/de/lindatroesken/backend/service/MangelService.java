@@ -37,7 +37,7 @@ public class MangelService {
 
         UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return mangelRepository.findByUserEntity(userEntity);
+        return mangelRepository.findByUserEntityOrderByDateNoticedDesc(userEntity);
 
     }
 

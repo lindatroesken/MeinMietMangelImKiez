@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface MangelRepository extends JpaRepository<MangelEntity, Long> {
 
-    List<MangelEntity> findByUserEntity(UserEntity userEntity);
+    List<MangelEntity> findByUserEntityOrderByDateNoticedDesc(UserEntity userEntity);
 
 }
