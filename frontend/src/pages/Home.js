@@ -19,12 +19,15 @@ export default function Home() {
   const [error, setError] = useState()
 
   useEffect(() => {
-    setLoading(true)
-    setError()
-    getMangelListDue(token, user.username)
-      .then(mangelList => setMangelList(mangelList))
-      .catch(error => setError(error))
-      .finally(() => setLoading(false))
+    if (user) {
+      setLoading(true)
+      setError()
+
+      getMangelListDue(token, user.username)
+        .then(mangelList => setMangelList(mangelList))
+        .catch(error => setError(error))
+        .finally(() => setLoading(false))
+    }
   }, [user, token])
 
   const handleGoToDetails = listItem => {
