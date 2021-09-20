@@ -51,7 +51,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<RestException> createRestException(Throwable e, HttpStatus httpStatus){
-        RestException restException = new RestException(e.getMessage(), httpStatus.value());
+        RestException restException = new RestException(e.getMessage(), httpStatus);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -60,11 +60,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Getter
-    @AllArgsConstructor
     public static class RestException {
-        private final String message;
+        private final String error;
         private final int status;
 
+        public RestException(String error, HttpStatus httpStatus) {
+            this.error = error;
+            this.status = httpStatus.value();
+        }
     }
 
 }

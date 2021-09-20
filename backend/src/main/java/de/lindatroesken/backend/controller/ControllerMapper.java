@@ -72,7 +72,7 @@ abstract class ControllerMapper {
                 .description(mangel.getDescription())
                 .details(mangel.getDetails())
                 .category(mangel.getCategory())
-                .status(Status.valueOf(mangel.getStatus()))
+                .status(stringToStatus(mangel.getStatus()))
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
                 .dateReminder(intToDateReminder(mangel.getRemindMeInDays()))
                 .isDue(checkDue(Status.valueOf(mangel.getStatus()), intToDateReminder(mangel.getRemindMeInDays())))
@@ -87,7 +87,7 @@ abstract class ControllerMapper {
                 .status(mangelEntity.getStatus().toString())
                 .id(mangelEntity.getId())
                 .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
-//                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
+                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
                 .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
                 .build();
     }
@@ -97,6 +97,13 @@ abstract class ControllerMapper {
             return false;
         }
         return ZonedDateTime.now().isAfter(dueDate);
+    }
+
+    private Status stringToStatus(String statusString){
+        if (statusString==null){
+            return null;
+        }
+        return Status.valueOf(statusString);
     }
 
     private ZonedDateTime intToDateReminder(int days){
