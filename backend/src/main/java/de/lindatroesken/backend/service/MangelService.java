@@ -34,9 +34,7 @@ public class MangelService {
     }
 
     public List<MangelEntity> findAllForUser(String username) {
-
         UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
-
         return mangelRepository.findByUserEntityOrderByDateNoticedDesc(userEntity);
 
     }
@@ -103,8 +101,6 @@ public class MangelService {
     }
 
     public MangelEntity updateMangel(Long mangelId, String username, MangelEntity changedMangel) {
-//        MangelEntity originalMangel = mangelRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
-//        MangelEntity existingMangel = copyMangelEntity(originalMangel);
         MangelEntity existingMangel = mangelRepository.findById(mangelId).orElseThrow(() -> new EntityNotFoundException("Mangel not found"));
         if (!existingMangel.getUserEntity().getUsername().equals(username)){
             throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
@@ -138,19 +134,6 @@ public class MangelService {
         existingMangel.setDue(changedMangel.isDue());
 
         return mangelRepository.save(existingMangel);
-    }
-
-    private MangelEntity copyMangelEntity(MangelEntity originalMangel) {
-        return MangelEntity.builder()
-                .id(originalMangel.getId())
-                .details(originalMangel.getDetails())
-                .category(originalMangel.getCategory())
-                .status(originalMangel.getStatus())
-                .description(originalMangel.getDescription())
-                .dateFixed(originalMangel.getDateFixed())
-                .userEntity(originalMangel.getUserEntity())
-                .dateNoticed(originalMangel.getDateNoticed())
-                .build();
     }
 
 
