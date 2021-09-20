@@ -42,19 +42,12 @@ export default function MaengelForm({ initialMode, title }) {
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
-  const [sizeContactList, setSizeContactList] = useState(0)
 
   const resetContactLogger = () => {
     setContactLogger({
       ...initialContactState,
       dateContacted: new Date().getTime(),
     })
-  }
-
-  const reloadContactList = () => {
-    console.log('list should be reloaded...')
-    setSizeContactList(mangel.contactLoggerList.length)
-    console.log(sizeContactList)
   }
 
   useEffect(() => {
@@ -106,22 +99,15 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const handleAddAndSave = () => {
-    console.log(mode)
+    const contactLoggerList = [...mangel.contactLoggerList, contactLogger]
+    setMangel({ ...mangel, contactLoggerList: contactLoggerList })
+
     if (mode === 'new') {
       console.log('add contactLog to Mangel...')
-      // const contactLoggerList = []
-      const contactLoggerList = mangel.contactLoggerList
-      contactLoggerList.push(contactLogger)
-      setMangel({ ...mangel, contactLoggerList: contactLoggerList })
       setViewAddContact(false)
-      resetContactLogger()
-      reloadContactList()
     } else if (mode === 'view') {
       console.log('save contactLog to existing mangel...')
       // save contactLog and update mangel
-      const contactLoggerList = mangel.contactLoggerList
-      contactLoggerList.push(contactLogger)
-      setMangel({ ...mangel, contactLoggerList: contactLoggerList })
       setLoading(true)
       setError()
       postContactLog(token, id, contactLogger)
@@ -130,20 +116,14 @@ export default function MaengelForm({ initialMode, title }) {
         .finally(() => {
           setViewAddContact(false)
           setLoading(false)
-          resetContactLogger()
-          reloadContactList()
         })
     } else if (mode === 'edit') {
       console.log('add contactLog to Mangel...')
-      const contactLoggerList = mangel.contactLoggerList
-      contactLoggerList.push(contactLogger)
-      setMangel({ ...mangel, contactLoggerList: contactLoggerList })
       setViewAddContact(false)
-      resetContactLogger()
-      reloadContactList()
     } else {
       console.log('unknown mode')
     }
+    resetContactLogger()
   }
 
   const handleDeleteContact = () => {
@@ -152,7 +132,9 @@ export default function MaengelForm({ initialMode, title }) {
     deleteContactLog(token, id, contactLogger.id)
       .then(r => {
         console.log(r, ' deleted. Do something with deleted mangel?')
-        getMangelById(token, id).then(() => reloadContactList())
+        getMangelById(token, id).then(dto => {
+          setMangel(dto)
+        })
       })
       .catch(setError)
       .finally(() => {
@@ -166,16 +148,18 @@ export default function MaengelForm({ initialMode, title }) {
     // save contactLog and update mangel
     setLoading(true)
     setError()
-    putContactLog(token, id, contactLogger)
-      .then(setMangel)
+    const tempContactLogger = { ...contactLogger }
+    console.log(mangel.contactLoggerList)
+    putContactLog(token, id, tempContactLogger)
+      .then(() => getMangelById(token, id).then(setMangel))
       .catch(setError)
       .finally(() => {
+        console.log(mangel.contactLoggerList)
         setViewAddContact(false)
         setLoading(false)
         resetContactLogger()
       })
 
-    console.log('contact edited')
     console.log('List should be rendered again, still not working. How?')
   }
 
@@ -198,6 +182,7 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleSubmitChanges = event => {
     event.preventDefault()
+    console.log('save clicked')
     setLoading(true)
     setError()
     putMangel(token, id, mangel)
@@ -205,6 +190,7 @@ export default function MaengelForm({ initialMode, title }) {
       .catch(setError)
       .finally(() => {
         setLoading(false)
+        setMode('view')
       })
   }
 
@@ -288,7 +274,7 @@ export default function MaengelForm({ initialMode, title }) {
             title="Details"
             readOnly={readOnly}
           />
-          {sizeContactList > 0 && (
+          {mangel.contactLoggerList.length > 0 && (
             <ContactTable
               data={mangel.contactLoggerList}
               handleContactDetailsEdit={handleContactDetailsEdit}
