@@ -87,7 +87,7 @@ abstract class ControllerMapper {
                 .status(mangelEntity.getStatus().toString())
                 .id(mangelEntity.getId())
                 .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
-                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
+//                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
                 .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
                 .build();
     }
@@ -104,8 +104,11 @@ abstract class ControllerMapper {
         return currentDate.plusDays(days);
     }
     private int dateToIntReminder(ZonedDateTime date){
-        ZonedDateTime currentDate = ZonedDateTime.now();
-        return Period.between(currentDate.toLocalDate(), date.toLocalDate()).getDays();
+        if (date != null) {
+            ZonedDateTime currentDate = ZonedDateTime.now();
+            return Period.between(currentDate.toLocalDate(), date.toLocalDate()).getDays();
+        }
+        return 0;
     }
 
     public ZonedDateTime convertLongToZonedDateTime(Long date){
