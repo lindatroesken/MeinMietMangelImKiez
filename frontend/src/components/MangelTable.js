@@ -1,18 +1,18 @@
 import React, { useMemo } from 'react'
-
 import Table from './Table'
-import TimeAgo from 'react-timeago'
 
-export default function MangelTable({ data, handleGoToDetails }) {
+export default function MangelTable({ data, handleGoToDetails, title }) {
   const columns = useMemo(
     () => [
       {
-        Header: 'Meine Mängelübersicht',
+        Header: title,
         columns: [
           {
             Header: 'Seit',
             accessor: 'dateNoticed',
-            Cell: ({ cell: { value } }) => <TimeAgo date={value} />,
+            Cell: props => {
+              return <span>{new Date(props.value).toLocaleDateString()}</span>
+            },
           },
           {
             Header: 'Kategorie',
@@ -25,7 +25,7 @@ export default function MangelTable({ data, handleGoToDetails }) {
         ],
       },
     ],
-    []
+    [title]
   )
 
   return (

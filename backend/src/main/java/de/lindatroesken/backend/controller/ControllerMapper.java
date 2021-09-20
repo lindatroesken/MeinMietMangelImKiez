@@ -8,6 +8,7 @@ import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.Status;
 
 import java.time.Instant;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
@@ -73,6 +74,8 @@ abstract class ControllerMapper {
                 .category(mangel.getCategory())
                 .status(Status.valueOf(mangel.getStatus()))
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
+                .dateReminder(intToDateReminder(mangel.getRemindMeInDays()))
+                .isDue(checkDue(Status.valueOf(mangel.getStatus()), intToDateReminder(mangel.getRemindMeInDays())))
                 .build();
     }
     public Mangel mapMangel(MangelEntity mangelEntity) {
@@ -84,7 +87,28 @@ abstract class ControllerMapper {
                 .status(mangelEntity.getStatus().toString())
                 .id(mangelEntity.getId())
                 .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
+//                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
+                .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
                 .build();
+    }
+
+    public boolean checkDue(Status status, ZonedDateTime dueDate){
+        if (status.toString().equals("DONE")){
+            return false;
+        }
+        return ZonedDateTime.now().isAfter(dueDate);
+    }
+
+    private ZonedDateTime intToDateReminder(int days){
+        ZonedDateTime currentDate = ZonedDateTime.now();
+        return currentDate.plusDays(days);
+    }
+    private int dateToIntReminder(ZonedDateTime date){
+        if (date != null) {
+            ZonedDateTime currentDate = ZonedDateTime.now();
+            return Period.between(currentDate.toLocalDate(), date.toLocalDate()).getDays();
+        }
+        return 0;
     }
 
     public ZonedDateTime convertLongToZonedDateTime(Long date){

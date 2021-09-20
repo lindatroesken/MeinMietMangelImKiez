@@ -35,6 +35,9 @@ public class MangelEntity {
     @Column(name = "date_noticed")
     private ZonedDateTime dateNoticed;
 
+    @Column(name = "date_reminder")
+    private ZonedDateTime dateReminder;
+
     @Column(name = "date_fixed")
     private ZonedDateTime dateFixed;
 
@@ -44,6 +47,9 @@ public class MangelEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
+
+    @Column(name = "is_due")
+    private boolean isDue;
 
     public void add(ContactLoggerEntity contactLoggerEntity){
         contactLoggerList.add(contactLoggerEntity);

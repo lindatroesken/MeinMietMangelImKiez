@@ -49,6 +49,18 @@ public class MangelController extends ControllerMapper {
         throw new UnauthorizedUserException("User can only view own mangel overview");
     }
 
+    @GetMapping(value = "finddue/{username}", produces = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only view own mangel overview")
+    })
+    public ResponseEntity<List<Mangel>> findAllDueByUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
+        if(authUser.getUsername().equals(username)){
+            List<MangelEntity> mangelEntityList = mangelService.findAllDueForUser(username);
+            return ok(mapMangel(mangelEntityList));
+        }
+        throw new UnauthorizedUserException("User can only view own mangel overview");
+    }
+
     @GetMapping(value = "find/{mangelId}", produces = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user can only view own mangel")

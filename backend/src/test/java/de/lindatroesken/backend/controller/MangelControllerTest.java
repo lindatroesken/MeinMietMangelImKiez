@@ -78,6 +78,7 @@ class MangelControllerTest {
                 .dateFixed(null)
                 .category("")
                 .userEntity(user1)
+                .dateReminder(DATE)
                 .build();
 
         mangelRepository.save(mangel1);

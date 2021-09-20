@@ -25,6 +25,7 @@ import {
   mangelStatusOptions,
   initialMangelStates,
   initialContactState,
+  mangelReminderOptions,
 } from '../services/mangel-service'
 import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
@@ -84,7 +85,6 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
-    console.log(mangel)
   }
 
   const handleMangelDateChange = value => {
@@ -147,12 +147,11 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const handleDeleteContact = () => {
-    console.log('delete contctLog clicked...')
     setLoading(true)
     setError()
     deleteContactLog(token, id, contactLogger.id)
       .then(r => {
-        console.log(r, ' deleted')
+        console.log(r, ' deleted. Do something with deleted mangel?')
         getMangelById(token, id).then(() => reloadContactList())
       })
       .catch(setError)
@@ -164,7 +163,6 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const handleEditContact = () => {
-    console.log('save edited contactLog...')
     // save contactLog and update mangel
     setLoading(true)
     setError()
@@ -177,13 +175,12 @@ export default function MaengelForm({ initialMode, title }) {
         resetContactLogger()
       })
 
-    console.log('edit')
+    console.log('contact edited')
     console.log('List should be rendered again, still not working. How?')
   }
 
   const handleSubmitNew = event => {
     event.preventDefault()
-    console.log(mangel)
     setLoading(true)
     setError()
     postMangel(token, user.username, mangel)
@@ -224,7 +221,6 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const handleContactDetailsEdit = listItem => {
-    console.log('clicked: ', listItem.original.id, 'should be edited')
     setContactLogger({ ...listItem.original })
     setViewAddContact(true)
   }
@@ -266,6 +262,15 @@ export default function MaengelForm({ initialMode, title }) {
             value={mangel.dateNoticed}
             onChange={handleMangelDateChange}
             title="Festgestellt am"
+            readOnly={readOnly}
+          />
+
+          <Select
+            name="remindMeInDays"
+            value={mangel.remindMeInDays}
+            values={mangelReminderOptions}
+            onChange={handleMangelChange}
+            title="Erinnerung in ... Tagen"
             readOnly={readOnly}
           />
 

@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import TimeAgo from 'react-timeago'
 import Table from './Table'
 
 export default function ContactTable({ data, handleContactDetailsEdit }) {
@@ -11,7 +10,9 @@ export default function ContactTable({ data, handleContactDetailsEdit }) {
           {
             Header: 'Datum',
             accessor: 'dateContacted',
-            Cell: ({ cell: { value } }) => <TimeAgo date={value} />,
+            Cell: props => {
+              return <span>{new Date(props.value).toLocaleDateString()}</span>
+            },
           },
           {
             Header: 'Kontakt',
