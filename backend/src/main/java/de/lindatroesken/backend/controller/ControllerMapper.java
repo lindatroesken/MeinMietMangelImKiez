@@ -2,10 +2,8 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.ContactLogger;
 import de.lindatroesken.backend.api.Mangel;
-import de.lindatroesken.backend.model.ContactLoggerEntity;
-import de.lindatroesken.backend.model.ContactType;
-import de.lindatroesken.backend.model.MangelEntity;
-import de.lindatroesken.backend.model.Status;
+import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.model.*;
 
 import java.time.Instant;
 import java.time.Period;
@@ -17,6 +15,42 @@ import java.util.List;
 import java.util.Set;
 
 abstract class ControllerMapper {
+
+    public User mapUser(UserEntity userEntity) {
+        return User.builder()
+                .username(userEntity.getUsername())
+                .build();
+    }
+
+    public List<User> mapUser(List<UserEntity> userEntityList) {
+        List<User> userList = new LinkedList<>();
+        for(UserEntity userEntity: userEntityList){
+            User user = mapUser(userEntity);
+            userList.add(user);
+        }
+        return userList;
+    }
+
+    public AddressEntity mapAddress(Address address){
+        return AddressEntity.builder()
+                .city(address.getCity())
+                .country(address.getCountry())
+                .zip(address.getZip())
+                .street(address.getStreet())
+                .number(address.getNumber())
+                .build();
+    }
+
+    public Address mapAddress(AddressEntity addressEntity){
+        return Address.builder()
+                .id(addressEntity.getId())
+                .city(addressEntity.getCity())
+                .country(addressEntity.getCountry())
+                .zip(addressEntity.getZip())
+                .street(addressEntity.getStreet())
+                .number(addressEntity.getNumber())
+                .build();
+    }
 
     public List<Mangel> mapMangel(List<MangelEntity> mangelEntityList) {
         List<Mangel> mangelList = new LinkedList<>();

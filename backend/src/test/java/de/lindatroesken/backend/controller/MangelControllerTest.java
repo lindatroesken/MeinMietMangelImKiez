@@ -92,11 +92,12 @@ class MangelControllerTest {
 
     @Test
     @DisplayName("GET all mangel with valid credentials should return own mangel list")
-    void testFindAllByUser() {
+    void testFindAllMangelForUser() {
         //GIVEN
         String username = "testuser";
+        String role = "user";
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(username, role));
         String url = getUrl() + "/findall/" + username;
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(username, "user"));
 
         //WHEN
         ParameterizedTypeReference<List<Mangel>> responseType = new ParameterizedTypeReference<>() {};
@@ -108,6 +109,7 @@ class MangelControllerTest {
         assertThat(response.getBody().size(), is(1));
         assertThat(response.getBody().get(0).getDescription(), is("Aufzug geht nicht"));
     }
+
 
     @Test
     @DisplayName("POST new mangel with valid credentials should return new mangel")

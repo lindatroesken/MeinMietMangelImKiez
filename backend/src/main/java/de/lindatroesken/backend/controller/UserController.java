@@ -32,7 +32,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 @CrossOrigin
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends ControllerMapper{
 
     public static final String CONTROLLER_TAG = "User Controller";
     private final UserService userService;
@@ -50,8 +50,7 @@ public class UserController {
     })
     public ResponseEntity<List<User>> findAll(@AuthenticationPrincipal UserEntity authUser){
         if (!authUser.getRole().equals("admin")) {
-//            throw new UnauthorizedUserException("Only admins are allowed to view all user");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedUserException("Only admins are allowed to view all user");
         }
         List<UserEntity> userEntityList = userService.findAll();
 
@@ -59,7 +58,7 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
 
-        return ok(map(userEntityList));
+        return ok(mapUser(userEntityList));
     }
 
     @GetMapping(value = "{username}", produces = APPLICATION_JSON_VALUE)
@@ -69,8 +68,7 @@ public class UserController {
     })
     public ResponseEntity<User> findUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
         if (!authUser.getRole().equals("admin")){
-//            throw new UnauthorizedUserException("Only admins are allowed to find a user");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedUserException("Only admins are allowed to find a user");
         }
         Optional<UserEntity> userEntityOptional = userService.findByUsername(username);
 
@@ -78,7 +76,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        return ok(map(userEntityOptional.get()));
+        return ok(mapUser(userEntityOptional.get()));
     }
 
 
