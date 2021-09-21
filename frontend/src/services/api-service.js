@@ -59,3 +59,8 @@ export const deleteMangel = (token, mangelId) =>
   axios
     .delete(`/api/mangel/delete/${mangelId}`, headers(token))
     .then(response => response.data)
+
+export const addNewAddress = (token, username, address) =>
+  axios
+    .post(`/api/user/address/new/${username}`, address, headers(token))
+    .then(response => response.data)
