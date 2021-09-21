@@ -1,6 +1,5 @@
 package de.lindatroesken.backend.controller;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
