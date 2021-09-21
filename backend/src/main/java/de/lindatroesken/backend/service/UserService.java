@@ -1,5 +1,6 @@
 package de.lindatroesken.backend.service;
 
+import de.lindatroesken.backend.model.AddressEntity;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.repo.UserRepository;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,17 @@ public class UserService {
 
     public Optional<UserEntity> findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public AddressEntity addNewAddress(String username, AddressEntity addressEntity) {
+        UserEntity userEntity = findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        AddressEntity createdAddress = userEntity.addAddress(addressEntity);
+        userRepository.save(userEntity);
+
+
+        return createdAddress;
+
+
     }
 }
 

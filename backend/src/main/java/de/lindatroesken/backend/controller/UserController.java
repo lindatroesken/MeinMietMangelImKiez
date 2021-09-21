@@ -1,6 +1,8 @@
 package de.lindatroesken.backend.controller;
 
+import de.lindatroesken.backend.api.Address;
 import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.model.AddressEntity;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.UserService;
 import io.swagger.annotations.Api;
@@ -8,7 +10,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,19 +82,14 @@ public class UserController {
     }
 
 
-    private List<User> map(List<UserEntity> userEntityList) {
-        List<User> userList = new LinkedList<>();
-        for(UserEntity userEntity: userEntityList){
-            User user = map(userEntity);
-            userList.add(user);
+    @PostMapping(value = "address/new/{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Address> addNewAddress(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username, @RequestBody Address address){
+        if (!authUser.getUsername().equals(username)){
+            throw new UnauthorizedUserException("User can only add address to own account");
         }
-        return userList;
+        AddressEntity addressEntity = userService.addNewAddress(username, mapAddress(address));
 
+        return ok(mapAddress(addressEntity));
     }
 
-    private User map(UserEntity userEntity) {
-        return User.builder()
-                .username(userEntity.getUsername())
-                .build();
-    }
 }

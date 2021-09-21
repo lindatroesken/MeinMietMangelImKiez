@@ -1,5 +1,6 @@
 package de.lindatroesken.backend.controller;
 
+import de.lindatroesken.backend.api.Address;
 import de.lindatroesken.backend.api.ContactLogger;
 import de.lindatroesken.backend.api.Mangel;
 import de.lindatroesken.backend.model.ContactLoggerEntity;
