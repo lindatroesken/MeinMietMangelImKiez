@@ -36,7 +36,8 @@ public class ContactLoggerEntity {
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+//        return java.util.Objects.hashCode(id);
+        return getId() == null ? getDateContacted().hashCode() : getId().hashCode();
     }
 
     @Override
