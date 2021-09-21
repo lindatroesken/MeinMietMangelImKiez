@@ -1,42 +1,37 @@
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Login from './pages/Login'
-import { getToken } from './services/api-service'
-import { useState } from 'react'
-import jwt from 'jsonwebtoken'
 import Home from './pages/Home'
 import ProtectedRoute from './auth/ProtectedRoute'
 import MaengelForm from './pages/MaengelForm'
 import PersonalMaengelList from './pages/PersonalMaengelList'
+import AuthProvider from './auth/AuthProvider'
+import Logout from './pages/Logout'
 
 export default function App() {
-  const [token, setToken] = useState()
-  const claims = jwt.decode(token)
-
-  const user = claims && {
-    username: claims.sub,
-  }
-  const login = credentials => getToken(credentials).then(setToken)
-
   return (
-    <Router>
-      <Switch>
-        <Route path="/login">
-          <Login onLogin={login} token={token} user={user} />
-        </Route>
-        <Route exact path="/">
-          <Home user={user} />
-        </Route>
-        {user && (
-          <ProtectedRoute user={user} path={`/${user.username}/maengel/new`}>
-            <MaengelForm user={user} />
+    <AuthProvider>
+      <Router>
+        <Switch>
+          <Route path="/login" component={Login} />
+          <Route exact path="/" component={Home} />
+          <ProtectedRoute path="/logout" component={Logout} />
+          <ProtectedRoute path="/mangel/new">
+            <MaengelForm
+              initialMode="new"
+              readOnly={false}
+              title="Neuen Mangel erfassen"
+            />
           </ProtectedRoute>
-        )}
-        {user && (
-          <ProtectedRoute user={user} path={`/${user.username}/maengel/list`}>
-            <PersonalMaengelList user={user} />
+          <ProtectedRoute path="/mangel/details/:id">
+            <MaengelForm
+              initialMode="view"
+              readOnly={true}
+              title="Mangel Details"
+            />
           </ProtectedRoute>
-        )}
-      </Switch>
-    </Router>
+          <ProtectedRoute path="/mangel/list" component={PersonalMaengelList} />
+        </Switch>
+      </Router>
+    </AuthProvider>
   )
 }

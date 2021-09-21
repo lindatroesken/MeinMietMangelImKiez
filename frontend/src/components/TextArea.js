@@ -1,6 +1,7 @@
 import styled from 'styled-components/macro'
 import Label from './Label'
-export default function TextField({
+
+export default function TextArea({
   type,
   value,
   onChange,
@@ -12,8 +13,9 @@ export default function TextField({
   return (
     <Label {...props}>
       {title}
-      <Input
-        type={type}
+      <TextAreaStyled
+        rows="5"
+        cols="1"
         value={value}
         onChange={onChange}
         name={name}
@@ -23,7 +25,7 @@ export default function TextField({
   )
 }
 
-const Input = styled.input`
+const TextAreaStyled = styled.textarea`
   width: 100%;
   font-size: 1em;
   padding: var(--size-s);
