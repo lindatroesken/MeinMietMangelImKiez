@@ -5,4 +5,5 @@ export const initialAddressState = {
   zip: '',
   city: 'Berlin',
   country: 'Deutschland',
+  landlord: null,
 }

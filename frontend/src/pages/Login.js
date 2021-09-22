@@ -33,6 +33,7 @@ export default function Login() {
     setLoading(true)
     setError()
     login(credentials).catch(error => {
+      console.log({ error })
       setError(error)
       setLoading(false)
     })
@@ -63,7 +64,7 @@ export default function Login() {
           <Button> login </Button>
         </Main>
       )}
-      {error && <Error>{error.message}</Error>}
+      {error && <Error>{error.response.data.message}</Error>}
     </Page>
   )
 }

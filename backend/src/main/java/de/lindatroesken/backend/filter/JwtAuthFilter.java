@@ -5,11 +5,13 @@ import de.lindatroesken.backend.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -48,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
             }
         } catch (JwtException e){
-            System.out.println(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "wrong credentials");
         }
 
         filterChain.doFilter(request, response);

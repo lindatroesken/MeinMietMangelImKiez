@@ -107,7 +107,7 @@ public class UserControllerTest {
         //THEN
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
         assertThat(response.getBody(), is(notNullValue()));
-        assertThat(response.getBody().getError(), is("Only admins are allowed to view all user"));
+        assertThat(response.getBody().getMessage(), is("Only admins are allowed to view all user"));
 
 
     }

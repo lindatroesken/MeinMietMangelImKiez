@@ -46,4 +46,7 @@ public class Mangel {
     @ApiModelProperty(notes = "mangel is due (not done and remind date elapsed")
     private boolean isDue;
 
+    @ApiModelProperty(notes = "address of mangel")
+    private Address address;
+
 }

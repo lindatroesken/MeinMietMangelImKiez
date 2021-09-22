@@ -71,7 +71,7 @@ public class MangelService {
         if (!existingMangel.getUserEntity().getUsername().equals(username)){
             throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
         }
-        existingMangel.add(newContactLogger);
+        existingMangel.addContactLogger(newContactLogger);
 
         return mangelRepository.save(existingMangel);
     }

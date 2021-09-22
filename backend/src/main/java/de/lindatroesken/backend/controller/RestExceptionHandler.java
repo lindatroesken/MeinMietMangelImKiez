@@ -64,11 +64,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Getter
     @NoArgsConstructor
     public static class RestException {
-        private String error;
+        private String message;
         private int status;
 
-        public RestException(String error, HttpStatus httpStatus) {
-            this.error = error;
+        public RestException(String message, HttpStatus httpStatus) {
+            this.message = message;
             this.status = httpStatus.value();
         }
     }

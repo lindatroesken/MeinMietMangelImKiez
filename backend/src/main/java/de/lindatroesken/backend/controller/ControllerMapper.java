@@ -33,16 +33,24 @@ abstract class ControllerMapper {
     }
 
     public AddressEntity mapAddress(Address address){
+        if (address == null){
+            return null;
+        }
         return AddressEntity.builder()
+                .id(address.getId())
                 .city(address.getCity())
                 .country(address.getCountry())
                 .zip(address.getZip())
                 .street(address.getStreet())
                 .number(address.getNumber())
                 .build();
+
     }
 
     public Address mapAddress(AddressEntity addressEntity){
+        if(addressEntity == null){
+            return null;
+        }
         return Address.builder()
                 .id(addressEntity.getId())
                 .city(addressEntity.getCity())
@@ -51,6 +59,14 @@ abstract class ControllerMapper {
                 .street(addressEntity.getStreet())
                 .number(addressEntity.getNumber())
                 .build();
+    }
+
+    public List<Address> mapAddressListFromEntity(List<AddressEntity> addressEntityList){
+        List<Address> addressList = new LinkedList<>();
+        for(AddressEntity addressEntity : addressEntityList){
+            addressList.add(mapAddress(addressEntity));
+        }
+        return addressList;
     }
 
     public List<Mangel> mapMangel(List<MangelEntity> mangelEntityList) {
@@ -113,6 +129,7 @@ abstract class ControllerMapper {
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
                 .dateReminder(intToDateReminder(mangel.getRemindMeInDays()))
                 .isDue(checkDue(Status.valueOf(mangel.getStatus()), intToDateReminder(mangel.getRemindMeInDays())))
+                .addressEntity(mapAddress(mangel.getAddress()))
                 .build();
     }
     public Mangel mapMangel(MangelEntity mangelEntity) {
@@ -126,6 +143,7 @@ abstract class ControllerMapper {
                 .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
                 .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
                 .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
+                .address(mapAddress(mangelEntity.getAddressEntity()))
                 .build();
     }
 

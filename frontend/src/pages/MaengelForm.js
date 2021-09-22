@@ -29,6 +29,7 @@ import {
 } from '../services/mangel-service'
 import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
+import useProfile from '../hooks/useProfile'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -42,6 +43,7 @@ export default function MaengelForm({ initialMode, title }) {
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
+  const { profile } = useProfile(user, token)
 
   const resetContactLogger = () => {
     setContactLogger({
@@ -64,6 +66,7 @@ export default function MaengelForm({ initialMode, title }) {
       setReadOnly(true)
       getMangelById(token, id)
         .then(dto => {
+          console.log(dto)
           setMangel(dto)
           resetContactLogger()
         })
@@ -225,6 +228,16 @@ export default function MaengelForm({ initialMode, title }) {
       {loading && <Loading />}
       {!loading && (
         <Main as="form">
+          {mangel.address && (
+            <Select
+              name="address"
+              value={mangel.address.street}
+              values={[mangel.address.street]}
+              onChange={handleMangelChange}
+              title="Adresse"
+              readOnly={readOnly}
+            />
+          )}
           <Select
             name="status"
             value={mangel.status}

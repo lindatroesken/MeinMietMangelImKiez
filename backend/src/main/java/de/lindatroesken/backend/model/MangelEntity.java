@@ -51,7 +51,11 @@ public class MangelEntity {
     @Column(name = "is_due")
     private boolean isDue;
 
-    public void add(ContactLoggerEntity contactLoggerEntity){
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_entity")
+    private AddressEntity addressEntity;
+
+    public void addContactLogger(ContactLoggerEntity contactLoggerEntity){
         contactLoggerList.add(contactLoggerEntity);
         contactLoggerEntity.setMangelEntity(this);
     }

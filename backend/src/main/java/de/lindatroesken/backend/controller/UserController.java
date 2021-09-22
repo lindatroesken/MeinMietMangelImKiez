@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 import static de.lindatroesken.backend.controller.UserController.CONTROLLER_TAG;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
@@ -70,14 +69,20 @@ public class UserController extends ControllerMapper{
         if (!authUser.getRole().equals("admin")){
             throw new UnauthorizedUserException("Only admins are allowed to find a user");
         }
-        Optional<UserEntity> userEntityOptional = userService.findByUsername(username);
+        UserEntity userEntity = userService.findByUsername(username);
 
-        if(userEntityOptional.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-
-        return ok(mapUser(userEntityOptional.get()));
+        return ok(mapUser(userEntity));
     }
+
+    @GetMapping(value="address/find/{username}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Address>> findAddressForUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
+        if(!authUser.getUsername().equals(username)){
+            throw new UnauthorizedUserException("User can only view own addresses");
+        }
+        List<AddressEntity> addressEntityList = userService.findAddressByUsername(username);
+        return ok(mapAddressListFromEntity(addressEntityList));
+    }
+
 
 
     @PostMapping(value = "address/new/{username}", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
@@ -87,6 +92,12 @@ public class UserController extends ControllerMapper{
         }
         AddressEntity addressEntity = userService.addNewAddress(username, mapAddress(address));
 
+        return ok(mapAddress(addressEntity));
+    }
+
+    @PutMapping(value = "address/edit/{addressId}",produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Address> editAddress(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long addressId, @RequestBody Address address){
+        AddressEntity addressEntity = userService.editAddress(authUser.getUsername(), addressId, mapAddress(address));
         return ok(mapAddress(addressEntity));
     }
 

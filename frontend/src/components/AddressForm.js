@@ -1,29 +1,24 @@
 import TextField from './TextField'
 import Button from './Button'
-import { useState } from 'react'
-import { initialAddressState } from '../services/address-service'
+import styled from 'styled-components/macro'
 
-export default function Address() {
-  const [address, setAddress] = useState(initialAddressState)
-
-  const handleAddressSubmit = event => {
-    event.preventDefault()
-    console.log(address)
-    console.log('should submit profile data')
-  }
-
-  const handleAddressInputChange = event => {
-    setAddress({ ...address, [event.target.name]: event.target.value })
-  }
-
+export default function AddressForm({
+  mode,
+  address,
+  handleEnableEdit,
+  handleAddressNew,
+  handleAddressEdit,
+  handleAddressInputChange,
+}) {
   return (
-    <div as="form">
+    <Address>
       <TextField
         name="street"
         value={address.street}
         onChange={handleAddressInputChange}
         title="Straße"
         type="text"
+        disabled={mode === 'view'}
       />
       <TextField
         name="number"
@@ -31,6 +26,7 @@ export default function Address() {
         onChange={handleAddressInputChange}
         title="Hausnummer"
         type="text"
+        disabled={mode === 'view'}
       />
       <TextField
         name="zip"
@@ -38,6 +34,7 @@ export default function Address() {
         onChange={handleAddressInputChange}
         title="Postleitzahl"
         type="text"
+        disabled={mode === 'view'}
       />
       <TextField
         name="city"
@@ -45,6 +42,7 @@ export default function Address() {
         onChange={handleAddressInputChange}
         title="Stadt"
         type="text"
+        disabled={mode === 'view'}
       />
       <TextField
         name="country"
@@ -52,11 +50,28 @@ export default function Address() {
         onChange={handleAddressInputChange}
         title="Land"
         type="text"
+        disabled={mode === 'view'}
       />
-      <Button type="button" onClick={handleAddressSubmit}>
-        {' '}
-        speichern{' '}
-      </Button>
-    </div>
+      {mode === 'new' && (
+        <div>
+          <Button onClick={handleAddressNew}> speichern </Button>
+        </div>
+      )}
+      {mode === 'view' && (
+        <div>
+          <Button type="button" onClick={() => handleEnableEdit(address.id)}>
+            bearbeiten
+          </Button>
+        </div>
+      )}
+      {mode === 'edit' && (
+        <Button type="button" onClick={handleAddressEdit}>
+          {' '}
+          Änderungen speichern
+        </Button>
+      )}
+    </Address>
   )
 }
+
+const Address = styled.form``
