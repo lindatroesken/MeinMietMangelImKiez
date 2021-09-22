@@ -42,7 +42,7 @@ public class UserService {
     public AddressEntity addNewAddress(String username, AddressEntity addressEntity) {
         UserEntity userEntity = findByUsername(username);
         Set<AddressEntity> existingUserAddresses = userEntity.getAddressList();
-        if(existingUserAddresses.contains(addressEntity)){
+        if(addressExists(existingUserAddresses, addressEntity)){
             throw new EntityExistsException("Address already exists");
         }
         AddressEntity createdAddress = userEntity.addAddress(addressEntity);
@@ -50,6 +50,18 @@ public class UserService {
 
         return createdAddress;
 
+    }
+
+    public boolean addressExists(Set<AddressEntity> existingAddressList, AddressEntity addressToCheck){
+        for (AddressEntity address : existingAddressList){
+            if (address.getStreet().equals(addressToCheck.getStreet())
+                    && address.getNumber().equals(addressToCheck.getNumber())
+                    && address.getZip().equals(addressToCheck.getZip())
+                    && address.getCity().equals(addressToCheck.getCity())
+                    && address.getCountry().equals(addressToCheck.getCountry())
+                ) {return true;}
+        }
+        return false;
     }
 
     public List<AddressEntity> findAddressByUsername(String username) {
