@@ -1,5 +1,6 @@
 package de.lindatroesken.backend.filter;
 
+import de.lindatroesken.backend.controller.UnauthorizedUserException;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.JwtService;
 import io.jsonwebtoken.Claims;
@@ -50,7 +51,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
             }
         } catch (JwtException e){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "wrong credentials");
+//            throw new UnauthorizedUserException("wrong credentials");
         }
 
         filterChain.doFilter(request, response);
