@@ -6,7 +6,8 @@ export default function TextField({
   onChange,
   name,
   title,
-  readOnly,
+  readOnly = false,
+  disabled = false,
   ...props
 }) {
   return (
@@ -18,6 +19,7 @@ export default function TextField({
         onChange={onChange}
         name={name}
         readOnly={readOnly}
+        disabled={disabled}
       />
     </Label>
   )

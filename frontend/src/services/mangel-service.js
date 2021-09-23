@@ -42,4 +42,5 @@ export const initialMangelStates = {
   id: null,
   isDue: null,
   contactLoggerList: [],
+  address: null,
 }

@@ -4,6 +4,7 @@ import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
@@ -48,7 +50,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
             }
         } catch (JwtException e){
-            System.out.println(e.getMessage());
+            log.error("Unable to parse JWT", e);
         }
 
         filterChain.doFilter(request, response);
