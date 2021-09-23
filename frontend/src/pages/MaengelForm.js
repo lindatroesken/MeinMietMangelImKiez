@@ -53,6 +53,24 @@ export default function MaengelForm({ initialMode, title }) {
     })
   }
 
+  const initializeMangel = () => {
+    getUserAddress(token, user.username)
+      .then(fetchedProfile => {
+        setAddresses([...fetchedProfile])
+        setMangel({
+          ...initialMangelStates,
+          dateNoticed: new Date().getTime(),
+          contactLoggerList: [],
+          address: fetchedProfile[0],
+        })
+      })
+      .catch(setError)
+      .finally(() => {
+        setLoading(false)
+        resetContactLogger()
+      })
+  }
+
   const getProfile = () => {
     setLoading(true)
     return getUserAddress(token, user.username)
@@ -66,21 +84,7 @@ export default function MaengelForm({ initialMode, title }) {
     setLoading(true)
     if (mode === 'new') {
       setReadOnly(false)
-      getUserAddress(token, user.username)
-        .then(fetchedProfile => {
-          setAddresses([...fetchedProfile])
-          setMangel({
-            ...initialMangelStates,
-            dateNoticed: new Date().getTime(),
-            contactLoggerList: [],
-            address: fetchedProfile[0],
-          })
-        })
-        .catch(setError)
-        .finally(() => {
-          setLoading(false)
-          resetContactLogger()
-        })
+      initializeMangel()
     } else if (mode === 'view') {
       setReadOnly(true)
       getProfile().then()
