@@ -3,28 +3,39 @@ import Label from './Label'
 
 export default function SelectAddress({
   name,
-  key,
-  address,
+  id,
   selected,
   title,
-  onChange,
+  handleAddressChange,
   value,
   values,
   readOnly,
   ...props
 }) {
+  const addressString = address => {
+    return (
+      address.street +
+      ' ' +
+      address.number +
+      ', ' +
+      address.zip +
+      ' ' +
+      address.city
+    )
+  }
+
   return (
     <Label {...props}>
       {title}
       <SelectStyled
         name={name}
         value={value}
-        onChange={event => onChange(event, address)}
+        onChange={handleAddressChange}
         disabled={readOnly}
       >
-        {values.map(value => (
-          <option key={key} value={value} disabled={!value}>
-            {value}
+        {values.map(answer => (
+          <option key={answer.id} value={answer.id}>
+            {addressString(answer)}
           </option>
         ))}
       </SelectStyled>
