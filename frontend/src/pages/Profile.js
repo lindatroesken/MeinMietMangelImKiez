@@ -3,7 +3,7 @@ import Header from '../components/Header'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
 import Main from '../components/Main'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
 import AddressForm from '../components/AddressForm'
 import { initialAddressState } from '../services/profile-service'
@@ -13,7 +13,6 @@ import {
   updateUserAddress,
 } from '../services/api-service'
 import { useHistory, useParams } from 'react-router-dom'
-import useProfile from '../hooks/useProfile'
 import Button from '../components/Button'
 
 export default function Profile() {
@@ -23,31 +22,38 @@ export default function Profile() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [address, setAddress] = useState(initialAddressState)
-  const [addressList, setAddressList] = useState({})
-  const { profile, loadProfile } = useProfile(user, token)
+  const [addressList, setAddressList] = useState([])
 
-  useEffect(() => {
+  const loadDataOnlyOnce = useCallback(() => {
     setLoading(true)
     setError()
     getUserAddress(token, user.username)
       .then(response => {
-        console.log('GET request response')
         setAddressList(response)
-        console.log(response)
         if (mode === 'new') {
           setAddress(initialAddressState)
-        } else {
-          setAddress(response[0])
+        } else if (mode === 'edit') {
+          setEditAddress(response, id)
         }
       })
       .catch(setError)
       .finally(() => {
-        // setAddress(addressList[0])
         setLoading(false)
         console.log(addressList)
         console.log(address)
       })
-  }, [user, token, mode])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode])
+
+  useEffect(() => {
+    loadDataOnlyOnce()
+  }, [loadDataOnlyOnce])
+
+  const setEditAddress = (addressList, id) => {
+    const selectedAddress = addressList.filter(address => address.id === id)
+    setAddress(selectedAddress)
+    console.log(addressList.findIndex(address => address.id === id))
+  }
 
   const handleAddressNew = event => {
     event.preventDefault()
@@ -55,34 +61,35 @@ export default function Profile() {
     setLoading(true)
     setError()
     addNewAddress(token, user.username, address)
-      .then(setAddress)
+      .then(response => {
+        setAddress(response)
+        console.log([...addressList, response])
+        setAddressList([...addressList, response])
+      })
       .catch(setError)
       .finally(() => {
         setLoading(false)
         history.push(`/profile/view/${address.id}`)
       })
   }
-  console.log('Mode: ', mode)
-  console.log('id: ', id)
 
   const handleAddressInputChange = event => {
     setAddress({ ...address, [event.target.name]: event.target.value })
-    // setAddressList({
-    //   ...addressList[0],
-    //   [event.target.name]: event.target.value,
-    // })
   }
+
   const handleEnableEdit = id => {
-    console.log('hier vielleicht setAddress noch mal setzen?')
+    setEditAddress(addressList, id)
     history.push(`/profile/edit/${id}`)
   }
+
   const handleSetModeNew = () => {
     history.push(`/profile/new`)
   }
-  const handleAddressEdit = () => {
+
+  const handleAddressEdit = id => {
     setLoading(true)
     setError()
-    updateUserAddress(token, address.id, address)
+    updateUserAddress(token, id, address)
       .then(setAddress)
       .catch(setError)
       .finally(() => {
@@ -92,17 +99,29 @@ export default function Profile() {
     console.log('updated')
   }
 
-  // console.log(mode)
-
   return (
     <Page>
       <Header title="Mein Profil" />
       {loading && <Loading />}
       {!loading && (
         <Main>
-          {/*{user && addressList && addressList.length > 0 && (*/}
-          {user && address && (
+          {user &&
+            mode !== 'edit' &&
+            addressList.length > 0 &&
+            addressList.map(address => (
+              <AddressForm
+                id={id}
+                mode={mode}
+                address={address}
+                handleEnableEdit={handleEnableEdit}
+                handleAddressNew={handleAddressNew}
+                handleAddressEdit={handleAddressEdit}
+                handleAddressInputChange={handleAddressInputChange}
+              />
+            ))}
+          {user && mode === 'edit' && address && (
             <AddressForm
+              id={id}
               mode={mode}
               address={address}
               handleEnableEdit={handleEnableEdit}

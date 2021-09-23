@@ -65,7 +65,7 @@ export default function AddressForm({
         </div>
       )}
       {mode === 'edit' && (
-        <Button type="button" onClick={handleAddressEdit}>
+        <Button type="button" onClick={() => handleAddressEdit(address.id)}>
           {' '}
           Änderungen speichern
         </Button>
