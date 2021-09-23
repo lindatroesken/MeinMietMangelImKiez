@@ -16,9 +16,9 @@ export default function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route exact path="/" component={Home} />
-          <ProtectedRoute path="/profile/:mode/:id" comonent={Profile} />
-          <ProtectedRoute path="/profile/:mode" comonent={Profile} />
-          <ProtectedRoute path="/map/view" comonent={MangelMap} />
+          <ProtectedRoute path="/profile/:mode" component={Profile} />
+          <ProtectedRoute path="/profile/:mode/:id" component={Profile} />
+          <ProtectedRoute path="/map/view" component={MangelMap} />
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/mangel/new">
             <MaengelForm
