@@ -1,6 +1,7 @@
 package de.lindatroesken.backend.controller;
 
 
+import de.lindatroesken.backend.api.Address;
 import de.lindatroesken.backend.api.Credentials;
 import de.lindatroesken.backend.api.User;
 import de.lindatroesken.backend.config.JwtConfig;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.time.Duration;
@@ -77,17 +77,18 @@ public class UserControllerTest {
     @DisplayName("GET should return a list of all users in database (2 users), if logged in as admin")
     public void TestGetListOfUsersShouldReturnTwoUsersForAdmin(){
         //GIVEN
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testadmin", "admin"));
+        String authName = "testadmin";
+        String authRole = "admin";
+        String url = getUrl();
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(authName, authRole));
 
         //WHEN
-        ParameterizedTypeReference<LinkedList<User>> responseType = new ParameterizedTypeReference<>() {};
-        ResponseEntity<LinkedList<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
-
+        ResponseEntity<User[]> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, User[].class);
 
         //THEN
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         assertThat(response.getBody(),is(notNullValue()));
-        assertThat(response.getBody().size(), is(2));
+        assertThat(response.getBody().length, is(2));
     }
 
     @Test
@@ -95,24 +96,31 @@ public class UserControllerTest {
 
     public void testGetListOfUsersShouldReturnError401(){
         //GIVEN
-        HttpEntity<Void> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+        String authName = "testuser";
+        String authRole = "user";
+        String url = getUrl();
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(authName, authRole));
 
         //WHEN
-        ParameterizedTypeReference<List<User>> responseType = new ParameterizedTypeReference<>() {};
-        ResponseEntity<List<User>> response = restTemplate.exchange(getUrl(), HttpMethod.GET, httpEntity, responseType);
+        ResponseEntity<RestExceptionHandler.RestException> response = restTemplate.exchange(url, HttpMethod.GET, httpEntity, RestExceptionHandler.RestException.class);
 
         //THEN
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
-        assertThat(response.getBody(), is(nullValue()));
+        assertThat(response.getBody(), is(notNullValue()));
+        assertThat(response.getBody().getMessage(), is("Only admins are allowed to view all user"));
+
 
     }
 
     @Test
     @DisplayName("GET /{username} should return a user from database, if logged in as admin")
-    public void testGetUserByUserNameReturnsUser(){
+    public void testGetUserByUserNameReturnsUserIfAdmin(){
         //GIVEN
-        String url = getUrl() + "/testuser";
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testadmin", "admin"));
+        String username = "testuser";
+        String authName = "testadmin";
+        String authRole = "admin";
+        String url = getUrl() + "/" + username;
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(authName, authRole));
         // WHEN
         ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,httpEntity, User.class);
         // THEN
@@ -126,14 +134,45 @@ public class UserControllerTest {
     @DisplayName("GET /{username} for unauthorized user should return http status 401 UNAUTHORIZED")
     public void testGetUserByUserNameShouldReturnError401(){
         //GIVEN
-        String url = getUrl() + "/testuser";
-        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader("testuser", "user"));
+        String username = "testuser";
+        String authName = "testuser";
+        String authRole = "user";
+        String url = getUrl() + "/" + username;
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(authName, authRole));
         // WHEN
         ResponseEntity<User> response = restTemplate.exchange(url,HttpMethod.GET,httpEntity, User.class);
         // THEN
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
 
     }
+
+    @Test
+    @DisplayName("POST for authorized user should return address")
+    public void testPostAddressforAuthorizedUserShouldReturnAddress(){
+        //GIVEN
+        String username = "testuser";
+        String authName = "testuser";
+        String authRole = "user";
+        String url = getUrl() + "/address/new/" + username;
+        Address address = Address.builder()
+                .number("1")
+                .zip("10000")
+                .street("Strasse")
+                .country("Deutschland")
+                .city("Berlin")
+                .build();
+        HttpEntity<Address> httpEntity = new HttpEntity<>(address, authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<Address> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Address.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(), is(notNullValue()));
+        assertThat(response.getBody().getCity(), is("Berlin"));
+//        assertThat(response.getBody().getId(), is(notNullValue()));
+    }
+
 
     private HttpHeaders authorizedHeader(String username, String role){
         Map<String,Object> claims = new HashMap<>();

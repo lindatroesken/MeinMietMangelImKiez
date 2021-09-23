@@ -71,7 +71,7 @@ public class MangelService {
         if (!existingMangel.getUserEntity().getUsername().equals(username)){
             throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
         }
-        existingMangel.add(newContactLogger);
+        existingMangel.addContactLogger(newContactLogger);
 
         return mangelRepository.save(existingMangel);
     }
@@ -158,7 +158,7 @@ public class MangelService {
         if (!deleteMangelEntity.getUserEntity().getUsername().equals(username)){
             throw new UnauthorizedUserException("User can only delete own mangel");
         }
-        userRepository.save(userEntity.remove(deleteMangelEntity));
+        userRepository.save(userEntity.removeMangel(deleteMangelEntity));
         deleteMangelEntity.setId(null);
         return deleteMangelEntity;
 

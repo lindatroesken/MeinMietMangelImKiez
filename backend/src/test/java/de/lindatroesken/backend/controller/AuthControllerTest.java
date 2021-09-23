@@ -19,6 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -101,7 +102,7 @@ class AuthControllerTest {
         HttpEntity<Credentials> httpEntity = new HttpEntity<>(credentials);
 
         // WHEN
-        ResponseEntity<AccessToken> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, AccessToken.class);
+        ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Void.class);
 
         // THEN
         assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));

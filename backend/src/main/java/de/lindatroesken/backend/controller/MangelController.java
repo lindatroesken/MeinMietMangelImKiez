@@ -23,7 +23,7 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
-@Tag(name = CONTROLLER_TAG, description = "Provides authorization methods, to get a token")
+@Tag(name = CONTROLLER_TAG, description = "Provides methods to create, edit, delete a mangel")
 @Api(tags = CONTROLLER_TAG)
 @CrossOrigin
 @RestController

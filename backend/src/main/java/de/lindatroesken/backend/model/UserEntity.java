@@ -33,21 +33,22 @@ public class UserEntity {
     @Column(name = "user_role")
     private String role;
 
-    public UserEntity remove(MangelEntity mangelEntity){
+    public UserEntity removeMangel(MangelEntity mangelEntity){
         mangelList.remove(mangelEntity);
         mangelEntity.setUserEntity(null);
         return this;
     }
 
-    public UserEntity remove(AddressEntity addressEntity){
+    public UserEntity removeAddress(AddressEntity addressEntity){
         addressList.remove(addressEntity);
         addressEntity.setUserEntity(null);
         return this;
     }
 
-    public void add(AddressEntity addressEntity){
+    public AddressEntity addAddress(AddressEntity addressEntity){
         addressList.add(addressEntity);
         addressEntity.setUserEntity(this);
+        return addressEntity;
     }
 
     @Override

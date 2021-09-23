@@ -1,11 +1,10 @@
 package de.lindatroesken.backend.controller;
 
+import de.lindatroesken.backend.api.Address;
 import de.lindatroesken.backend.api.ContactLogger;
 import de.lindatroesken.backend.api.Mangel;
-import de.lindatroesken.backend.model.ContactLoggerEntity;
-import de.lindatroesken.backend.model.ContactType;
-import de.lindatroesken.backend.model.MangelEntity;
-import de.lindatroesken.backend.model.Status;
+import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.model.*;
 
 import java.time.Instant;
 import java.time.Period;
@@ -17,6 +16,58 @@ import java.util.List;
 import java.util.Set;
 
 abstract class ControllerMapper {
+
+    public User mapUser(UserEntity userEntity) {
+        return User.builder()
+                .username(userEntity.getUsername())
+                .build();
+    }
+
+    public List<User> mapUser(List<UserEntity> userEntityList) {
+        List<User> userList = new LinkedList<>();
+        for(UserEntity userEntity: userEntityList){
+            User user = mapUser(userEntity);
+            userList.add(user);
+        }
+        return userList;
+    }
+
+    public AddressEntity mapAddress(Address address){
+        if (address == null){
+            return null;
+        }
+        return AddressEntity.builder()
+                .id(address.getId())
+                .city(address.getCity())
+                .country(address.getCountry())
+                .zip(address.getZip())
+                .street(address.getStreet())
+                .number(address.getNumber())
+                .build();
+
+    }
+
+    public Address mapAddress(AddressEntity addressEntity){
+        if(addressEntity == null){
+            return null;
+        }
+        return Address.builder()
+                .id(addressEntity.getId())
+                .city(addressEntity.getCity())
+                .country(addressEntity.getCountry())
+                .zip(addressEntity.getZip())
+                .street(addressEntity.getStreet())
+                .number(addressEntity.getNumber())
+                .build();
+    }
+
+    public List<Address> mapAddressListFromEntity(List<AddressEntity> addressEntityList){
+        List<Address> addressList = new LinkedList<>();
+        for(AddressEntity addressEntity : addressEntityList){
+            addressList.add(mapAddress(addressEntity));
+        }
+        return addressList;
+    }
 
     public List<Mangel> mapMangel(List<MangelEntity> mangelEntityList) {
         List<Mangel> mangelList = new LinkedList<>();
@@ -78,6 +129,7 @@ abstract class ControllerMapper {
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
                 .dateReminder(intToDateReminder(mangel.getRemindMeInDays()))
                 .isDue(checkDue(Status.valueOf(mangel.getStatus()), intToDateReminder(mangel.getRemindMeInDays())))
+                .addressEntity(mapAddress(mangel.getAddress()))
                 .build();
     }
     public Mangel mapMangel(MangelEntity mangelEntity) {
@@ -91,6 +143,7 @@ abstract class ControllerMapper {
                 .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
                 .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
                 .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
+                .address(mapAddress(mangelEntity.getAddressEntity()))
                 .build();
     }
 

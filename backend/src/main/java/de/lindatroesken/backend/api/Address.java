@@ -22,7 +22,7 @@ public class Address {
     @ApiModelProperty(notes = "city")
     private String city;
 
-    @ApiModelProperty(notes = "Street")
+    @ApiModelProperty(notes = "street")
     private String street;
 
     @ApiModelProperty(notes = "number")

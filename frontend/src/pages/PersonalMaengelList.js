@@ -46,7 +46,7 @@ export default function PersonalMaengelList() {
           )}
         </Main>
       )}
-      {error && <Error>{error.message}</Error>}
+      {error && <Error>{error.response.data.message}</Error>}
     </Page>
   )
 }

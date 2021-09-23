@@ -10,13 +10,13 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 
 
@@ -62,15 +62,15 @@ public class AuthController {
         );
         try {
             authenticationManager.authenticate(authToken);
-            UserEntity user = userService.findByUsername(username).orElseThrow();
+            UserEntity user = userService.findByUsername(username);
             String token = jwtService.createJwtToken(user);
             AccessToken accessToken = AccessToken.builder()
                     .token(token).build();
             return ResponseEntity.ok(accessToken);
         } catch (AuthenticationException e){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedUserException("bad credentials");
         } catch (NoSuchElementException e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new EntityNotFoundException("bad credentials");
         }
 
 

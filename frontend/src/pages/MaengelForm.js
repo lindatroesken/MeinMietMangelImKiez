@@ -12,6 +12,7 @@ import {
   deleteContactLog,
   deleteMangel,
   getMangelById,
+  getUserAddress,
   postContactLog,
   postMangel,
   putContactLog,
@@ -29,6 +30,7 @@ import {
 } from '../services/mangel-service'
 import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
+import SelectAddress from '../components/SelectAddress'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -42,6 +44,7 @@ export default function MaengelForm({ initialMode, title }) {
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
+  const [profile, setProfile] = useState([])
 
   const resetContactLogger = () => {
     setContactLogger({
@@ -50,21 +53,44 @@ export default function MaengelForm({ initialMode, title }) {
     })
   }
 
+  const initializeMangel = () => {
+    getUserAddress(token, user.username)
+      .then(fetchedProfile => {
+        setProfile([...fetchedProfile])
+        setMangel({
+          ...initialMangelStates,
+          dateNoticed: new Date().getTime(),
+          contactLoggerList: [],
+          address: fetchedProfile[1],
+        })
+      })
+      .catch(setError)
+      .finally(() => setLoading(false))
+  }
+
+  const getProfile = () => {
+    setLoading(true)
+    return getUserAddress(token, user.username)
+      .then(fetchedProfile => {
+        setProfile([...fetchedProfile])
+      })
+      .catch(setError)
+  }
+
   useEffect(() => {
     console.log(mode)
+    setLoading(true)
     if (mode === 'new') {
       setReadOnly(false)
-      setMangel({
-        ...initialMangelStates,
-        dateNoticed: new Date().getTime(),
-        contactLoggerList: [],
-      })
+      initializeMangel()
       resetContactLogger()
     } else if (mode === 'view') {
       setReadOnly(true)
+      getProfile().then()
       getMangelById(token, id)
-        .then(dto => {
-          setMangel(dto)
+        .then(fetchedMangel => {
+          console.log(fetchedMangel)
+          setMangel(fetchedMangel)
           resetContactLogger()
         })
         .catch(setError)
@@ -72,12 +98,19 @@ export default function MaengelForm({ initialMode, title }) {
           setLoading(false)
         })
     } else {
+      getProfile().finally(() => setLoading(false))
       setReadOnly(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, token, id])
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
+  }
+
+  const handleAddressChange = (event, address) => {
+    console.log(address)
+    setMangel({ ...mangel, address: address })
   }
 
   const handleMangelDateChange = value => {
@@ -219,12 +252,37 @@ export default function MaengelForm({ initialMode, title }) {
     setViewAddContact(!viewAddContact)
   }
 
+  const addressString = address => {
+    return (
+      address.street +
+      ' ' +
+      address.number +
+      ', ' +
+      address.zip +
+      ' ' +
+      address.city
+    )
+  }
+  console.log(mangel.address)
+
   return (
     <Page>
       <Header title={title ? title : mode} />
       {loading && <Loading />}
       {!loading && (
         <Main as="form">
+          {mangel.address && (
+            <SelectAddress
+              name="address"
+              address={mangel.address}
+              key={mangel.address.id}
+              value={addressString(mangel.address)}
+              values={profile.map(address => addressString(address))}
+              onChange={handleAddressChange}
+              title="Adresse"
+              readOnly={readOnly}
+            />
+          )}
           <Select
             name="status"
             value={mangel.status}
@@ -322,7 +380,7 @@ export default function MaengelForm({ initialMode, title }) {
           )}
         </Main>
       )}
-      {error && <Error>{error.message}</Error>}
+      {error && <Error>{error.response.data.message}</Error>}
     </Page>
   )
 }
