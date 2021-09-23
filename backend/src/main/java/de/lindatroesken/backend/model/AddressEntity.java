@@ -49,24 +49,12 @@ public class AddressEntity {
         return getId().hashCode();
     }
 
-
-//    @Override
-//    public int hashCode() {
-//        String hasString = new StringBuilder().append(street).append(number).append(zip).append(city).toString();
-//        return hasString.hashCode();
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AddressEntity that = (AddressEntity) o;
         return id.equals(that.id);
-//        return  street != null && street.equals(that.street)
-//                && number.equals(that.number)
-//                && zip.equals(that.zip)
-//                && city.equals(that.city)
-//                && country.equals(that.country);
     }
 
 }

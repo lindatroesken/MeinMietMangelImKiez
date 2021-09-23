@@ -59,7 +59,7 @@ public class UserService {
                     && address.getZip().equals(addressToCheck.getZip())
                     && address.getCity().equals(addressToCheck.getCity())
                     && address.getCountry().equals(addressToCheck.getCountry())
-                ) {return true;}
+            ) {return true;}
         }
         return false;
     }
