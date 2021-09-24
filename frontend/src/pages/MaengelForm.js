@@ -12,6 +12,7 @@ import {
   deleteContactLog,
   deleteMangel,
   getMangelById,
+  getUserAddress,
   postContactLog,
   postMangel,
   putContactLog,
@@ -29,6 +30,7 @@ import {
 } from '../services/mangel-service'
 import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
+import SelectAddress from '../components/SelectAddress'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -42,6 +44,7 @@ export default function MaengelForm({ initialMode, title }) {
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
+  const [addresses, setAddresses] = useState([])
 
   const resetContactLogger = () => {
     setContactLogger({
@@ -50,21 +53,44 @@ export default function MaengelForm({ initialMode, title }) {
     })
   }
 
+  const initializeMangel = () => {
+    getUserAddress(token, user.username)
+      .then(fetchedProfile => {
+        setAddresses([...fetchedProfile])
+        setMangel({
+          ...initialMangelStates,
+          dateNoticed: new Date().getTime(),
+          contactLoggerList: [],
+          address: fetchedProfile[0],
+        })
+      })
+      .catch(setError)
+      .finally(() => {
+        setLoading(false)
+        resetContactLogger()
+      })
+  }
+
+  const getProfile = () => {
+    setLoading(true)
+    return getUserAddress(token, user.username)
+      .then(fetchedProfile => {
+        setAddresses([...fetchedProfile])
+      })
+      .catch(setError)
+  }
+
   useEffect(() => {
-    console.log(mode)
+    setLoading(true)
     if (mode === 'new') {
       setReadOnly(false)
-      setMangel({
-        ...initialMangelStates,
-        dateNoticed: new Date().getTime(),
-        contactLoggerList: [],
-      })
-      resetContactLogger()
+      initializeMangel()
     } else if (mode === 'view') {
       setReadOnly(true)
+      getProfile().then()
       getMangelById(token, id)
-        .then(dto => {
-          setMangel(dto)
+        .then(fetchedMangel => {
+          setMangel(fetchedMangel)
           resetContactLogger()
         })
         .catch(setError)
@@ -72,12 +98,21 @@ export default function MaengelForm({ initialMode, title }) {
           setLoading(false)
         })
     } else {
+      getProfile().finally(() => setLoading(false))
       setReadOnly(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, token, id])
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
+  }
+
+  const handleAddressChange = event => {
+    const selectedAddress = addresses.find(
+      address => address.id.toString() === event.target.value.toString()
+    )
+    setMangel({ ...mangel, address: selectedAddress })
   }
 
   const handleMangelDateChange = value => {
@@ -106,8 +141,6 @@ export default function MaengelForm({ initialMode, title }) {
       console.log('add contactLog to Mangel...')
       setViewAddContact(false)
     } else if (mode === 'view') {
-      console.log('save contactLog to existing mangel...')
-      // save contactLog and update mangel
       setLoading(true)
       setError()
       postContactLog(token, id, contactLogger)
@@ -149,18 +182,15 @@ export default function MaengelForm({ initialMode, title }) {
     setLoading(true)
     setError()
     const tempContactLogger = { ...contactLogger }
-    console.log(mangel.contactLoggerList)
     putContactLog(token, id, tempContactLogger)
-      .then(() => getMangelById(token, id).then(setMangel))
+      .then(() => getMangelById(token, id))
+      .then(setMangel)
       .catch(setError)
       .finally(() => {
-        console.log(mangel.contactLoggerList)
         setViewAddContact(false)
         setLoading(false)
         resetContactLogger()
       })
-
-    console.log('List should be rendered again, still not working. How?')
   }
 
   const handleSubmitNew = event => {
@@ -225,6 +255,17 @@ export default function MaengelForm({ initialMode, title }) {
       {loading && <Loading />}
       {!loading && (
         <Main as="form">
+          {mangel.address && (
+            <SelectAddress
+              name="address"
+              id={mangel.address.id}
+              value={mangel.address.id}
+              values={addresses}
+              handleAddressChange={handleAddressChange}
+              title="Adresse"
+              readOnly={readOnly}
+            />
+          )}
           <Select
             name="status"
             value={mangel.status}
@@ -322,7 +363,7 @@ export default function MaengelForm({ initialMode, title }) {
           )}
         </Main>
       )}
-      {error && <Error>{error.message}</Error>}
+      {error && <Error>{error.response.data.message}</Error>}
     </Page>
   )
 }

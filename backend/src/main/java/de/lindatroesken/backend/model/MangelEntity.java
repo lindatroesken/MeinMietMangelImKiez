@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "mangel")
@@ -24,7 +24,7 @@ public class MangelEntity {
     private UserEntity userEntity;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "mangelEntity", fetch = FetchType.EAGER)
-    private List<ContactLoggerEntity> contactLoggerList;
+    private Set<ContactLoggerEntity> contactLoggerList;
 
     @Column(name="details", columnDefinition="TEXT")
     private String details;
@@ -51,7 +51,11 @@ public class MangelEntity {
     @Column(name = "is_due")
     private boolean isDue;
 
-    public void add(ContactLoggerEntity contactLoggerEntity){
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_entity")
+    private AddressEntity addressEntity;
+
+    public void addContactLogger(ContactLoggerEntity contactLoggerEntity){
         contactLoggerList.add(contactLoggerEntity);
         contactLoggerEntity.setMangelEntity(this);
     }

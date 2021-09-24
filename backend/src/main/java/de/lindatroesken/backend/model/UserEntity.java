@@ -2,7 +2,7 @@ package de.lindatroesken.backend.model;
 
 import lombok.*;
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
@@ -14,7 +14,10 @@ import java.util.List;
 public class UserEntity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userEntity", fetch = FetchType.EAGER)
-    private List<MangelEntity> mangelList;
+    private Set<MangelEntity> mangelList;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "userEntity", fetch = FetchType.EAGER)
+    private Set<AddressEntity> addressList;
 
     @Id
     @GeneratedValue
@@ -30,10 +33,22 @@ public class UserEntity {
     @Column(name = "user_role")
     private String role;
 
-    public UserEntity remove(MangelEntity mangelEntity){
+    public UserEntity removeMangel(MangelEntity mangelEntity){
         mangelList.remove(mangelEntity);
         mangelEntity.setUserEntity(null);
         return this;
+    }
+
+    public UserEntity removeAddress(AddressEntity addressEntity){
+        addressList.remove(addressEntity);
+        addressEntity.setUserEntity(null);
+        return this;
+    }
+
+    public AddressEntity addAddress(AddressEntity addressEntity){
+        addressList.add(addressEntity);
+        addressEntity.setUserEntity(this);
+        return addressEntity;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package de.lindatroesken.backend.controller;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,13 +60,15 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(restException, httpHeaders, httpStatus);
     }
 
+    @Setter
     @Getter
+    @NoArgsConstructor
     public static class RestException {
-        private final String error;
-        private final int status;
+        private String message;
+        private int status;
 
-        public RestException(String error, HttpStatus httpStatus) {
-            this.error = error;
+        public RestException(String message, HttpStatus httpStatus) {
+            this.message = message;
             this.status = httpStatus.value();
         }
     }

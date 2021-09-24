@@ -13,8 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -39,7 +40,7 @@ public class MangelService {
 
     }
 
-    public MangelEntity createMangelWithContactLoggerList(String username, MangelEntity newMangelEntity, List<ContactLoggerEntity> newContactLoggerList) {
+    public MangelEntity createMangelWithContactLoggerList(String username, MangelEntity newMangelEntity, Set<ContactLoggerEntity> newContactLoggerList) {
         MangelEntity createdMangelEntity = createMangel(username, newMangelEntity);
         return addContactLoggerList(createdMangelEntity, newContactLoggerList);
     }
@@ -50,8 +51,8 @@ public class MangelService {
         return mangelRepository.save(newMangelEntity);
     }
 
-    public MangelEntity addContactLoggerList(MangelEntity mangelEntity, List<ContactLoggerEntity> contactLoggerList){
-        List<ContactLoggerEntity> createdContactLoggerList = new LinkedList<>();
+    public MangelEntity addContactLoggerList(MangelEntity mangelEntity, Set<ContactLoggerEntity> contactLoggerList){
+        Set<ContactLoggerEntity> createdContactLoggerList = new HashSet<>();
         for (ContactLoggerEntity contactLoggerEntity : contactLoggerList){
             contactLoggerEntity.setMangelEntity(mangelEntity);
             createdContactLoggerList.add(contactLoggerEntity);
@@ -70,7 +71,7 @@ public class MangelService {
         if (!existingMangel.getUserEntity().getUsername().equals(username)){
             throw new UnauthorizedUserException("Mangel can only be updated by owner of mangel");
         }
-        existingMangel.add(newContactLogger);
+        existingMangel.addContactLogger(newContactLogger);
 
         return mangelRepository.save(existingMangel);
     }
@@ -157,7 +158,7 @@ public class MangelService {
         if (!deleteMangelEntity.getUserEntity().getUsername().equals(username)){
             throw new UnauthorizedUserException("User can only delete own mangel");
         }
-        userRepository.save(userEntity.remove(deleteMangelEntity));
+        userRepository.save(userEntity.removeMangel(deleteMangelEntity));
         deleteMangelEntity.setId(null);
         return deleteMangelEntity;
 
