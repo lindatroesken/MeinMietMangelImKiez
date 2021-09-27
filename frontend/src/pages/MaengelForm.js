@@ -44,7 +44,7 @@ export default function MaengelForm({ initialMode, title }) {
   const [loading, setLoading] = useState(false)
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
-  const [profile, setProfile] = useState([])
+  const [addresses, setAddresses] = useState([])
 
   const resetContactLogger = () => {
     setContactLogger({
@@ -56,30 +56,32 @@ export default function MaengelForm({ initialMode, title }) {
   const initializeMangel = () => {
     getUserAddress(token, user.username)
       .then(fetchedProfile => {
-        setProfile([...fetchedProfile])
+        setAddresses([...fetchedProfile])
         setMangel({
           ...initialMangelStates,
           dateNoticed: new Date().getTime(),
           contactLoggerList: [],
-          address: fetchedProfile[1],
+          address: fetchedProfile[0],
         })
       })
       .then(resetContactLogger)
       .catch(setError)
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setLoading(false)
+        resetContactLogger()
+      })
   }
 
   const getProfile = () => {
     setLoading(true)
     return getUserAddress(token, user.username)
       .then(fetchedProfile => {
-        setProfile([...fetchedProfile])
+        setAddresses([...fetchedProfile])
       })
       .catch(setError)
   }
 
   useEffect(() => {
-    console.log(mode)
     setLoading(true)
     if (mode === 'new') {
       setReadOnly(false)
@@ -89,7 +91,6 @@ export default function MaengelForm({ initialMode, title }) {
       getProfile().then()
       getMangelById(token, id)
         .then(fetchedMangel => {
-          console.log(fetchedMangel)
           setMangel(fetchedMangel)
           resetContactLogger()
         })
@@ -108,9 +109,11 @@ export default function MaengelForm({ initialMode, title }) {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
   }
 
-  const handleAddressChange = (event, address) => {
-    console.log(address)
-    setMangel({ ...mangel, address: address })
+  const handleAddressChange = event => {
+    const selectedAddress = addresses.find(
+      address => address.id.toString() === event.target.value.toString()
+    )
+    setMangel({ ...mangel, address: selectedAddress })
   }
 
   const handleMangelDateChange = value => {
@@ -139,8 +142,6 @@ export default function MaengelForm({ initialMode, title }) {
       console.log('add contactLog to Mangel...')
       setViewAddContact(false)
     } else if (mode === 'view') {
-      console.log('save contactLog to existing mangel...')
-      // save contactLog and update mangel
       setLoading(true)
       setError()
       postContactLog(token, id, contactLogger)
@@ -182,18 +183,15 @@ export default function MaengelForm({ initialMode, title }) {
     setLoading(true)
     setError()
     const tempContactLogger = { ...contactLogger }
-    console.log(mangel.contactLoggerList)
     putContactLog(token, id, tempContactLogger)
-      .then(() => getMangelById(token, id).then(setMangel))
+      .then(() => getMangelById(token, id))
+      .then(setMangel)
       .catch(setError)
       .finally(() => {
-        console.log(mangel.contactLoggerList)
         setViewAddContact(false)
         setLoading(false)
         resetContactLogger()
       })
-
-    console.log('List should be rendered again, still not working. How?')
   }
 
   const handleSubmitNew = event => {
@@ -252,19 +250,6 @@ export default function MaengelForm({ initialMode, title }) {
     setViewAddContact(!viewAddContact)
   }
 
-  const addressString = address => {
-    return (
-      address.street +
-      ' ' +
-      address.number +
-      ', ' +
-      address.zip +
-      ' ' +
-      address.city
-    )
-  }
-  console.log(mangel.address)
-
   return (
     <Page>
       <Header title={title ? title : mode} />
@@ -274,11 +259,10 @@ export default function MaengelForm({ initialMode, title }) {
           {mangel.address && (
             <SelectAddress
               name="address"
-              address={mangel.address}
-              key={mangel.address.id}
-              value={addressString(mangel.address)}
-              values={profile.map(address => addressString(address))}
-              onChange={handleAddressChange}
+              id={mangel.address.id}
+              value={mangel.address.id}
+              values={addresses}
+              handleAddressChange={handleAddressChange}
               title="Adresse"
               readOnly={readOnly}
             />
