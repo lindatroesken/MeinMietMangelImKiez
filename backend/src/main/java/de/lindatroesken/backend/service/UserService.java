@@ -3,6 +3,7 @@ package de.lindatroesken.backend.service;
 import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import de.lindatroesken.backend.config.MapboxClientConfigProperties;
 import de.lindatroesken.backend.controller.UnauthorizedUserException;
 import de.lindatroesken.backend.model.AddressEntity;
 import de.lindatroesken.backend.model.UserEntity;
@@ -30,11 +31,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
+    private final MapboxClientConfigProperties mapboxClientConfigProperties;
 
     @Autowired
-    public UserService(UserRepository userRepository, AddressRepository addressRepository) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, MapboxClientConfigProperties mapboxClientConfigProperties) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
+        this.mapboxClientConfigProperties = mapboxClientConfigProperties;
     }
 
 
@@ -72,8 +75,10 @@ public class UserService {
                 .append(", ")
                 .append(addressEntity.getCountry()).toString();
 
+        String mapboxToken = mapboxClientConfigProperties.getAccessToken();
+
         MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
-                .accessToken("tbd")
+                .accessToken(mapboxToken)
                 .query(addressString)
                 .build();
 
@@ -84,7 +89,6 @@ public class UserService {
                 double relevance = 0;
                 List<Double> coordinates;
                 if (results.size() > 0) {
-                    System.out.println(results.get(0).center().coordinates());
                     coordinates = results.get(0).center().coordinates();
 
                     addressEntity.setLatitude(coordinates.get(0));
