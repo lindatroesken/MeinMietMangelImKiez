@@ -75,12 +75,21 @@ public class UserController extends ControllerMapper{
     }
 
     @GetMapping(value="address/find/{username}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Address>> findAddressForUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
+    public ResponseEntity<List<Address>> findAllAddressesForUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
         if(!authUser.getUsername().equals(username)){
             throw new UnauthorizedUserException("User can only view own addresses");
         }
         List<AddressEntity> addressEntityList = userService.findAddressByUsername(username);
         return ok(mapAddressListFromEntity(addressEntityList));
+    }
+
+    @GetMapping(value="address/find/{username}/{addressId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Address> findAddressByIdForUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long addressId){
+        AddressEntity addressEntity = userService.findAddressById(addressId);
+        if(!authUser.getUsername().equals(addressEntity.getUserEntity().getUsername())){
+            throw new UnauthorizedUserException("User can only view own addresses");
+        }
+        return ok(mapAddress(addressEntity));
     }
 
 
@@ -98,6 +107,12 @@ public class UserController extends ControllerMapper{
     @PutMapping(value = "address/edit/{addressId}",produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
     public ResponseEntity<Address> editAddress(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long addressId, @RequestBody Address address){
         AddressEntity addressEntity = userService.editAddress(authUser.getUsername(), addressId, mapAddress(address));
+        return ok(mapAddress(addressEntity));
+    }
+
+    @DeleteMapping(value = "address/delete/{addressId}",produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Address> deleteAddress(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long addressId){
+        AddressEntity addressEntity = userService.deleteAddress(authUser.getUsername(), addressId);
         return ok(mapAddress(addressEntity));
     }
 
