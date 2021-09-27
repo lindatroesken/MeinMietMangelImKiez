@@ -91,8 +91,8 @@ public class UserService {
                 if (results.size() > 0) {
                     coordinates = results.get(0).center().coordinates();
 
-                    addressEntity.setLatitude(coordinates.get(0));
-                    addressEntity.setLongitude(coordinates.get(1));
+                    addressEntity.setLongitude(coordinates.get(0));
+                    addressEntity.setLatitude(coordinates.get(1));
 
                     addressRepository.save(addressEntity);
                     log.info("mapbox onResponse: coordinates saved to address");
