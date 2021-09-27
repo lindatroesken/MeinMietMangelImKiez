@@ -8,6 +8,8 @@ import AuthProvider from './auth/AuthProvider'
 import Logout from './pages/Logout'
 import Profile from './pages/Profile'
 import MangelMap from './pages/MangelMap'
+import NewAddress from './pages/NewAddress'
+import EditAddress from './pages/EditAddress'
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
           <Route exact path="/" component={Home} />
           <ProtectedRoute path="/profile/:mode" component={Profile} />
           <ProtectedRoute path="/profile/:mode/:id" component={Profile} />
+          <ProtectedRoute path="/address/edit/:id" component={EditAddress} />
+          <ProtectedRoute path="/address/new" component={NewAddress} />
           <Route path="/map/view" component={MangelMap} />
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/mangel/new">
