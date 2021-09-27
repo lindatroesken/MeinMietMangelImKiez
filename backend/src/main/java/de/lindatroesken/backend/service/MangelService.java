@@ -167,4 +167,10 @@ public class MangelService {
     public List<MangelEntity> findAllDueForUser(String username) {
       return findAllForUser(username).stream().filter(mangelEntity -> mangelEntity.isDue()).collect(Collectors.toList());
     }
+
+    public List<MangelEntity> findAllForStatistics() {
+        List<MangelEntity> mangelEntityList = mangelRepository.findAll();
+
+        return mangelEntityList;
+    }
 }

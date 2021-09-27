@@ -1,9 +1,6 @@
 package de.lindatroesken.backend.controller;
 
-import de.lindatroesken.backend.api.Address;
-import de.lindatroesken.backend.api.ContactLogger;
-import de.lindatroesken.backend.api.Mangel;
-import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.api.*;
 import de.lindatroesken.backend.model.*;
 
 import java.time.Instant;
@@ -118,6 +115,23 @@ abstract class ControllerMapper {
                 .build();
     }
 
+    public MangelStatistics mapMangelToStatistics(MangelEntity mangelEntity){
+        return MangelStatistics.builder()
+                .id(mangelEntity.getId())
+                .latitude(mangelEntity.getAddressEntity().getLatitude())
+                .longitude(mangelEntity.getAddressEntity().getLongitude())
+                .category(mangelEntity.getCategory())
+                .status(mangelEntity.getStatus().toString())
+                .build();
+    }
+
+    public List<MangelStatistics> mapMangelToStatisticsList(List<MangelEntity> mangelEntityList){
+        List<MangelStatistics> mangelStatisticsList = new LinkedList<>();
+        for (MangelEntity mangelEntity : mangelEntityList) {
+            mangelStatisticsList.add(mapMangelToStatistics(mangelEntity));
+        }
+        return mangelStatisticsList;
+    }
 
 
     public MangelEntity mapMangel(Mangel mangel){

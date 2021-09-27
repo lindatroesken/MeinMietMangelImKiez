@@ -2,6 +2,7 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.ContactLogger;
 import de.lindatroesken.backend.api.Mangel;
+import de.lindatroesken.backend.api.MangelStatistics;
 import de.lindatroesken.backend.model.ContactLoggerEntity;
 import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
@@ -136,12 +137,12 @@ public class MangelController extends ControllerMapper {
         return ok(mapMangel(deletedMangel));
     }
 
-    @GetMapping(value = "locations", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "statistics/all", produces = APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only delete own mangel")
     })
-    public ResponseEntity<List<Mangel>> getAllLocations(@AuthenticationPrincipal UserEntity authUser){
-        System.out.println("WIP...");
-        return null;
+    public ResponseEntity<List<MangelStatistics>> getAllLocations(@AuthenticationPrincipal UserEntity authUser){
+        List<MangelEntity> mangelEntityList = mangelService.findAllForStatistics();
+        return ok(mapMangelToStatisticsList(mangelEntityList));
     }
 }
