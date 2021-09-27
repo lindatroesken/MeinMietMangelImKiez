@@ -156,7 +156,34 @@ public class UserService {
         if (addressEntity.getCountry() != null && !addressEntity.getCountry().equals(existingAddressEntity.getCountry())){
             existingAddressEntity.setCountry(addressEntity.getCountry());
         }
-        return addressRepository.save(existingAddressEntity);
+        addressRepository.save(existingAddressEntity);
+
+        getGeoLocation(existingAddressEntity);
+
+        return existingAddressEntity;
+
+
     }
+
+    public AddressEntity findAddressById(Long addressId) {
+        return addressRepository.findById(addressId).orElseThrow(() -> new EntityNotFoundException("Address not found"));
+
+    }
+
+    public AddressEntity deleteAddress(String username, Long addressId) {
+        UserEntity userEntity = findByUsername(username);
+        AddressEntity existingAddressEntity = addressRepository.findById(addressId).orElseThrow(() -> new EntityNotFoundException("Address not found"));
+        if (!existingAddressEntity.getUserEntity().equals(userEntity)){
+            throw new IllegalArgumentException("Address and user does not match");
+        }
+        if (existingAddressEntity.getMangelList().size()>0){
+            throw new IllegalArgumentException("Cannot delete address, because address has at least one mangel. Delete or change mangel first.");
+        }
+        userEntity.removeAddress(existingAddressEntity);
+        userRepository.save(userEntity);
+        log.info("Address deleted");
+        return existingAddressEntity;
+    }
+
 }
 
