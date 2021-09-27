@@ -40,6 +40,12 @@ public class AddressEntity {
     @Column(name = "country")
     private String country;
 
+    @Column(name = "longitude")
+    private double longitude;
+
+    @Column(name = "latitude")
+    private double latitude;
+
 
     @Override
     public int hashCode() {
