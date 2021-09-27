@@ -3,15 +3,18 @@ import Page from '../components/Page'
 import Main from '../components/Main'
 import { useEffect, useState } from 'react'
 import ReactMapGL, { Marker, Popup } from 'react-map-gl'
-import { mangelLocations } from '../services/locations-services'
 import styled from 'styled-components/macro'
 import { initialViewport } from '../services/map-service'
+import { getMangelStatisticsAll } from '../services/api-service'
+import { useAuth } from '../auth/AuthProvider'
 
 const apiToken = process.env.REACT_APP_MAPBOX_TOKEN
 
 export default function MangelMap() {
   const [viewport, setViewport] = useState(initialViewport)
   const [selectedMangel, setSelectedMangel] = useState(null)
+  const [mangelLocations, setMangelLocations] = useState()
+  const { token } = useAuth()
 
   useEffect(() => {
     const listener = e => {
@@ -23,6 +26,10 @@ export default function MangelMap() {
     return () => {
       window.removeEventListener('keydown', listener)
     }
+  }, [])
+
+  useEffect(() => {
+    getMangelStatisticsAll(token).then(setMangelLocations).catch(console.log)
   }, [])
 
   const handleSetSelectedMangel = (event, mangel) => {
@@ -40,25 +47,29 @@ export default function MangelMap() {
           onViewportChange={setViewport}
           mapStyle="mapbox://styles/lindat/cktx7t65v0woz17lfqp0esw27"
         >
-          {mangelLocations.map(mangel => (
-            <StyledMarker
-              key={mangel.id}
-              longitude={mangel.longitude}
-              latitude={mangel.latitude}
-            >
-              <MarkerButton
-                onClick={event => handleSetSelectedMangel(event, mangel)}
-              />
-              <div>{mangel.category}</div>
-            </StyledMarker>
-          ))}
+          {mangelLocations &&
+            mangelLocations.map(mangel => (
+              <StyledMarker
+                key={mangel.id}
+                longitude={mangel.longitude}
+                latitude={mangel.latitude}
+              >
+                <MarkerButton
+                  onClick={event => handleSetSelectedMangel(event, mangel)}
+                />
+                <div>{mangel.category}</div>
+              </StyledMarker>
+            ))}
           {selectedMangel && (
             <StyledPopup
               longitude={selectedMangel.longitude}
               latitude={selectedMangel.latitude}
               onClose={() => setSelectedMangel(null)}
             >
-              <div>Mangel mit id {selectedMangel.id}</div>
+              <div>
+                Mangel mit id {selectedMangel.id} und Status{' '}
+                {selectedMangel.status}{' '}
+              </div>
             </StyledPopup>
           )}
         </ReactMapGL>
