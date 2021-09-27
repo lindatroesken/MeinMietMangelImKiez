@@ -1,16 +1,27 @@
-import AddressForm from './AddressForm'
 import Button from './Button'
+import TextField from './TextField'
+import styled from 'styled-components/macro'
 
 export default function Addresses({
   user,
-  mode,
   addressList,
   id,
   handleEditAddress,
   handleNewAddress,
 }) {
+  const addressToString = address => {
+    return (
+      address.street +
+      ' ' +
+      address.number +
+      ', ' +
+      address.zip +
+      ' ' +
+      address.city
+    )
+  }
   return (
-    <div>
+    <Wrapper>
       <h3>Meine Adressen</h3>
       {user && (
         <div>
@@ -20,14 +31,33 @@ export default function Addresses({
       {user &&
         addressList.length > 0 &&
         addressList.map(address => (
-          <AddressForm
-            selectedId={id}
-            readOnly={true}
-            mode={mode}
-            address={address}
-            handleEditAddress={handleEditAddress}
-          />
+          <AddressListItem>
+            <TextField
+              disabled={true}
+              key={address.id}
+              name={`address${id}`}
+              value={addressToString(address)}
+            />
+            <Button type="button" onClick={() => handleEditAddress(address.id)}>
+              🔧
+            </Button>
+          </AddressListItem>
         ))}
-    </div>
+    </Wrapper>
   )
 }
+const Wrapper = styled.div`
+  width: 100%;
+`
+
+const AddressListItem = styled.div`
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  align-self: center;
+  justify-self: center;
+  input {
+    margin: 0;
+    width: 100%;
+  }
+`
