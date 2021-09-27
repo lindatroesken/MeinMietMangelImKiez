@@ -1,5 +1,8 @@
 package de.lindatroesken.backend.service;
 
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import de.lindatroesken.backend.controller.UnauthorizedUserException;
 import de.lindatroesken.backend.model.AddressEntity;
 import de.lindatroesken.backend.model.UserEntity;
@@ -7,15 +10,19 @@ import de.lindatroesken.backend.repo.AddressRepository;
 import de.lindatroesken.backend.repo.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
-
+@Slf4j
 @Getter
 @Setter
 @Service
@@ -47,9 +54,56 @@ public class UserService {
         }
         AddressEntity createdAddress = userEntity.addAddress(addressEntity);
         userRepository.save(userEntity);
+        getGeoLocation(addressEntity);
 
         return createdAddress;
 
+    }
+
+    public void getGeoLocation(AddressEntity addressEntity){
+        String addressString = new StringBuilder()
+                .append(addressEntity.getStreet())
+                .append(" ")
+                .append(addressEntity.getNumber())
+                .append(", ")
+                .append(addressEntity.getZip())
+                .append(" ")
+                .append(addressEntity.getCity())
+                .append(", ")
+                .append(addressEntity.getCountry()).toString();
+
+        MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
+                .accessToken("tbd")
+                .query(addressString)
+                .build();
+
+        mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                List<CarmenFeature> results = response.body().features();
+                double relevance = 0;
+                List<Double> coordinates;
+                if (results.size() > 0) {
+                    System.out.println(results.get(0).center().coordinates());
+                    coordinates = results.get(0).center().coordinates();
+
+                    addressEntity.setLatitude(coordinates.get(0));
+                    addressEntity.setLongitude(coordinates.get(1));
+
+                    addressRepository.save(addressEntity);
+                    log.info("mapbox onResponse: coordinates saved to address");
+
+                } else {
+                    log.info("mapbox onResponse: No result found for this address");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
+                log.info("mapbox onFailure: some problem....");
+                throwable.printStackTrace();
+            }
+        });
     }
 
     public boolean addressExists(Set<AddressEntity> existingAddressList, AddressEntity addressToCheck){
