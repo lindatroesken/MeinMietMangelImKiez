@@ -12,7 +12,7 @@ import {
   deleteContactLog,
   deleteMangel,
   getMangelById,
-  getUserAddress,
+  getUserAddressList,
   postContactLog,
   postMangel,
   putContactLog,
@@ -54,7 +54,7 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const initializeMangel = () => {
-    getUserAddress(token, user.username)
+    getUserAddressList(token, user.username)
       .then(fetchedProfile => {
         setAddresses([...fetchedProfile])
         setMangel({
@@ -68,13 +68,12 @@ export default function MaengelForm({ initialMode, title }) {
       .catch(setError)
       .finally(() => {
         setLoading(false)
-        resetContactLogger()
       })
   }
 
   const getProfile = () => {
     setLoading(true)
-    return getUserAddress(token, user.username)
+    return getUserAddressList(token, user.username)
       .then(fetchedProfile => {
         setAddresses([...fetchedProfile])
       })
@@ -102,7 +101,7 @@ export default function MaengelForm({ initialMode, title }) {
       getProfile().finally(() => setLoading(false))
       setReadOnly(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [mode, token, id])
 
   const handleMangelChange = event => {
