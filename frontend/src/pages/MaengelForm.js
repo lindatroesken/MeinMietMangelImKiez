@@ -64,6 +64,7 @@ export default function MaengelForm({ initialMode, title }) {
           address: fetchedProfile[1],
         })
       })
+      .then(resetContactLogger)
       .catch(setError)
       .finally(() => setLoading(false))
   }
@@ -83,7 +84,6 @@ export default function MaengelForm({ initialMode, title }) {
     if (mode === 'new') {
       setReadOnly(false)
       initializeMangel()
-      resetContactLogger()
     } else if (mode === 'view') {
       setReadOnly(true)
       getProfile().then()
