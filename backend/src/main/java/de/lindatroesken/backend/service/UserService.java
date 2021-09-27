@@ -115,9 +115,10 @@ public class UserService {
             if (address.getStreet().equals(addressToCheck.getStreet())
                     && address.getNumber().equals(addressToCheck.getNumber())
                     && address.getZip().equals(addressToCheck.getZip())
-                    && address.getCity().equals(addressToCheck.getCity())
-                    && address.getCountry().equals(addressToCheck.getCountry())
-            ) {return true;}
+                    && address.getCity().equals(addressToCheck.getCity()))
+            {
+                return true;
+            }
         }
         return false;
     }
