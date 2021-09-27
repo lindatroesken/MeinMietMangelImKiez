@@ -133,6 +133,10 @@ public class UserService {
             throw new IllegalArgumentException("Request body and ID doe not match");
         }
         UserEntity userEntity = findByUsername(username);
+        Set<AddressEntity> existingUserAddresses = userEntity.getAddressList();
+        if(addressExists(existingUserAddresses, addressEntity)){
+            throw new EntityExistsException("Address already exists");
+        }
         AddressEntity existingAddressEntity = addressRepository.findById(addressId).orElseThrow(() -> new EntityNotFoundException("Address not found"));
         if (!existingAddressEntity.getUserEntity().equals(userEntity)){
             throw new UnauthorizedUserException("User can only edit own address");
