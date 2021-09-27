@@ -5,16 +5,12 @@ import { useEffect, useState } from 'react'
 import ReactMapGL, { Marker, Popup } from 'react-map-gl'
 import { mangelLocations } from '../services/locations-services'
 import styled from 'styled-components/macro'
+import { initialViewport } from '../services/map-service'
+
+const apiToken = process.env.REACT_APP_MAPBOX_TOKEN
 
 export default function MangelMap() {
-  const [viewport, setViewport] = useState({
-    latitude: 52.497678727124054,
-    longitude: 13.41515292321081,
-    zoom: 14,
-    width: '100%',
-    height: '100%',
-  })
-
+  const [viewport, setViewport] = useState(initialViewport)
   const [selectedMangel, setSelectedMangel] = useState(null)
 
   useEffect(() => {
@@ -29,16 +25,19 @@ export default function MangelMap() {
     }
   }, [])
 
+  const handleSetSelectedMangel = (event, mangel) => {
+    event.preventDefault()
+    setSelectedMangel(mangel)
+  }
+
   return (
     <Page>
       <Header title="Kiezübersicht" />
       <Main>
         <ReactMapGL
           {...viewport}
-          mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-          onViewportChange={viewport => {
-            setViewport(viewport)
-          }}
+          mapboxApiAccessToken={apiToken}
+          onViewportChange={setViewport}
           mapStyle="mapbox://styles/lindat/cktx7t65v0woz17lfqp0esw27"
         >
           {mangelLocations.map(mangel => (
@@ -48,10 +47,7 @@ export default function MangelMap() {
               latitude={mangel.latitude}
             >
               <MarkerButton
-                onClick={e => {
-                  e.preventDefault()
-                  setSelectedMangel(mangel)
-                }}
+                onClick={event => handleSetSelectedMangel(event, mangel)}
               />
               <div>{mangel.category}</div>
             </StyledMarker>
@@ -62,7 +58,7 @@ export default function MangelMap() {
               latitude={selectedMangel.latitude}
               onClose={() => setSelectedMangel(null)}
             >
-              <div>Mangel....</div>
+              <div>Mangel mit id {selectedMangel.id}</div>
             </StyledPopup>
           )}
         </ReactMapGL>
