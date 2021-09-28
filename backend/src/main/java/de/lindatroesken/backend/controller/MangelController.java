@@ -135,4 +135,13 @@ public class MangelController extends ControllerMapper {
         MangelEntity deletedMangel = mangelService.deleteMangel(authUser.getUsername(), mangelId);
         return ok(mapMangel(deletedMangel));
     }
+
+    @GetMapping(value = "locations", produces = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only delete own mangel")
+    })
+    public ResponseEntity<List<Mangel>> getAllLocations(@AuthenticationPrincipal UserEntity authUser){
+        System.out.println("WIP...");
+        return null;
+    }
 }

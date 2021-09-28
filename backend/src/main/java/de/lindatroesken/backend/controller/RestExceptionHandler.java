@@ -3,6 +3,7 @@ package de.lindatroesken.backend.controller;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
+@Slf4j
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -56,6 +58,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        log.info("Handled Exception: " + restException.message);
 
         return new ResponseEntity<>(restException, httpHeaders, httpStatus);
     }
