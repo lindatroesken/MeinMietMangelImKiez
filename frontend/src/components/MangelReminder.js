@@ -4,9 +4,9 @@ export default function MangelReminder({ mangelList }) {
   return (
     <div>
       {listSize === 1
-        ? `⚠️ ${mangelList.length} fälliger Mangel ⚠️`
+        ? `🔔️ ${mangelList.length} fälliger Mangel 🔔️`
         : listSize > 1
-        ? `⚠️ ${mangelList.length} fällige Mängel ⚠️`
+        ? `🔔️ ${mangelList.length} fällige Mängel 🔔️`
         : 'alles gut 👍'}
     </div>
   )

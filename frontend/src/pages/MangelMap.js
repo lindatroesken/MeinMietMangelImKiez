@@ -7,6 +7,7 @@ import styled from 'styled-components/macro'
 import { initialViewport, mangelCategoryColors } from '../services/map-service'
 import { getMangelStatisticsAll } from '../services/api-service'
 import { useAuth } from '../auth/AuthProvider'
+import Navbar from '../components/Navbar'
 
 const apiToken = process.env.REACT_APP_MAPBOX_TOKEN
 
@@ -14,7 +15,7 @@ export default function MangelMap() {
   const [viewport, setViewport] = useState(initialViewport)
   const [selectedMangel, setSelectedMangel] = useState(null)
   const [mangelLocations, setMangelLocations] = useState()
-  const { token } = useAuth()
+  const { token, user } = useAuth()
 
   useEffect(() => {
     const listener = e => {
@@ -104,6 +105,7 @@ export default function MangelMap() {
           </MapFooter>
         </Wrapper>
       </Main>
+      <Navbar user={user} />
     </Page>
   )
 }

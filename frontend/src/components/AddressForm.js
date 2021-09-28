@@ -97,7 +97,7 @@ const Address = styled.form`
   border-style: solid;
   padding: var(--size-m);
   margin-bottom: var(--size-m);
-  max-width: 500px;
+  max-width: var(--max-content-width);
 `
 
 const StreetNumber = styled.div`
