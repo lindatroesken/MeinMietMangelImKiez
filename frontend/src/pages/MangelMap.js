@@ -4,7 +4,7 @@ import Main from '../components/Main'
 import { useEffect, useState } from 'react'
 import ReactMapGL, { Marker, Popup } from 'react-map-gl'
 import styled from 'styled-components/macro'
-import { initialViewport } from '../services/map-service'
+import { initialViewport, mangelCategoryColors } from '../services/map-service'
 import { getMangelStatisticsAll } from '../services/api-service'
 import { useAuth } from '../auth/AuthProvider'
 
@@ -28,9 +28,21 @@ export default function MangelMap() {
     }
   }, [])
 
+  const mangelWithColor = mangelLocations =>
+    mangelLocations.map(mangelLocation => {
+      return {
+        ...mangelLocation,
+        color: mangelCategoryColors[mangelLocation.category],
+      }
+    })
+
   useEffect(() => {
-    getMangelStatisticsAll(token).then(setMangelLocations).catch(console.log)
-  }, [])
+    getMangelStatisticsAll(token)
+      .then(mangelLocations => {
+        setMangelLocations(mangelWithColor(mangelLocations))
+      })
+      .catch(console.log)
+  }, [token])
 
   const handleSetSelectedMangel = (event, mangel) => {
     event.preventDefault()
@@ -41,42 +53,70 @@ export default function MangelMap() {
     <Page>
       <Header title="Kiezübersicht" />
       <Main>
-        <ReactMapGL
-          {...viewport}
-          mapboxApiAccessToken={apiToken}
-          onViewportChange={setViewport}
-          mapStyle="mapbox://styles/lindat/cktx7t65v0woz17lfqp0esw27"
-        >
-          {mangelLocations &&
-            mangelLocations.map(mangel => (
-              <StyledMarker
-                key={mangel.id}
-                longitude={mangel.longitude}
-                latitude={mangel.latitude}
+        <Wrapper>
+          <MapHeader>Darstellung auswählen</MapHeader>
+          <ReactMapGL
+            {...viewport}
+            mapboxApiAccessToken={apiToken}
+            onViewportChange={setViewport}
+            mapStyle="mapbox://styles/lindat/cktx7t65v0woz17lfqp0esw27"
+          >
+            {mangelLocations &&
+              mangelLocations.map(mangel => (
+                <StyledMarker
+                  key={mangel.id}
+                  longitude={mangel.longitude}
+                  latitude={mangel.latitude}
+                >
+                  <MarkerButton
+                    inputColor={mangel.color}
+                    onClick={event => handleSetSelectedMangel(event, mangel)}
+                  />
+                </StyledMarker>
+              ))}
+            {selectedMangel && (
+              <StyledPopup
+                longitude={selectedMangel.longitude}
+                latitude={selectedMangel.latitude}
+                onClose={() => setSelectedMangel(null)}
               >
-                <MarkerButton
-                  onClick={event => handleSetSelectedMangel(event, mangel)}
-                />
-                <div>{mangel.category}</div>
-              </StyledMarker>
-            ))}
-          {selectedMangel && (
-            <StyledPopup
-              longitude={selectedMangel.longitude}
-              latitude={selectedMangel.latitude}
-              onClose={() => setSelectedMangel(null)}
-            >
-              <div>
-                Mangel mit id {selectedMangel.id} und Status{' '}
-                {selectedMangel.status}{' '}
-              </div>
-            </StyledPopup>
-          )}
-        </ReactMapGL>
+                <div>
+                  {selectedMangel.category} und Status {selectedMangel.status}{' '}
+                </div>
+              </StyledPopup>
+            )}
+          </ReactMapGL>
+          <MapFooter>
+            {mangelCategoryColors &&
+              Object.entries(mangelCategoryColors).map(
+                ([key, value]) =>
+                  key !== 'null' && (
+                    <LegendEntry key={key}>
+                      <MarkerButton inputColor={value} disabled={true} />
+                      <div>{key}</div>
+                    </LegendEntry>
+                  )
+              )}
+            <LegendEntry key="unknown">
+              <MarkerButton inputColor={'grey'} />
+              <div>unbekannt</div>
+            </LegendEntry>
+          </MapFooter>
+        </Wrapper>
       </Main>
     </Page>
   )
 }
+
+const Wrapper = styled.div`
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-rows: 50px 1fr min-content;
+  grid-template-columns: 1fr;
+`
+
+const MapHeader = styled.div``
 
 const StyledMarker = styled(Marker)`
   color: black;
@@ -90,7 +130,21 @@ const MarkerButton = styled.button`
   width: 10px;
   height: 10px;
   border-radius: 5px;
-  background-color: var(--accent);
+  background-color: ${props => props.inputColor || 'grey'};
   cursor: pointer;
   border: none;
+`
+const MapFooter = styled.div`
+  margin: var(--size-m) 0 var(--size-m) 0;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+`
+const LegendEntry = styled.legend`
+  display: grid;
+  grid-gap: var(--size-xs);
+  grid-template-columns: min-content 1fr;
+  font-size: var(--size-m);
+  margin: var(--size-xs) 0 var(--size-xs) 0;
 `
