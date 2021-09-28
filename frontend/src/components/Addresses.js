@@ -48,6 +48,7 @@ export default function Addresses({
 }
 const Wrapper = styled.div`
   width: 100%;
+  max-width: var(--max-content-width);
 `
 
 const AddressListItem = styled.div`

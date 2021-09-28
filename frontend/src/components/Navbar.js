@@ -5,15 +5,15 @@ export default function Navbar({ user, ...props }) {
   return (
     <Wrapper {...props}>
       <NavLink exact to="/">
-        {' '}
-        Home{' '}
+        Übersicht
       </NavLink>
-      {!user && <NavLink to="/login"> Login </NavLink>}
-      {user && <NavLink to="/logout"> Logout </NavLink>}
-      {user && <NavLink to="/map/view"> Karte </NavLink>}
-      {user && <NavLink to="/profile/view"> Profil </NavLink>}
-      {user && <NavLink to="/mangel/new"> Neu </NavLink>}
-      {user && <NavLink to="/mangel/list"> Liste </NavLink>}
+      {user && (
+        <>
+          <NavLink to="/map/view"> Karte </NavLink>
+          <NavLink to="/mangel/new"> Neu </NavLink>
+          <NavLink to="/mangel/list"> Liste </NavLink>
+        </>
+      )}
     </Wrapper>
   )
 }

@@ -10,6 +10,7 @@ import MangelTable from '../components/MangelTable'
 import { useHistory } from 'react-router-dom'
 import { initialMangelStates } from '../services/mangel-service'
 import Navbar from '../components/Navbar'
+import styled from 'styled-components/macro'
 
 export default function PersonalMaengelList() {
   const { user, token } = useAuth()
@@ -38,13 +39,15 @@ export default function PersonalMaengelList() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          {mangelList.length > 0 && (
-            <MangelTable
-              data={mangelList}
-              handleGoToDetails={handleGoToDetails}
-              title="Meine Mängel"
-            />
-          )}
+          <Wrapper>
+            {mangelList.length > 0 && (
+              <MangelTable
+                data={mangelList}
+                handleGoToDetails={handleGoToDetails}
+                title="Meine Mängel"
+              />
+            )}
+          </Wrapper>
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
@@ -52,3 +55,9 @@ export default function PersonalMaengelList() {
     </Page>
   )
 }
+
+const Wrapper = styled.div`
+  max-width: var(--max-content-width);
+  display: grid;
+  align-items: flex-start;
+`

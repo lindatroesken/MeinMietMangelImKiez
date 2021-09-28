@@ -26,6 +26,8 @@ export default createGlobalStyle`
     --size-l: 16px;
     --size-xl: 24px;
     --size-xxl: 32px;
+    
+    --max-content-width: 500px;
 
   }
 `

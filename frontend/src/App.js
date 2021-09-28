@@ -13,8 +13,8 @@ import EditAddress from './pages/EditAddress'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Switch>
           <Route path="/login" component={Login} />
           <Route exact path="/" component={Home} />
@@ -40,7 +40,7 @@ export default function App() {
           </ProtectedRoute>
           <ProtectedRoute path="/mangel/list" component={PersonalMaengelList} />
         </Switch>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   )
 }

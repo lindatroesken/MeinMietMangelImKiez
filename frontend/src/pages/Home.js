@@ -12,6 +12,7 @@ import Error from '../components/Error'
 import { initialMangelStates } from '../services/mangel-service'
 import MangelReminder from '../components/MangelReminder'
 import Navbar from '../components/Navbar'
+import styled from 'styled-components/macro'
 
 export default function Home() {
   const { user, token } = useAuth()
@@ -43,27 +44,28 @@ export default function Home() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          <h1>Willkommen {user ? user.username : ''}</h1>
-          {user && <MangelReminder mangelList={mangelList} />}
-          {mangelList.length > 0 && (
-            <MangelTable
-              data={mangelList}
-              handleGoToDetails={handleGoToDetails}
-              title="Meine fälligen Mängel"
-            />
-          )}
-          {user && (
-            <Button>
-              <NavLink to="/mangel/new">
-                Neuer Mangel für {user.username}
-              </NavLink>
-            </Button>
-          )}
-          {!user && (
-            <Button>
-              <NavLink to="/login">Login</NavLink>
-            </Button>
-          )}
+          <Wrapper>
+            {user && <MangelReminder mangelList={mangelList} />}
+            {mangelList.length > 0 && (
+              <MangelTable
+                data={mangelList}
+                handleGoToDetails={handleGoToDetails}
+                title="Meine fälligen Mängel"
+              />
+            )}
+            {user && (
+              <Button>
+                <NavLink to="/mangel/new">
+                  Neuer Mangel für {user.username}
+                </NavLink>
+              </Button>
+            )}
+            {!user && (
+              <Button>
+                <NavLink to="/login">Login</NavLink>
+              </Button>
+            )}
+          </Wrapper>
         </Main>
       )}
       {error && <Error>{error.message}</Error>}
@@ -71,3 +73,7 @@ export default function Home() {
     </Page>
   )
 }
+
+const Wrapper = styled.div`
+  max-width: var(--maxcontent-width);
+`
