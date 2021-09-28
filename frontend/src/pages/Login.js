@@ -8,6 +8,7 @@ import Error from '../components/Error'
 import { Redirect } from 'react-router-dom'
 import Header from '../components/Header'
 import { useAuth } from '../auth/AuthProvider'
+import Navbar from '../components/Navbar'
 
 const initialState = {
   username: '',
@@ -65,6 +66,7 @@ export default function Login() {
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
+      <Navbar user={user} />
     </Page>
   )
 }

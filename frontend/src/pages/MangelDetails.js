@@ -8,6 +8,7 @@ import { getMangelById } from '../services/api-service'
 import { initialMangelStates } from '../services/mangel-service'
 import Error from '../components/Error'
 import Loading from '../components/Loading'
+import Navbar from '../components/Navbar'
 
 export default function MangelDetails() {
   const { user, token } = useAuth()
@@ -39,6 +40,7 @@ export default function MangelDetails() {
         </Main>
       )}
       {error && <Error>{error.message}</Error>}
+      <Navbar user={user} />
     </Page>
   )
 }

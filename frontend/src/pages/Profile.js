@@ -10,6 +10,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import Button from '../components/Button'
 import Addresses from '../components/Addresses'
 import TextField from '../components/TextField'
+import Navbar from '../components/Navbar'
 
 export default function Profile() {
   const { mode, id } = useParams()
@@ -78,6 +79,7 @@ export default function Profile() {
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
+      <Navbar user={user} />
     </Page>
   )
 }

@@ -12,6 +12,7 @@ import {
   getUserAddressById,
   updateUserAddress,
 } from '../services/api-service'
+import Navbar from '../components/Navbar'
 
 export default function EditAddress() {
   const [loading, setLoading] = useState(false)
@@ -89,6 +90,7 @@ export default function EditAddress() {
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
+      <Navbar user={user} />
     </Page>
   )
 }

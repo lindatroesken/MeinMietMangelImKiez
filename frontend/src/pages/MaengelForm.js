@@ -31,6 +31,7 @@ import {
 import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
 import SelectAddress from '../components/SelectAddress'
+import Navbar from '../components/Navbar'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -364,6 +365,7 @@ export default function MaengelForm({ initialMode, title }) {
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
+      <Navbar user={user} />
     </Page>
   )
 }

@@ -9,6 +9,7 @@ import { useAuth } from '../auth/AuthProvider'
 import MangelTable from '../components/MangelTable'
 import { useHistory } from 'react-router-dom'
 import { initialMangelStates } from '../services/mangel-service'
+import Navbar from '../components/Navbar'
 
 export default function PersonalMaengelList() {
   const { user, token } = useAuth()
@@ -47,6 +48,7 @@ export default function PersonalMaengelList() {
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
+      <Navbar user={user} />
     </Page>
   )
 }

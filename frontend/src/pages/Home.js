@@ -11,6 +11,7 @@ import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { initialMangelStates } from '../services/mangel-service'
 import MangelReminder from '../components/MangelReminder'
+import Navbar from '../components/Navbar'
 
 export default function Home() {
   const { user, token } = useAuth()
@@ -66,6 +67,7 @@ export default function Home() {
         </Main>
       )}
       {error && <Error>{error.message}</Error>}
+      <Navbar user={user} />
     </Page>
   )
 }
