@@ -84,3 +84,8 @@ export const deleteUserAddress = (token, addressId) =>
   axios
     .delete(`/api/user/address/delete/${addressId}`, headers(token))
     .then(response => response.data)
+
+export const getMangelStatisticsAll = token =>
+  axios
+    .get(`/api/mangel/statistics/all`, headers(token))
+    .then(response => response.data)
