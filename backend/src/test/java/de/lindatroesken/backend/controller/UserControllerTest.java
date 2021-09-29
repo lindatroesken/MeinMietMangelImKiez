@@ -146,33 +146,6 @@ public class UserControllerTest {
 
     }
 
-    @Test
-    @DisplayName("POST for authorized user should return address")
-    public void testPostAddressforAuthorizedUserShouldReturnAddress(){
-        //GIVEN
-        String username = "testuser";
-        String authName = "testuser";
-        String authRole = "user";
-        String url = getUrl() + "/address/new/" + username;
-        Address address = Address.builder()
-                .number("1")
-                .zip("10000")
-                .street("Strasse")
-                .country("Deutschland")
-                .city("Berlin")
-                .build();
-        HttpEntity<Address> httpEntity = new HttpEntity<>(address, authorizedHeader(authName, authRole));
-
-        //WHEN
-        ResponseEntity<Address> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Address.class);
-
-        //THEN
-        assertThat(response.getStatusCode(), is(HttpStatus.OK));
-        assertThat(response.getBody(), is(notNullValue()));
-        assertThat(response.getBody().getCity(), is("Berlin"));
-//        assertThat(response.getBody().getId(), is(notNullValue()));
-    }
-
 
     private HttpHeaders authorizedHeader(String username, String role){
         Map<String,Object> claims = new HashMap<>();
