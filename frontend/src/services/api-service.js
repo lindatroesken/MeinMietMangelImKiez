@@ -60,6 +60,14 @@ export const deleteMangel = (token, mangelId) =>
     .delete(`/api/mangel/delete/${mangelId}`, headers(token))
     .then(response => response.data)
 
+export const exportMangelAsCSV = token =>
+  axios.get(`/api/mangel/export/csv/all`, {
+    responseType: 'blob',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
 export const addNewAddress = (token, username, address) =>
   axios
     .post(`/api/user/address/new/${username}`, address, headers(token))

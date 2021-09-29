@@ -15,11 +15,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 
 @Slf4j
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-
 
 
     @ExceptionHandler({
@@ -51,6 +51,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<RestException> handle409(Throwable e) {
         return createRestException(e, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({
+            CSVException.class
+    })
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<RestException> handle500CSV(Throwable e) {
+        return createRestException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<RestException> createRestException(Throwable e, HttpStatus httpStatus){

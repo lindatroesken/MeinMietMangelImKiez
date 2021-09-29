@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "contact_logger")
@@ -46,4 +47,13 @@ public class ContactLoggerEntity {
         ContactLoggerEntity that = (ContactLoggerEntity) o;
         return id.equals(that.id);
     }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm");
+        return  dateContacted.format(formatter) +
+                ", " + contactType +
+                ", " + contactNote;
+    }
+
 }
