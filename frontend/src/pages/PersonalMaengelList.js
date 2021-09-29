@@ -2,7 +2,7 @@ import Page from '../components/Page'
 import Header from '../components/Header'
 import Main from '../components/Main'
 import { useEffect, useState } from 'react'
-import { getMangelList } from '../services/api-service'
+import { exportMangelAsCSV, getMangelList } from '../services/api-service'
 import Loading from '../components/Loading'
 import Error from '../components/Error'
 import { useAuth } from '../auth/AuthProvider'
@@ -11,6 +11,7 @@ import { useHistory } from 'react-router-dom'
 import { initialMangelStates } from '../services/mangel-service'
 import Navbar from '../components/Navbar'
 import styled from 'styled-components/macro'
+import Button from '../components/Button'
 
 export default function PersonalMaengelList() {
   const { user, token } = useAuth()
@@ -33,21 +34,43 @@ export default function PersonalMaengelList() {
     history.push(path)
   }
 
+  const handleExportCSV = () => {
+    setLoading(true)
+    setError()
+    exportMangelAsCSV(token)
+      .then(response => {
+        const fileName =
+          response.headers['content-disposition'].split('filename=')[1]
+        console.log(fileName)
+        const blob = new Blob([response.data])
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = fileName
+        link.click()
+        link.remove()
+      })
+      .catch(setError)
+      .finally(() => setLoading(false))
+  }
+
   return (
     <Page>
       <Header title="Meine Mängelübersicht" />
       {loading && <Loading />}
       {!loading && (
         <Main>
-          <Wrapper>
-            {mangelList.length > 0 && (
+          {mangelList.length > 0 && (
+            <Wrapper>
+              <Button type="button" onClick={handleExportCSV}>
+                export to CSV
+              </Button>
               <MangelTable
                 data={mangelList}
                 handleGoToDetails={handleGoToDetails}
                 title="Meine Mängel"
               />
-            )}
-          </Wrapper>
+            </Wrapper>
+          )}
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
@@ -59,5 +82,7 @@ export default function PersonalMaengelList() {
 const Wrapper = styled.div`
   max-width: var(--max-content-width);
   display: grid;
-  align-items: flex-start;
+  button {
+    width: 100px;
+  }
 `
