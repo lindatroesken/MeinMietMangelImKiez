@@ -33,6 +33,7 @@ import AddContact from '../components/AddContact'
 import SelectAddress from '../components/SelectAddress'
 import Navbar from '../components/Navbar'
 import styled from 'styled-components/macro'
+import Message from '../components/Message'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -47,6 +48,7 @@ export default function MaengelForm({ initialMode, title }) {
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
   const [addresses, setAddresses] = useState([])
+  const [message, setMessage] = useState()
 
   const resetContactLogger = () => {
     setContactLogger({
@@ -108,6 +110,15 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
+    setMessage()
+  }
+
+  const handleStatusChange = event => {
+    handleMangelChange(event)
+    if (event.target.value === 'DONE') {
+    } else {
+      setMangel({ ...mangel, dateFixed: null })
+    }
   }
 
   const handleAddressChange = event => {
@@ -117,8 +128,8 @@ export default function MaengelForm({ initialMode, title }) {
     setMangel({ ...mangel, address: selectedAddress })
   }
 
-  const handleMangelDateChange = value => {
-    setMangel({ ...mangel, dateNoticed: value.getTime() })
+  const handleMangelDateChange = (date, name) => {
+    setMangel({ ...mangel, [name]: date.getTime() })
   }
 
   const handleContactChange = event => {
@@ -128,10 +139,10 @@ export default function MaengelForm({ initialMode, title }) {
     })
   }
 
-  const handleContactDateChange = value => {
+  const handleContactDateChange = (date, name) => {
     setContactLogger({
       ...contactLogger,
-      dateContacted: value.getTime(),
+      [name]: date.getTime(),
     })
   }
 
@@ -197,14 +208,16 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleSubmitNew = event => {
     event.preventDefault()
-    setLoading(true)
-    setError()
-    postMangel(token, user.username, mangel)
-      .catch(setError)
-      .finally(() => {
-        setLoading(false)
-        history.push('/mangel/list')
-      })
+    if (isValidInputFields()) {
+      setLoading(true)
+      setError()
+      postMangel(token, user.username, mangel)
+        .catch(setError)
+        .finally(() => {
+          setLoading(false)
+          history.push('/mangel/list')
+        })
+    }
   }
 
   const handleSwitchToEdit = () => {
@@ -214,16 +227,31 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleSubmitChanges = event => {
     event.preventDefault()
-    console.log('save clicked')
-    setLoading(true)
-    setError()
-    putMangel(token, id, mangel)
-      .then(setMangelSaved)
-      .catch(setError)
-      .finally(() => {
-        setLoading(false)
-        setMode('view')
-      })
+    if (isValidInputFields()) {
+      console.log('save clicked')
+      setLoading(true)
+      setError()
+      putMangel(token, id, mangel)
+        .then(setMangelSaved)
+        .catch(setError)
+        .finally(() => {
+          setLoading(false)
+          setMode('view')
+        })
+    }
+  }
+
+  const isValidInputFields = () => {
+    console.log(mangel)
+    if (mangel.status === 'DONE' && mangel.dateFixed === null) {
+      setMessage('Es muss ein Datum gewählt werden ')
+      return false
+    }
+    if (mangel.category === '') {
+      setMessage('Es muss eine Kategorie gewählt werden')
+      return false
+    }
+    return true
   }
 
   const handleDeleteMangel = () => {
@@ -270,14 +298,6 @@ export default function MaengelForm({ initialMode, title }) {
               />
             )}
             <Select
-              name="status"
-              value={mangel.status}
-              values={mangelStatusOptions}
-              onChange={handleMangelChange}
-              title="Status"
-              readOnly={readOnly}
-            />
-            <Select
               name="category"
               value={mangel.category}
               values={mangelCategoryOptions}
@@ -318,6 +338,24 @@ export default function MaengelForm({ initialMode, title }) {
               title="Details"
               readOnly={readOnly}
             />
+            <Select
+              name="status"
+              value={mangel.status}
+              values={mangelStatusOptions}
+              onChange={handleStatusChange}
+              title="Status"
+              readOnly={readOnly}
+            />
+            {mangel.status === 'DONE' && (
+              <DateField
+                type="date"
+                name="dateFixed"
+                value={mangel.dateFixed}
+                onChange={handleMangelDateChange}
+                title="Fertig am"
+                readOnly={readOnly}
+              />
+            )}
             {mangel.contactLoggerList.length > 0 && (
               <ContactTable
                 data={mangel.contactLoggerList}
@@ -340,6 +378,8 @@ export default function MaengelForm({ initialMode, title }) {
                 handleEditContact={handleEditContact}
               />
             )}
+
+            {message && <Message>{message}</Message>}
 
             {mode === 'new' && (
               <Button type="button" onClick={handleSubmitNew}>
@@ -374,5 +414,8 @@ export default function MaengelForm({ initialMode, title }) {
 }
 
 const Wrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
   max-width: var(--max-content-width);
 `
