@@ -55,7 +55,7 @@ export default function MangelMap() {
       <Header title="Kiezübersicht" />
       <Main>
         <Wrapper>
-          <MapHeader>Darstellung auswählen</MapHeader>
+          <MapHeader>Alle offenen Mängel</MapHeader>
           <ReactMapGL
             {...viewport}
             mapboxApiAccessToken={apiToken}

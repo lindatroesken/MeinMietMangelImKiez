@@ -92,9 +92,9 @@ export default function AddressForm({
 }
 
 const Address = styled.form`
-  border-color: var(--background-dark);
+  border-color: var(--dark-shades);
   border-radius: var(--size-s);
-  border-style: solid;
+  border: solid 0.5px;
   padding: var(--size-m);
   margin-bottom: var(--size-m);
   max-width: var(--max-content-width);

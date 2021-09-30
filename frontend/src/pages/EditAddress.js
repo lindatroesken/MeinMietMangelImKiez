@@ -76,6 +76,7 @@ export default function EditAddress() {
       {loading && <Loading />}
       {!loading && (
         <Main>
+          {error && <Error>{error.response.data.message}</Error>}
           {user && address && (
             <AddressForm
               address={address}
@@ -89,7 +90,7 @@ export default function EditAddress() {
           )}
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )

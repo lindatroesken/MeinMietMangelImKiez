@@ -53,12 +53,20 @@ export default function PersonalMaengelList() {
       .finally(() => setLoading(false))
   }
 
+  const handleNewMangel = () => {
+    history.push('/mangel/new')
+  }
+
   return (
     <Page>
       <Header title="Meine Mängelübersicht" />
       {loading && <Loading />}
       {!loading && (
         <Main>
+          {mangelList.length === 0 && <div>noch keine Mängel</div>}
+          <Button type="button" onClick={handleNewMangel}>
+            Neuen Mangel anlegn
+          </Button>
           {mangelList.length > 0 && (
             <Wrapper>
               <Button type="button" onClick={handleExportCSV}>
@@ -82,6 +90,7 @@ export default function PersonalMaengelList() {
 const Wrapper = styled.div`
   max-width: var(--max-content-width);
   display: grid;
+  justify-content: center;
   button {
     width: 100px;
   }

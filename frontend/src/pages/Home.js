@@ -76,4 +76,9 @@ export default function Home() {
 
 const Wrapper = styled.div`
   max-width: var(--maxcontent-width);
+  display: grid;
+  justify-content: center;
+  grid-gap: var(--size-s);
+  button {
+  }
 `
