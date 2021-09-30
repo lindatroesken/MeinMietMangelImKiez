@@ -58,8 +58,9 @@ export default function AddContact({
 }
 
 const ContactForm = styled.div`
-  background-color: var(--background-dark);
-  border: solid var(--neutral-dark);
+  width: 100%;
+  background-color: var(--light-shades);
+  border: solid var(--dark-shades) 0.5px;
   border-radius: var(--size-s);
   padding: var(--size-s);
 `

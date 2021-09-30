@@ -9,16 +9,17 @@ export default createGlobalStyle`
   html, body {
     margin: 0;
     font-family: "Gill Sans", sans-serif;
+    //font-size: 20px;
   }
 
   :root {
-    --background-dark: #303841;
-    --background-light: #3a4750;
-    --accent: #E3001B;
-    --contrast: #005A71;
-    --neutral-dark: #bebebe;
-    --neutral-light: #ffffff;
-    --error: var(--accent);
+    --dark-shades: #5D595D;
+    --light-shades: #F8F8F7;
+    --accent: #A0ADAF;
+    --dark-accent: #8E8C8C;
+    --light-accent: #8B9181;
+    --error: #f44336;
+    --message: #e39e35;
 
     --size-xs: 4px;
     --size-s: 8px;
@@ -26,7 +27,7 @@ export default createGlobalStyle`
     --size-l: 16px;
     --size-xl: 24px;
     --size-xxl: 32px;
-    
+
     --max-content-width: 500px;
 
   }

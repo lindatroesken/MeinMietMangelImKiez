@@ -42,14 +42,14 @@ const Wrapper = styled.header`
   text-align: center;
   display: grid;
   grid-template-columns: min-content 1fr min-content;
-  background: var(--background-dark);
-  color: var(--neutral-dark);
-  border-bottom: 1px solid var(--neutral-dark);
+  background: var(--dark-shades);
+  color: var(--dark-accent);
+  border-bottom: 1px solid var(--dark-accent);
   align-items: center;
 
   Button {
     margin: 0;
-    color: var(--neutral-dark);
+    color: var(--dark-accent);
     padding: var(--size-xs);
   }
 
@@ -59,7 +59,7 @@ const Wrapper = styled.header`
   }
   h3 {
     align-items: center;
-    color: var(--neutral-dark);
+    color: var(--dark-accent);
     margin-bottom: var(--size-m);
   }
   div {

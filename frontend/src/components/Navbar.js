@@ -19,19 +19,19 @@ export default function Navbar({ user, ...props }) {
 }
 
 const Wrapper = styled.nav`
-  border-top: 1px solid var(--neutral-dark);
+  border-top: 1px solid var(--dark-accent);
   width: 100%;
   padding: var(--size-m);
   display: flex;
   overflow-y: scroll;
-  background-color: var(--background-dark);
+  background-color: var(--dark-shades);
 
   a {
     flex-grow: 1;
     margin: 0 var(--size-l);
     text-align: center;
     text-decoration: none;
-    color: var(--neutral-dark);
+    color: var(--dark-accent);
   }
 
   a.active {

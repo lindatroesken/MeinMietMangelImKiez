@@ -5,24 +5,19 @@ export default function ContactTable({ data, handleContactDetailsEdit }) {
   const columns = useMemo(
     () => [
       {
-        Header: 'Mein Kontaktprotokoll',
-        columns: [
-          {
-            Header: 'Datum',
-            accessor: 'dateContacted',
-            Cell: props => {
-              return <span>{new Date(props.value).toLocaleDateString()}</span>
-            },
-          },
-          {
-            Header: 'Kontakt',
-            accessor: 'contactType',
-          },
-          {
-            Header: 'Notiz',
-            accessor: 'contactNote',
-          },
-        ],
+        Header: 'Datum',
+        accessor: 'dateContacted',
+        Cell: props => {
+          return <span>{new Date(props.value).toLocaleDateString()}</span>
+        },
+      },
+      {
+        Header: 'Kontakt',
+        accessor: 'contactType',
+      },
+      {
+        Header: 'Notiz',
+        accessor: 'contactNote',
       },
     ],
     []

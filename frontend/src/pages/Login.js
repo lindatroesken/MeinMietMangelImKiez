@@ -49,6 +49,7 @@ export default function Login() {
       {loading && <Loading />}
       {!loading && (
         <Main as="form" onSubmit={handleSubmit}>
+          {error && <Error>{error.response.data.message}</Error>}
           <Wrapper>
             <TextField
               name="username"
@@ -67,7 +68,7 @@ export default function Login() {
           </Wrapper>
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )
