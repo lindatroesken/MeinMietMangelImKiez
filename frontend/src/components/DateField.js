@@ -14,13 +14,12 @@ export default function DateField({
     <Label {...props}>
       {title}
       <DatePicker
-        closeOnScroll={e => e.target === document}
         name={name}
         onChange={date => onChange(date, name)}
         selected={value}
         dateFormat="dd/MMM/yyyy HH:mm"
         showTimeSelect
-        readOnly={readOnly}
+        disabled={readOnly}
       />
     </Label>
   )

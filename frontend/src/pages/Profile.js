@@ -50,6 +50,14 @@ export default function Profile() {
     console.log('username change tbd.')
   }
 
+  const handleSubmitPassword = () => {
+    console.log('submit new password, tbd.')
+  }
+
+  const handleSubmitUserName = () => {
+    console.log('submit new username, tbd.')
+  }
+
   return (
     <Page>
       <Header title="Mein Profil" />
@@ -65,8 +73,12 @@ export default function Profile() {
               type="text"
               disabled={true}
             />
-            <Button type="button">Namen ändern</Button>
-            <Button type="button">Passwort ändern</Button>
+            <Button type="button" onClick={handleSubmitUserName}>
+              Namen ändern
+            </Button>
+            <Button type="button" onClick={handleSubmitPassword}>
+              Passwort ändern
+            </Button>
           </div>
           <Addresses
             user={user}

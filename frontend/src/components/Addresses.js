@@ -31,7 +31,7 @@ export default function Addresses({
       {user &&
         addressList.length > 0 &&
         addressList.map(address => (
-          <AddressListItem>
+          <AddressListItem key={address.id}>
             <TextField
               disabled={true}
               key={address.id}

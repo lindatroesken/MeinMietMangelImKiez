@@ -25,7 +25,7 @@ export default function AddContact({
       />
       <DateField
         type="date"
-        name="dateNoticed"
+        name="dateContacted"
         value={contactLogger.dateContacted}
         onChange={handleContactDateChange}
         title="Kontaktiert am"

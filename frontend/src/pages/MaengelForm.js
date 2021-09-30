@@ -114,11 +114,23 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const handleStatusChange = event => {
-    handleMangelChange(event)
+    console.log('clicked')
+    console.log(event.target.name)
+    console.log(event.target.value)
     if (event.target.value === 'DONE') {
+      setMangel({
+        ...mangel,
+        [event.target.name]: event.target.value,
+        dateFixed: null,
+      })
     } else {
-      setMangel({ ...mangel, dateFixed: null })
+      setMangel({ ...mangel, [event.target.name]: event.target.value })
     }
+    // handleMangelChange(event)
+    // if (event.target.value === 'DONE') {
+    // } else {
+    //   setMangel({ ...mangel, dateFixed: null })
+    // }
   }
 
   const handleAddressChange = event => {
@@ -251,6 +263,7 @@ export default function MaengelForm({ initialMode, title }) {
       setMessage('Es muss eine Kategorie gewählt werden')
       return false
     }
+    setMessage()
     return true
   }
 
@@ -273,6 +286,7 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleCancelChanges = () => {
     setMangel(mangelSaved)
+    setMode('view')
   }
 
   const toggleViewAddContact = () => {
@@ -397,7 +411,7 @@ export default function MaengelForm({ initialMode, title }) {
                   Änderungen speichern
                 </Button>
                 <Button type="button" onClick={handleCancelChanges}>
-                  Änderungen verwerfen
+                  Abbrechen
                 </Button>
                 <Button type="button" onClick={handleDeleteMangel}>
                   Mangel löschen

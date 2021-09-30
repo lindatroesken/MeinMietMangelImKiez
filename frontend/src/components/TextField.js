@@ -19,7 +19,7 @@ export default function TextField({
         onChange={onChange}
         name={name}
         readOnly={readOnly}
-        disabled={disabled}
+        disabled={readOnly}
       />
     </Label>
   )

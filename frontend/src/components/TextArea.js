@@ -19,7 +19,7 @@ export default function TextArea({
         value={value}
         onChange={onChange}
         name={name}
-        readOnly={readOnly}
+        disabled={readOnly}
       />
     </Label>
   )
