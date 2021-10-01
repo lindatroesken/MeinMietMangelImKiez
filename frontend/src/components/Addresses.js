@@ -1,6 +1,7 @@
 import Button from './Button'
 import TextField from './TextField'
 import styled from 'styled-components/macro'
+import edit from '../images/edit-2-32.png'
 
 export default function Addresses({
   user,
@@ -39,7 +40,7 @@ export default function Addresses({
               value={addressToString(address)}
             />
             <Button type="button" onClick={() => handleEditAddress(address.id)}>
-              🔧
+              <Icon src={edit} />
             </Button>
           </AddressListItem>
         ))}
@@ -49,6 +50,11 @@ export default function Addresses({
 const Wrapper = styled.div`
   width: 100%;
   max-width: var(--max-content-width);
+`
+
+const Icon = styled.img`
+  width: var(--size-l);
+  height: var(--size-l);
 `
 
 const AddressListItem = styled.div`

@@ -1,6 +1,6 @@
-import Label from './Label'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import styled from 'styled-components/macro'
 
 export default function DateField({
   value,
@@ -11,7 +11,7 @@ export default function DateField({
   ...props
 }) {
   return (
-    <Label {...props}>
+    <DateLabel {...props}>
       {title}
       <DatePicker
         name={name}
@@ -21,6 +21,10 @@ export default function DateField({
         showTimeSelect
         disabled={readOnly}
       />
-    </Label>
+    </DateLabel>
   )
 }
+
+const DateLabel = styled.label`
+  align-items: center;
+`

@@ -11,6 +11,9 @@ import Button from '../components/Button'
 import Addresses from '../components/Addresses'
 import TextField from '../components/TextField'
 import Navbar from '../components/Navbar'
+import MainTop from '../components/MainTop'
+import MainCenter from '../components/MainCenter'
+import MainBottom from '../components/MainBottom'
 
 export default function Profile() {
   const { mode, id } = useParams()
@@ -64,33 +67,39 @@ export default function Profile() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          <div>
-            <TextField
-              name="username"
-              value={user.username}
-              onChange={handleChangeUsername}
-              title="Username"
-              type="text"
-              disabled={true}
+          <MainTop>
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
+            <div>
+              <TextField
+                name="username"
+                value={user.username}
+                onChange={handleChangeUsername}
+                title="Username"
+                type="text"
+                disabled={true}
+              />
+              <Button type="button" onClick={handleSubmitUserName}>
+                Namen ändern
+              </Button>
+              <Button type="button" onClick={handleSubmitPassword}>
+                Passwort ändern
+              </Button>
+            </div>
+            <Addresses
+              user={user}
+              mode={mode}
+              addressList={addressList}
+              id={id}
+              handleEditAddress={handleEditAddress}
+              handleNewAddress={handleNewAddress}
             />
-            <Button type="button" onClick={handleSubmitUserName}>
-              Namen ändern
-            </Button>
-            <Button type="button" onClick={handleSubmitPassword}>
-              Passwort ändern
-            </Button>
-          </div>
-          <Addresses
-            user={user}
-            mode={mode}
-            addressList={addressList}
-            id={id}
-            handleEditAddress={handleEditAddress}
-            handleNewAddress={handleNewAddress}
-          />
+          </MainCenter>
+          <MainBottom />
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )

@@ -32,8 +32,10 @@ import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
 import SelectAddress from '../components/SelectAddress'
 import Navbar from '../components/Navbar'
-import styled from 'styled-components/macro'
 import Message from '../components/Message'
+import MainCenter from '../components/MainCenter'
+import MainTop from '../components/MainTop'
+import MainBottom from '../components/MainBottom'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -299,7 +301,11 @@ export default function MaengelForm({ initialMode, title }) {
       {loading && <Loading />}
       {!loading && (
         <Main as="form">
-          <Wrapper>
+          <MainTop>
+            {' '}
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
             {mangel.address && (
               <SelectAddress
                 name="address"
@@ -319,7 +325,6 @@ export default function MaengelForm({ initialMode, title }) {
               title="Kategorie"
               readOnly={readOnly}
             />
-
             <DateField
               type="date"
               name="dateNoticed"
@@ -328,7 +333,6 @@ export default function MaengelForm({ initialMode, title }) {
               title="Festgestellt am"
               readOnly={readOnly}
             />
-
             <Select
               name="remindMeInDays"
               value={mangel.remindMeInDays}
@@ -337,7 +341,6 @@ export default function MaengelForm({ initialMode, title }) {
               title="Erinnerung in ... Tagen"
               readOnly={readOnly}
             />
-
             <TextField
               name="description"
               value={mangel.description}
@@ -376,11 +379,9 @@ export default function MaengelForm({ initialMode, title }) {
                 handleContactDetailsEdit={handleContactDetailsEdit}
               />
             )}
-
             <Button type="button" onClick={toggleViewAddContact}>
               Protokolliere Kontakt zum Vermieter (show/hide)
             </Button>
-
             {viewAddContact && (
               <AddContact
                 contactLogger={contactLogger}
@@ -392,7 +393,8 @@ export default function MaengelForm({ initialMode, title }) {
                 handleEditContact={handleEditContact}
               />
             )}
-
+          </MainCenter>
+          <MainBottom>
             {message && <Message>{message}</Message>}
 
             {mode === 'new' && (
@@ -418,18 +420,11 @@ export default function MaengelForm({ initialMode, title }) {
                 </Button>
               </div>
             )}
-          </Wrapper>
+          </MainBottom>
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )
 }
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
-  max-width: var(--max-content-width);
-`

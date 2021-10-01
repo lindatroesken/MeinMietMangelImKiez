@@ -50,6 +50,7 @@ const StyledTable = styled.table`
   padding: var(--size-l);
   font-weight: normal;
   border: none;
+  width: 100%;
   color: var(--dark-shades);
   thead {
   }

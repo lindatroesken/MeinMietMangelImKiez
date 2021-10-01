@@ -2,10 +2,10 @@ import styled from 'styled-components/macro'
 
 export default styled.main`
   display: grid;
-  place-items: center;
+  grid-template-rows: 40px 1fr min-content;
   grid-gap: var(--size-xs);
-  padding: var(--size-l);
-  height: 100%;
+  padding: 0 var(--size-l) 0;
   width: 100%;
-  overflow-y: scroll;
+  height: 100%;
+  overflow: hidden;
 `

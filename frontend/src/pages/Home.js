@@ -12,7 +12,9 @@ import Error from '../components/Error'
 import { initialMangelStates } from '../services/mangel-service'
 import MangelReminder from '../components/MangelReminder'
 import Navbar from '../components/Navbar'
-import styled from 'styled-components/macro'
+import MainCenter from '../components/MainCenter'
+import MainTop from '../components/MainTop'
+import MainBottom from '../components/MainBottom'
 
 export default function Home() {
   const { user, token } = useAuth()
@@ -44,8 +46,11 @@ export default function Home() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          <Wrapper>
+          <MainTop>
             {user && <MangelReminder mangelList={mangelList} />}
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
             {mangelList.length > 0 && (
               <MangelTable
                 data={mangelList}
@@ -53,32 +58,24 @@ export default function Home() {
                 title="Meine fälligen Mängel"
               />
             )}
-            {user && (
-              <Button>
-                <NavLink to="/mangel/new">
-                  Neuer Mangel für {user.username}
-                </NavLink>
-              </Button>
-            )}
+
             {!user && (
               <Button>
                 <NavLink to="/login">Login</NavLink>
               </Button>
             )}
-          </Wrapper>
+          </MainCenter>
+          <MainBottom>
+            {user && (
+              <Button>
+                <NavLink to="/mangel/new">Neuer Mangel</NavLink>
+              </Button>
+            )}
+          </MainBottom>
         </Main>
       )}
-      {error && <Error>{error.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )
 }
-
-const Wrapper = styled.div`
-  max-width: var(--maxcontent-width);
-  display: grid;
-  justify-content: center;
-  grid-gap: var(--size-s);
-  button {
-  }
-`
