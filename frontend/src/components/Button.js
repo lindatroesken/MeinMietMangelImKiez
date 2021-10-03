@@ -20,9 +20,4 @@ export default styled.button`
       background-color: var(--dark-shades);
       color: var(--light-shades);
     `}
-  ${props =>
-    props.danger &&
-    css`
-      color: red;
-    `}
 `
