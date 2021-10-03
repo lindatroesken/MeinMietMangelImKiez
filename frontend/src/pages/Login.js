@@ -70,7 +70,9 @@ export default function Login() {
             />
           </MainCenter>
           <MainBottom>
-            <Button> login </Button>
+            {credentials.username && credentials.password && (
+              <Button> login </Button>
+            )}
           </MainBottom>
         </Main>
       )}
