@@ -150,7 +150,7 @@ public class MangelController extends ControllerMapper {
             @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only delete own mangel")
     })
     public ResponseEntity<List<MangelStatistics>> getAllLocations(@AuthenticationPrincipal UserEntity authUser){
-        List<MangelEntity> mangelEntityList = mangelService.findAllForStatistics();
+        List<MangelEntity> mangelEntityList = mangelService.findAllForAllUser();
         return ok(mapMangelToStatisticsList(mangelEntityList));
     }
 
