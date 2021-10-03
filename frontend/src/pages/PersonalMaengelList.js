@@ -104,6 +104,7 @@ export default function PersonalMaengelList() {
 
 const Wrapper = styled.div`
   max-width: var(--max-content-width);
+  width: 100%;
   display: grid;
   justify-content: center;
   button {

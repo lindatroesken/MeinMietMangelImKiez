@@ -40,6 +40,7 @@ export default function Home() {
     history.push(path)
   }
 
+  console.log(error)
   return (
     <Page>
       <Header title="Meine Mängelapp" />
@@ -47,11 +48,11 @@ export default function Home() {
       {!loading && (
         <Main>
           <MainTop>
-            {user && <MangelReminder mangelList={mangelList} />}
             {error && <Error>{error.response.data.message}</Error>}
           </MainTop>
           <MainCenter>
-            {mangelList.length > 0 && (
+            {user && !error && <MangelReminder mangelList={mangelList} />}
+            {mangelList.length > 0 && !error && (
               <MangelTable
                 data={mangelList}
                 handleGoToDetails={handleGoToDetails}

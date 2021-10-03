@@ -3,13 +3,14 @@ import MainBottom from './MainBottom'
 import MainCenter from './MainCenter'
 import Main from './Main'
 import Loader from 'react-loader-spinner'
+import styled from 'styled-components/macro'
 
 export default function Loading() {
   return (
     <Main>
       <MainTop />
       <MainCenter>
-        <Loader
+        <CenteredLoader
           type="ThreeDots"
           color="#8E8C8C"
           height={100}
@@ -21,3 +22,8 @@ export default function Loading() {
     </Main>
   )
 }
+
+const CenteredLoader = styled(Loader)`
+  width: 100%;
+  text-align: center;
+`

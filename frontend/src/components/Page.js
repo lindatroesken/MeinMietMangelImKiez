@@ -7,7 +7,7 @@ export default styled.div`
   background-color: var(--light-shades);
   color: var(--light-accent);
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: grid;
   grid-template-rows: 50px 1fr 50px;
 `

@@ -2,6 +2,7 @@ import styled from 'styled-components/macro'
 
 export default styled.main`
   display: grid;
+  //align-items: center;
   grid-template-rows: 40px 1fr min-content;
   grid-gap: var(--size-xs);
   padding: 0 var(--size-l) 0;

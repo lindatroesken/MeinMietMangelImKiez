@@ -37,12 +37,12 @@ export default function Login() {
     setLoading(true)
     setError()
     login(credentials)
+      .then(() => history.push('/'))
       .catch(error => {
         console.log({ error })
         setError(error)
         setLoading(false)
       })
-      .finally(() => history.push('/'))
   }
 
   return (

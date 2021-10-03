@@ -2,12 +2,12 @@ import styled from 'styled-components/macro'
 
 export default styled.div`
   max-width: var(--max-content-width);
+  flex-direction: column;
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
   height: 100%;
   grid-gap: var(--size-s);
-  align-items: center;
-  justify-content: center;
-  grid-template-columns: 1fr;
+  align-content: flex-start;
+  justify-self: center;
   overflow-x: scroll;
 `

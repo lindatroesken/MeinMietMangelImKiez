@@ -13,7 +13,7 @@ export default function DateField({
   return (
     <DateLabel {...props}>
       {title}
-      <DatePicker
+      <StyledDatePicker
         name={name}
         onChange={date => onChange(date, name)}
         selected={value}
@@ -26,5 +26,13 @@ export default function DateField({
 }
 
 const DateLabel = styled.label`
-  align-items: center;
+  align-self: center;
+`
+
+const StyledDatePicker = styled(DatePicker)`
+  padding: var(--size-s);
+  margin-top: var(--size-xs);
+  border-radius: var(--size-s);
+  border: 0.1px solid var(--light-accent);
+  color: var(--dark-shades);
 `

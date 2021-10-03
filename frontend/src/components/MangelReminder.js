@@ -1,15 +1,21 @@
-import Message from './Message'
+import styled from 'styled-components/macro'
 
 export default function MangelReminder({ mangelList }) {
   const listSize = mangelList.length
 
   return (
-    <Message>
+    <Wrapper>
       {listSize === 1
         ? `${mangelList.length} fälliger Mangel`
         : listSize > 1
         ? `${mangelList.length} fällige Mängel️`
-        : 'alles gut 👍'}
-    </Message>
+        : 'keine fälligen Mängel'}
+    </Wrapper>
   )
 }
+
+const Wrapper = styled.div`
+  color: var(--message);
+  width: 100%;
+  text-align: center;
+`

@@ -14,6 +14,8 @@ import Navbar from '../components/Navbar'
 import MainTop from '../components/MainTop'
 import MainCenter from '../components/MainCenter'
 import MainBottom from '../components/MainBottom'
+import styled from 'styled-components/macro'
+import save from '../images/save-32.png'
 
 export default function Profile() {
   const { mode, id } = useParams()
@@ -22,6 +24,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [addressList, setAddressList] = useState([])
+  const [username, setUsername] = useState(user.username)
 
   const loadDataOnlyOnce = useCallback(() => {
     setLoading(true)
@@ -49,12 +52,8 @@ export default function Profile() {
     history.push(`/address/new`)
   }
 
-  const handleChangeUsername = () => {
-    console.log('username change tbd.')
-  }
-
-  const handleSubmitPassword = () => {
-    console.log('submit new password, tbd.')
+  const handleChangeUsername = event => {
+    setUsername(event.target.value)
   }
 
   const handleSubmitUserName = () => {
@@ -71,22 +70,19 @@ export default function Profile() {
             {error && <Error>{error.response.data.message}</Error>}
           </MainTop>
           <MainCenter>
-            <div>
+            <User>
               <TextField
                 name="username"
-                value={user.username}
+                value={username}
                 onChange={handleChangeUsername}
                 title="Username"
                 type="text"
                 disabled={true}
               />
               <Button type="button" onClick={handleSubmitUserName}>
-                Namen ändern
+                <Icon src={save} />
               </Button>
-              <Button type="button" onClick={handleSubmitPassword}>
-                Passwort ändern
-              </Button>
-            </div>
+            </User>
             <Addresses
               user={user}
               mode={mode}
@@ -104,3 +100,26 @@ export default function Profile() {
     </Page>
   )
 }
+
+const Icon = styled.img`
+  width: var(--size-l);
+  height: var(--size-l);
+  padding: 0;
+`
+
+const User = styled.div`
+  display: grid;
+  width: 100%;
+  padding: 0;
+  grid-template-columns: 1fr min-content;
+  justify-content: space-between;
+  align-items: end;
+  label {
+    margin: 0;
+    width: 100%;
+  }
+  button {
+    margin-bottom: 0;
+    height: min-content;
+  }
+`

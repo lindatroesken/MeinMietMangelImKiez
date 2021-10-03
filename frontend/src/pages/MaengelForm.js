@@ -36,6 +36,8 @@ import Message from '../components/Message'
 import MainCenter from '../components/MainCenter'
 import MainTop from '../components/MainTop'
 import MainBottom from '../components/MainBottom'
+import trash from '../images/trash-9-32.png'
+import Icon from '../components/Icon'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -334,6 +336,24 @@ export default function MaengelForm({ initialMode, title }) {
               readOnly={readOnly}
             />
             <Select
+              name="status"
+              value={mangel.status}
+              values={mangelStatusOptions}
+              onChange={handleStatusChange}
+              title="Status"
+              readOnly={readOnly}
+            />
+            {mangel.status === 'DONE' && (
+              <DateField
+                type="date"
+                name="dateFixed"
+                value={mangel.dateFixed}
+                onChange={handleMangelDateChange}
+                title="Fertig am"
+                readOnly={readOnly}
+              />
+            )}
+            <Select
               name="remindMeInDays"
               value={mangel.remindMeInDays}
               values={mangelReminderOptions}
@@ -355,24 +375,7 @@ export default function MaengelForm({ initialMode, title }) {
               title="Details"
               readOnly={readOnly}
             />
-            <Select
-              name="status"
-              value={mangel.status}
-              values={mangelStatusOptions}
-              onChange={handleStatusChange}
-              title="Status"
-              readOnly={readOnly}
-            />
-            {mangel.status === 'DONE' && (
-              <DateField
-                type="date"
-                name="dateFixed"
-                value={mangel.dateFixed}
-                onChange={handleMangelDateChange}
-                title="Fertig am"
-                readOnly={readOnly}
-              />
-            )}
+
             {mangel.contactLoggerList.length > 0 && (
               <ContactTable
                 data={mangel.contactLoggerList}
@@ -398,25 +401,25 @@ export default function MaengelForm({ initialMode, title }) {
             {message && <Message>{message}</Message>}
 
             {mode === 'new' && (
-              <Button type="button" onClick={handleSubmitNew}>
+              <Button type="button" onClick={handleSubmitNew} primary>
                 speichern
               </Button>
             )}
             {mode === 'view' && (
-              <Button type="button" onClick={handleSwitchToEdit}>
+              <Button type="button" onClick={handleSwitchToEdit} primary>
                 bearbeiten
               </Button>
             )}
             {mode === 'edit' && (
               <div>
-                <Button type="button" onClick={handleSubmitChanges}>
+                <Button type="button" onClick={handleSubmitChanges} primary>
                   Änderungen speichern
                 </Button>
                 <Button type="button" onClick={handleCancelChanges}>
                   Abbrechen
                 </Button>
                 <Button type="button" onClick={handleDeleteMangel}>
-                  Mangel löschen
+                  <Icon src={trash} alt="red trash" />
                 </Button>
               </div>
             )}

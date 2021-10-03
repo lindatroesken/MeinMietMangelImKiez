@@ -2,6 +2,7 @@ import Button from './Button'
 import TextField from './TextField'
 import styled from 'styled-components/macro'
 import edit from '../images/edit-2-32.png'
+import add from '../images/add-file-32.png'
 
 export default function Addresses({
   user,
@@ -23,10 +24,13 @@ export default function Addresses({
   }
   return (
     <Wrapper>
-      <h3>Meine Adressen</h3>
       {user && (
         <div>
-          <Button onClick={handleNewAddress}> neue Adresse </Button>
+          <p>Meine Adressen</p>
+          <Button onClick={handleNewAddress}>
+            {' '}
+            <Icon src={add} alt="add" />{' '}
+          </Button>
         </div>
       )}
       {user &&
@@ -48,8 +52,20 @@ export default function Addresses({
   )
 }
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  align-items: center;
+  justify-content: center;
   max-width: var(--max-content-width);
+  div {
+    font-size: var(--size-l);
+    font-weight: bold;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr min-content;
+    white-space: nowrap;
+  }
 `
 
 const Icon = styled.img`
@@ -59,12 +75,17 @@ const Icon = styled.img`
 
 const AddressListItem = styled.div`
   padding: 0;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr min-content;
-  align-self: center;
-  justify-self: center;
-  input {
+  align-items: end;
+  justify-content: space-between;
+  label {
     margin: 0;
     width: 100%;
+  }
+  button {
+    margin-bottom: 0;
+    height: min-content;
   }
 `
