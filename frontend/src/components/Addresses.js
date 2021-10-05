@@ -42,6 +42,7 @@ export default function Addresses({
               key={address.id}
               name={`address${id}`}
               value={addressToString(address)}
+              readOnly={true}
             />
             <Button type="button" onClick={() => handleEditAddress(address.id)}>
               <Icon src={edit} />
