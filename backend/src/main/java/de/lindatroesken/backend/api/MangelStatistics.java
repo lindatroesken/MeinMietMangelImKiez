@@ -29,4 +29,7 @@ public class MangelStatistics {
     @ApiModelProperty(notes="status")
     private String status;
 
+    @ApiModelProperty(notes="date noticed")
+    private Long dateNoticed;
+
 }

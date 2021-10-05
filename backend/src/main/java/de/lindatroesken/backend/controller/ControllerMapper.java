@@ -121,6 +121,7 @@ abstract class ControllerMapper {
                 .latitude(mangelEntity.getAddressEntity().getLatitude())
                 .longitude(mangelEntity.getAddressEntity().getLongitude())
                 .category(mangelEntity.getCategory())
+                .dateNoticed(convertZonedDateTimeToLong(mangelEntity.getDateNoticed()))
                 .status(mangelEntity.getStatus().toString())
                 .build();
     }

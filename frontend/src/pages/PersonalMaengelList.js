@@ -71,7 +71,7 @@ export default function PersonalMaengelList() {
             {error && <Error>{error.response.data.message}</Error>}
           </MainTop>
           <MainCenter>
-            {mangelList.length === 0 && <div>noch keine Mängel</div>}
+            {mangelList.length === 0 && <NoMangel>noch keine Mängel</NoMangel>}
             {mangelList.length > 0 && (
               <Wrapper>
                 <MangelTable
@@ -102,6 +102,9 @@ export default function PersonalMaengelList() {
   )
 }
 
+const NoMangel = styled.div`
+  text-align: center;
+`
 const Wrapper = styled.div`
   max-width: var(--max-content-width);
   width: 100%;

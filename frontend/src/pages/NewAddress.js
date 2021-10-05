@@ -36,6 +36,9 @@ export default function NewAddress() {
         history.push(`/profile/view/`)
       })
   }
+  const handleCancel = () => {
+    history.goBack()
+  }
 
   return (
     <Page>
@@ -49,6 +52,7 @@ export default function NewAddress() {
               address={address}
               handleAddressInputChange={handleAddressInputChange}
               handleSaveNewAddress={handleSaveNewAddress}
+              handleCancel={handleCancel}
               readOnly={false}
               mode="new"
             />

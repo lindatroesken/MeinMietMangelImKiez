@@ -39,6 +39,10 @@ export default function MangelMap() {
       }
     })
 
+  const toDate = datestamp => {
+    return new Date(datestamp).toLocaleDateString()
+  }
+
   useEffect(() => {
     getMangelStatisticsAll(token)
       .then(mangelLocations => {
@@ -83,7 +87,8 @@ export default function MangelMap() {
               onClose={() => setSelectedMangel(null)}
             >
               <div>
-                {selectedMangel.category} und Status {selectedMangel.status}{' '}
+                {selectedMangel.category}, seit{' '}
+                {toDate(selectedMangel.dateNoticed)}{' '}
               </div>
             </StyledPopup>
           )}
