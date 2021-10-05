@@ -92,12 +92,13 @@ export default function AddressForm({
 }
 
 const Address = styled.form`
+  width: 100%;
   border-color: var(--dark-shades);
   border-radius: var(--size-s);
   border: solid 0.5px;
-  padding: var(--size-m);
+  //padding: var(--size-m);
   margin-bottom: var(--size-m);
-  max-width: var(--max-content-width);
+  //max-width: var(--max-content-width);
 `
 
 const StreetNumber = styled.div`

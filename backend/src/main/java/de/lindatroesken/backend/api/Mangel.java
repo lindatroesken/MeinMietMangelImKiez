@@ -32,7 +32,7 @@ public class Mangel {
     private int remindMeInDays;
 
     @ApiModelProperty(notes = "date of problem solved")
-    private String dateFixed;
+    private Long dateFixed;
 
     @ApiModelProperty(notes = "status of issue")
     private String status;

@@ -9,7 +9,6 @@ export default createGlobalStyle`
   html, body {
     margin: 0;
     font-family: "Gill Sans", sans-serif;
-    //font-size: 20px;
   }
 
   :root {
@@ -21,6 +20,8 @@ export default createGlobalStyle`
     --error: #f44336;
     --message: #e39e35;
 
+    --size-xxxs: 1px;
+    --size-xxs: 2px;
     --size-xs: 4px;
     --size-s: 8px;
     --size-m: 12px;

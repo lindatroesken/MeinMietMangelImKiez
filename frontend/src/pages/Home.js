@@ -12,7 +12,9 @@ import Error from '../components/Error'
 import { initialMangelStates } from '../services/mangel-service'
 import MangelReminder from '../components/MangelReminder'
 import Navbar from '../components/Navbar'
-import styled from 'styled-components/macro'
+import MainCenter from '../components/MainCenter'
+import MainTop from '../components/MainTop'
+import MainBottom from '../components/MainBottom'
 
 export default function Home() {
   const { user, token } = useAuth()
@@ -38,47 +40,43 @@ export default function Home() {
     history.push(path)
   }
 
+  console.log(error)
   return (
     <Page>
       <Header title="Meine Mängelapp" />
       {loading && <Loading />}
       {!loading && (
         <Main>
-          <Wrapper>
-            {user && <MangelReminder mangelList={mangelList} />}
-            {mangelList.length > 0 && (
+          <MainTop>
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
+            {user && !error && <MangelReminder mangelList={mangelList} />}
+            {mangelList.length > 0 && !error && (
               <MangelTable
                 data={mangelList}
                 handleGoToDetails={handleGoToDetails}
                 title="Meine fälligen Mängel"
               />
             )}
-            {user && (
-              <Button>
-                <NavLink to="/mangel/new">
-                  Neuer Mangel für {user.username}
-                </NavLink>
-              </Button>
-            )}
+
             {!user && (
               <Button>
                 <NavLink to="/login">Login</NavLink>
               </Button>
             )}
-          </Wrapper>
+          </MainCenter>
+          <MainBottom>
+            {user && (
+              <Button>
+                <NavLink to="/mangel/new">Neuer Mangel</NavLink>
+              </Button>
+            )}
+          </MainBottom>
         </Main>
       )}
-      {error && <Error>{error.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )
 }
-
-const Wrapper = styled.div`
-  max-width: var(--maxcontent-width);
-  display: grid;
-  justify-content: center;
-  grid-gap: var(--size-s);
-  button {
-  }
-`

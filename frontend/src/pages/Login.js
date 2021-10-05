@@ -9,7 +9,9 @@ import { useHistory } from 'react-router-dom'
 import Header from '../components/Header'
 import { useAuth } from '../auth/AuthProvider'
 import Navbar from '../components/Navbar'
-import styled from 'styled-components/macro'
+import MainTop from '../components/MainTop'
+import MainBottom from '../components/MainBottom'
+import MainCenter from '../components/MainCenter'
 
 const initialState = {
   username: '',
@@ -35,12 +37,12 @@ export default function Login() {
     setLoading(true)
     setError()
     login(credentials)
+      .then(() => history.push('/'))
       .catch(error => {
         console.log({ error })
         setError(error)
         setLoading(false)
       })
-      .finally(() => history.push('/'))
   }
 
   return (
@@ -49,8 +51,10 @@ export default function Login() {
       {loading && <Loading />}
       {!loading && (
         <Main as="form" onSubmit={handleSubmit}>
-          {error && <Error>{error.response.data.message}</Error>}
-          <Wrapper>
+          <MainTop>
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
             <TextField
               name="username"
               value={credentials.username}
@@ -64,8 +68,12 @@ export default function Login() {
               title="Password"
               type="password"
             />
-            <Button> login </Button>
-          </Wrapper>
+          </MainCenter>
+          <MainBottom>
+            {credentials.username && credentials.password && (
+              <Button> login </Button>
+            )}
+          </MainBottom>
         </Main>
       )}
 
@@ -73,7 +81,3 @@ export default function Login() {
     </Page>
   )
 }
-
-const Wrapper = styled.div`
-  max-width: var(--max-content-width);
-`

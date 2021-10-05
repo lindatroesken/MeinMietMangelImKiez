@@ -12,6 +12,9 @@ import { initialMangelStates } from '../services/mangel-service'
 import Navbar from '../components/Navbar'
 import styled from 'styled-components/macro'
 import Button from '../components/Button'
+import MainTop from '../components/MainTop'
+import MainCenter from '../components/MainCenter'
+import MainBottom from '../components/MainBottom'
 
 export default function PersonalMaengelList() {
   const { user, token } = useAuth()
@@ -63,25 +66,37 @@ export default function PersonalMaengelList() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          {mangelList.length === 0 && <div>noch keine Mängel</div>}
-          <Button type="button" onClick={handleNewMangel}>
-            Neuen Mangel anlegn
-          </Button>
-          {mangelList.length > 0 && (
-            <Wrapper>
-              <Button type="button" onClick={handleExportCSV}>
-                export to CSV
-              </Button>
-              <MangelTable
-                data={mangelList}
-                handleGoToDetails={handleGoToDetails}
-                title="Meine Mängel"
-              />
-            </Wrapper>
-          )}
+          <MainTop>
+            {' '}
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
+            {mangelList.length === 0 && <div>noch keine Mängel</div>}
+            {mangelList.length > 0 && (
+              <Wrapper>
+                <MangelTable
+                  data={mangelList}
+                  handleGoToDetails={handleGoToDetails}
+                  title="Meine Mängel"
+                />
+              </Wrapper>
+            )}
+          </MainCenter>
+          <MainBottom>
+            {!error && (
+              <div>
+                <Button type="button" onClick={handleNewMangel}>
+                  Neuen Mangel anlegen
+                </Button>
+                <Button type="button" onClick={handleExportCSV}>
+                  export to CSV
+                </Button>
+              </div>
+            )}
+          </MainBottom>
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )
@@ -89,6 +104,7 @@ export default function PersonalMaengelList() {
 
 const Wrapper = styled.div`
   max-width: var(--max-content-width);
+  width: 100%;
   display: grid;
   justify-content: center;
   button {

@@ -46,12 +46,16 @@ export default function Table({ columns, data, handleOnListItemClick }) {
 }
 
 const StyledTable = styled.table`
+  justify-self: center;
   background-color: var(--light-shades);
+  text-align: center;
   padding: var(--size-l);
   font-weight: normal;
   border: none;
+  width: 100%;
   color: var(--dark-shades);
-  thead {
+  th {
+    text-align: center;
   }
   tbody {
     tr {

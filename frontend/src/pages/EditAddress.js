@@ -13,6 +13,9 @@ import {
   updateUserAddress,
 } from '../services/api-service'
 import Navbar from '../components/Navbar'
+import MainTop from '../components/MainTop'
+import MainCenter from '../components/MainCenter'
+import MainBottom from '../components/MainBottom'
 
 export default function EditAddress() {
   const [loading, setLoading] = useState(false)
@@ -76,18 +79,23 @@ export default function EditAddress() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          {error && <Error>{error.response.data.message}</Error>}
-          {user && address && (
-            <AddressForm
-              address={address}
-              handleSaveAddressChanges={handleSaveAddressChanges}
-              handleAddressInputChange={handleAddressInputChange}
-              handleCancel={handleCancel}
-              handleDeleteAddress={handleDeleteAddress}
-              readOnly={false}
-              mode="edit"
-            />
-          )}
+          <MainTop>
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
+            {user && address && (
+              <AddressForm
+                address={address}
+                handleSaveAddressChanges={handleSaveAddressChanges}
+                handleAddressInputChange={handleAddressInputChange}
+                handleCancel={handleCancel}
+                handleDeleteAddress={handleDeleteAddress}
+                readOnly={false}
+                mode="edit"
+              />
+            )}
+          </MainCenter>
+          <MainBottom />
         </Main>
       )}
 

@@ -32,8 +32,12 @@ import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
 import SelectAddress from '../components/SelectAddress'
 import Navbar from '../components/Navbar'
-import styled from 'styled-components/macro'
 import Message from '../components/Message'
+import MainCenter from '../components/MainCenter'
+import MainTop from '../components/MainTop'
+import MainBottom from '../components/MainBottom'
+import trash from '../images/trash-9-32.png'
+import Icon from '../components/Icon'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -114,11 +118,23 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const handleStatusChange = event => {
-    handleMangelChange(event)
+    console.log('clicked')
+    console.log(event.target.name)
+    console.log(event.target.value)
     if (event.target.value === 'DONE') {
+      setMangel({
+        ...mangel,
+        [event.target.name]: event.target.value,
+        dateFixed: null,
+      })
     } else {
-      setMangel({ ...mangel, dateFixed: null })
+      setMangel({ ...mangel, [event.target.name]: event.target.value })
     }
+    // handleMangelChange(event)
+    // if (event.target.value === 'DONE') {
+    // } else {
+    //   setMangel({ ...mangel, dateFixed: null })
+    // }
   }
 
   const handleAddressChange = event => {
@@ -251,6 +267,7 @@ export default function MaengelForm({ initialMode, title }) {
       setMessage('Es muss eine Kategorie gewählt werden')
       return false
     }
+    setMessage()
     return true
   }
 
@@ -273,6 +290,7 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleCancelChanges = () => {
     setMangel(mangelSaved)
+    setMode('view')
   }
 
   const toggleViewAddContact = () => {
@@ -285,7 +303,11 @@ export default function MaengelForm({ initialMode, title }) {
       {loading && <Loading />}
       {!loading && (
         <Main as="form">
-          <Wrapper>
+          <MainTop>
+            {' '}
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
             {mangel.address && (
               <SelectAddress
                 name="address"
@@ -305,37 +327,12 @@ export default function MaengelForm({ initialMode, title }) {
               title="Kategorie"
               readOnly={readOnly}
             />
-
             <DateField
               type="date"
               name="dateNoticed"
               value={mangel.dateNoticed}
               onChange={handleMangelDateChange}
               title="Festgestellt am"
-              readOnly={readOnly}
-            />
-
-            <Select
-              name="remindMeInDays"
-              value={mangel.remindMeInDays}
-              values={mangelReminderOptions}
-              onChange={handleMangelChange}
-              title="Erinnerung in ... Tagen"
-              readOnly={readOnly}
-            />
-
-            <TextField
-              name="description"
-              value={mangel.description}
-              onChange={handleMangelChange}
-              title="Beschreibung"
-              readOnly={readOnly}
-            />
-            <TextArea
-              name="details"
-              value={mangel.details}
-              onChange={handleMangelChange}
-              title="Details"
               readOnly={readOnly}
             />
             <Select
@@ -356,17 +353,38 @@ export default function MaengelForm({ initialMode, title }) {
                 readOnly={readOnly}
               />
             )}
+            <Select
+              name="remindMeInDays"
+              value={mangel.remindMeInDays}
+              values={mangelReminderOptions}
+              onChange={handleMangelChange}
+              title="Erinnerung in ... Tagen"
+              readOnly={readOnly}
+            />
+            <TextField
+              name="description"
+              value={mangel.description}
+              onChange={handleMangelChange}
+              title="Beschreibung"
+              readOnly={readOnly}
+            />
+            <TextArea
+              name="details"
+              value={mangel.details}
+              onChange={handleMangelChange}
+              title="Details"
+              readOnly={readOnly}
+            />
+
             {mangel.contactLoggerList.length > 0 && (
               <ContactTable
                 data={mangel.contactLoggerList}
                 handleContactDetailsEdit={handleContactDetailsEdit}
               />
             )}
-
             <Button type="button" onClick={toggleViewAddContact}>
               Protokolliere Kontakt zum Vermieter (show/hide)
             </Button>
-
             {viewAddContact && (
               <AddContact
                 contactLogger={contactLogger}
@@ -378,44 +396,38 @@ export default function MaengelForm({ initialMode, title }) {
                 handleEditContact={handleEditContact}
               />
             )}
-
+          </MainCenter>
+          <MainBottom>
             {message && <Message>{message}</Message>}
 
             {mode === 'new' && (
-              <Button type="button" onClick={handleSubmitNew}>
+              <Button type="button" onClick={handleSubmitNew} primary>
                 speichern
               </Button>
             )}
             {mode === 'view' && (
-              <Button type="button" onClick={handleSwitchToEdit}>
+              <Button type="button" onClick={handleSwitchToEdit} primary>
                 bearbeiten
               </Button>
             )}
             {mode === 'edit' && (
               <div>
-                <Button type="button" onClick={handleSubmitChanges}>
+                <Button type="button" onClick={handleSubmitChanges} primary>
                   Änderungen speichern
                 </Button>
                 <Button type="button" onClick={handleCancelChanges}>
-                  Änderungen verwerfen
+                  Abbrechen
                 </Button>
                 <Button type="button" onClick={handleDeleteMangel}>
-                  Mangel löschen
+                  <Icon src={trash} alt="red trash" />
                 </Button>
               </div>
             )}
-          </Wrapper>
+          </MainBottom>
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
       <Navbar user={user} />
     </Page>
   )
 }
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
-  max-width: var(--max-content-width);
-`

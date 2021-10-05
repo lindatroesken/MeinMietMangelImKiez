@@ -34,7 +34,8 @@ const SelectStyled = styled.select`
   width: 100%;
   font-size: 1em;
   padding: var(--size-s);
-  margin-top: var(--size-s);
-  border: none;
+  margin-top: var(--size-xs);
   border-radius: var(--size-s);
+  border: 0.1px solid var(--light-accent);
+  color: var(--dark-shades);
 `

@@ -1,8 +1,8 @@
 import styled from 'styled-components/macro'
 import Button from './Button'
-import logoutIcon from '../images/logout-20-16.png'
-import loginIcon from '../images/login-16-16.png'
-import profilesIcon from '../images/profile-24-16.png'
+import logoutIcon from '../images/logout-32.png'
+import loginIcon from '../images/login-32.png'
+import profilesIcon from '../images/user-32.png'
 
 import { useAuth } from '../auth/AuthProvider'
 import { useHistory } from 'react-router-dom'
@@ -13,8 +13,8 @@ export default function Header({ title, ...props }) {
 
   return (
     <Wrapper {...props}>
-      <Logo>🏚</Logo>
-      <h3>{title}</h3>
+      <Logo />
+      <p>{title}</p>
       <div>
         {user && (
           <ButtonGroup>
@@ -38,6 +38,7 @@ export default function Header({ title, ...props }) {
 }
 
 const Wrapper = styled.header`
+  height: 50px;
   width: 100%;
   text-align: center;
   display: grid;
@@ -48,8 +49,10 @@ const Wrapper = styled.header`
   align-items: center;
 
   Button {
-    margin: 0;
-    color: var(--dark-accent);
+    margin: 0 var(--size-xs) 0 0;
+    border-radius: var(--size-s);
+    background-color: var(--dark-shades);
+    border: none;
     padding: var(--size-xs);
   }
 
@@ -58,8 +61,10 @@ const Wrapper = styled.header`
     width: 20px;
   }
   h3 {
+    font-size: var(--size-l);
     align-items: center;
     color: var(--dark-accent);
+    margin-top: var(--size-m);
     margin-bottom: var(--size-m);
   }
   div {

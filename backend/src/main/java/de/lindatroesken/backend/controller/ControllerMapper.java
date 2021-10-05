@@ -142,6 +142,7 @@ abstract class ControllerMapper {
                 .status(stringToStatus(mangel.getStatus()))
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
                 .dateReminder(intToDateReminder(mangel.getRemindMeInDays()))
+                .dateFixed(convertLongToZonedDateTime(mangel.getDateFixed()))
                 .isDue(checkDue(Status.valueOf(mangel.getStatus()), intToDateReminder(mangel.getRemindMeInDays())))
                 .addressEntity(mapAddress(mangel.getAddress()))
                 .build();
@@ -149,6 +150,7 @@ abstract class ControllerMapper {
     public Mangel mapMangel(MangelEntity mangelEntity) {
         return Mangel.builder()
                 .dateNoticed(convertZonedDateTimeToLong(mangelEntity.getDateNoticed()))
+                .dateFixed(convertZonedDateTimeToLong(mangelEntity.getDateFixed()))
                 .description(mangelEntity.getDescription())
                 .details(mangelEntity.getDetails())
                 .category(mangelEntity.getCategory())
@@ -188,6 +190,9 @@ abstract class ControllerMapper {
     }
 
     public ZonedDateTime convertLongToZonedDateTime(Long date){
+        if (date == null){
+            return null;
+        }
         try {
             return ZonedDateTime.ofInstant(Instant.ofEpochMilli(date),
                     ZoneId.systemDefault());
@@ -197,6 +202,9 @@ abstract class ControllerMapper {
     }
 
     public Long convertZonedDateTimeToLong(ZonedDateTime date){
+        if (date == null){
+            return null;
+        }
         try {
             return date.toInstant().toEpochMilli();
         } catch (IllegalArgumentException e) {

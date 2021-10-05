@@ -10,6 +10,9 @@ import { initialAddressState } from '../services/profile-service'
 import AddressForm from '../components/AddressForm'
 import { addNewAddress } from '../services/api-service'
 import Navbar from '../components/Navbar'
+import MainTop from '../components/MainTop'
+import MainCenter from '../components/MainCenter'
+import MainBottom from '../components/MainBottom'
 
 export default function NewAddress() {
   const [loading, setLoading] = useState(false)
@@ -40,13 +43,17 @@ export default function NewAddress() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          <AddressForm
-            address={address}
-            handleAddressInputChange={handleAddressInputChange}
-            handleSaveNewAddress={handleSaveNewAddress}
-            readOnly={false}
-            mode="new"
-          />
+          <MainTop />
+          <MainCenter>
+            <AddressForm
+              address={address}
+              handleAddressInputChange={handleAddressInputChange}
+              handleSaveNewAddress={handleSaveNewAddress}
+              readOnly={false}
+              mode="new"
+            />
+          </MainCenter>
+          <MainBottom />
         </Main>
       )}
       {error && <Error>{error.response.data.message}</Error>}
