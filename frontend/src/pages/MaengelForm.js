@@ -12,7 +12,7 @@ import {
   deleteContactLog,
   deleteMangel,
   getMangelById,
-  getUserAddress,
+  getUserAddressList,
   postContactLog,
   postMangel,
   putContactLog,
@@ -31,6 +31,13 @@ import {
 import ContactTable from '../components/ContactTable'
 import AddContact from '../components/AddContact'
 import SelectAddress from '../components/SelectAddress'
+import Navbar from '../components/Navbar'
+import Message from '../components/Message'
+import MainCenter from '../components/MainCenter'
+import MainTop from '../components/MainTop'
+import MainBottom from '../components/MainBottom'
+import trash from '../images/trash-9-32.png'
+import Icon from '../components/Icon'
 
 export default function MaengelForm({ initialMode, title }) {
   const { user, token } = useAuth()
@@ -45,6 +52,7 @@ export default function MaengelForm({ initialMode, title }) {
   const [readOnly, setReadOnly] = useState()
   const [viewAddContact, setViewAddContact] = useState(false)
   const [addresses, setAddresses] = useState([])
+  const [message, setMessage] = useState()
 
   const resetContactLogger = () => {
     setContactLogger({
@@ -54,7 +62,7 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const initializeMangel = () => {
-    getUserAddress(token, user.username)
+    getUserAddressList(token, user.username)
       .then(fetchedProfile => {
         setAddresses([...fetchedProfile])
         setMangel({
@@ -64,16 +72,16 @@ export default function MaengelForm({ initialMode, title }) {
           address: fetchedProfile[0],
         })
       })
+      .then(resetContactLogger)
       .catch(setError)
       .finally(() => {
         setLoading(false)
-        resetContactLogger()
       })
   }
 
   const getProfile = () => {
     setLoading(true)
-    return getUserAddress(token, user.username)
+    return getUserAddressList(token, user.username)
       .then(fetchedProfile => {
         setAddresses([...fetchedProfile])
       })
@@ -101,11 +109,32 @@ export default function MaengelForm({ initialMode, title }) {
       getProfile().finally(() => setLoading(false))
       setReadOnly(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, [mode, token, id])
 
   const handleMangelChange = event => {
     setMangel({ ...mangel, [event.target.name]: event.target.value })
+    setMessage()
+  }
+
+  const handleStatusChange = event => {
+    console.log('clicked')
+    console.log(event.target.name)
+    console.log(event.target.value)
+    if (event.target.value === 'DONE') {
+      setMangel({
+        ...mangel,
+        [event.target.name]: event.target.value,
+        dateFixed: null,
+      })
+    } else {
+      setMangel({ ...mangel, [event.target.name]: event.target.value })
+    }
+    // handleMangelChange(event)
+    // if (event.target.value === 'DONE') {
+    // } else {
+    //   setMangel({ ...mangel, dateFixed: null })
+    // }
   }
 
   const handleAddressChange = event => {
@@ -115,8 +144,8 @@ export default function MaengelForm({ initialMode, title }) {
     setMangel({ ...mangel, address: selectedAddress })
   }
 
-  const handleMangelDateChange = value => {
-    setMangel({ ...mangel, dateNoticed: value.getTime() })
+  const handleMangelDateChange = (date, name) => {
+    setMangel({ ...mangel, [name]: date.getTime() })
   }
 
   const handleContactChange = event => {
@@ -126,10 +155,10 @@ export default function MaengelForm({ initialMode, title }) {
     })
   }
 
-  const handleContactDateChange = value => {
+  const handleContactDateChange = (date, name) => {
     setContactLogger({
       ...contactLogger,
-      dateContacted: value.getTime(),
+      [name]: date.getTime(),
     })
   }
 
@@ -195,14 +224,16 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleSubmitNew = event => {
     event.preventDefault()
-    setLoading(true)
-    setError()
-    postMangel(token, user.username, mangel)
-      .catch(setError)
-      .finally(() => {
-        setLoading(false)
-        history.push('/mangel/list')
-      })
+    if (isValidInputFields()) {
+      setLoading(true)
+      setError()
+      postMangel(token, user.username, mangel)
+        .catch(setError)
+        .finally(() => {
+          setLoading(false)
+          history.push('/mangel/list')
+        })
+    }
   }
 
   const handleSwitchToEdit = () => {
@@ -212,16 +243,32 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleSubmitChanges = event => {
     event.preventDefault()
-    console.log('save clicked')
-    setLoading(true)
-    setError()
-    putMangel(token, id, mangel)
-      .then(setMangelSaved)
-      .catch(setError)
-      .finally(() => {
-        setLoading(false)
-        setMode('view')
-      })
+    if (isValidInputFields()) {
+      console.log('save clicked')
+      setLoading(true)
+      setError()
+      putMangel(token, id, mangel)
+        .then(setMangelSaved)
+        .catch(setError)
+        .finally(() => {
+          setLoading(false)
+          setMode('view')
+        })
+    }
+  }
+
+  const isValidInputFields = () => {
+    console.log(mangel)
+    if (mangel.status === 'DONE' && mangel.dateFixed === null) {
+      setMessage('Es muss ein Datum gewählt werden ')
+      return false
+    }
+    if (mangel.category === '') {
+      setMessage('Es muss eine Kategorie gewählt werden')
+      return false
+    }
+    setMessage()
+    return true
   }
 
   const handleDeleteMangel = () => {
@@ -243,6 +290,7 @@ export default function MaengelForm({ initialMode, title }) {
 
   const handleCancelChanges = () => {
     setMangel(mangelSaved)
+    setMode('view')
   }
 
   const toggleViewAddContact = () => {
@@ -255,115 +303,131 @@ export default function MaengelForm({ initialMode, title }) {
       {loading && <Loading />}
       {!loading && (
         <Main as="form">
-          {mangel.address && (
-            <SelectAddress
-              name="address"
-              id={mangel.address.id}
-              value={mangel.address.id}
-              values={addresses}
-              handleAddressChange={handleAddressChange}
-              title="Adresse"
+          <MainTop>
+            {' '}
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
+            {mangel.address && (
+              <SelectAddress
+                name="address"
+                id={mangel.address.id}
+                value={mangel.address.id}
+                values={addresses}
+                handleAddressChange={handleAddressChange}
+                title="Adresse"
+                readOnly={readOnly}
+              />
+            )}
+            <Select
+              name="category"
+              value={mangel.category}
+              values={mangelCategoryOptions}
+              onChange={handleMangelChange}
+              title="Kategorie"
               readOnly={readOnly}
             />
-          )}
-          <Select
-            name="status"
-            value={mangel.status}
-            values={mangelStatusOptions}
-            onChange={handleMangelChange}
-            title="Status"
-            readOnly={readOnly}
-          />
-          <Select
-            name="category"
-            value={mangel.category}
-            values={mangelCategoryOptions}
-            onChange={handleMangelChange}
-            title="Kategorie"
-            readOnly={readOnly}
-          />
-
-          <DateField
-            type="date"
-            name="dateNoticed"
-            value={mangel.dateNoticed}
-            onChange={handleMangelDateChange}
-            title="Festgestellt am"
-            readOnly={readOnly}
-          />
-
-          <Select
-            name="remindMeInDays"
-            value={mangel.remindMeInDays}
-            values={mangelReminderOptions}
-            onChange={handleMangelChange}
-            title="Erinnerung in ... Tagen"
-            readOnly={readOnly}
-          />
-
-          <TextField
-            name="description"
-            value={mangel.description}
-            onChange={handleMangelChange}
-            title="Beschreibung"
-            readOnly={readOnly}
-          />
-          <TextArea
-            name="details"
-            value={mangel.details}
-            onChange={handleMangelChange}
-            title="Details"
-            readOnly={readOnly}
-          />
-          {mangel.contactLoggerList.length > 0 && (
-            <ContactTable
-              data={mangel.contactLoggerList}
-              handleContactDetailsEdit={handleContactDetailsEdit}
+            <DateField
+              type="date"
+              name="dateNoticed"
+              value={mangel.dateNoticed}
+              onChange={handleMangelDateChange}
+              title="Festgestellt am"
+              readOnly={readOnly}
             />
-          )}
-
-          <Button type="button" onClick={toggleViewAddContact}>
-            Protokolliere Kontakt zum Vermieter (show/hide)
-          </Button>
-
-          {viewAddContact && (
-            <AddContact
-              contactLogger={contactLogger}
-              mode={mode}
-              handleContactChange={handleContactChange}
-              handleContactDateChange={handleContactDateChange}
-              handleAddAndSave={handleAddAndSave}
-              handleDeleteContact={handleDeleteContact}
-              handleEditContact={handleEditContact}
+            <Select
+              name="status"
+              value={mangel.status}
+              values={mangelStatusOptions}
+              onChange={handleStatusChange}
+              title="Status"
+              readOnly={readOnly}
             />
-          )}
+            {mangel.status === 'DONE' && (
+              <DateField
+                type="date"
+                name="dateFixed"
+                value={mangel.dateFixed}
+                onChange={handleMangelDateChange}
+                title="Fertig am"
+                readOnly={readOnly}
+              />
+            )}
+            <Select
+              name="remindMeInDays"
+              value={mangel.remindMeInDays}
+              values={mangelReminderOptions}
+              onChange={handleMangelChange}
+              title="Erinnerung in ... Tagen"
+              readOnly={readOnly}
+            />
+            <TextField
+              name="description"
+              value={mangel.description}
+              onChange={handleMangelChange}
+              title="Beschreibung"
+              readOnly={readOnly}
+            />
+            <TextArea
+              name="details"
+              value={mangel.details}
+              onChange={handleMangelChange}
+              title="Details"
+              readOnly={readOnly}
+            />
 
-          {mode === 'new' && (
-            <Button type="button" onClick={handleSubmitNew}>
-              speichern
+            {mangel.contactLoggerList.length > 0 && (
+              <ContactTable
+                data={mangel.contactLoggerList}
+                handleContactDetailsEdit={handleContactDetailsEdit}
+              />
+            )}
+            <Button type="button" onClick={toggleViewAddContact}>
+              Protokolliere Kontakt zum Vermieter (show/hide)
             </Button>
-          )}
-          {mode === 'view' && (
-            <Button type="button" onClick={handleSwitchToEdit}>
-              bearbeiten
-            </Button>
-          )}
-          {mode === 'edit' && (
-            <div>
-              <Button type="button" onClick={handleSubmitChanges}>
-                Änderungen speichern
+            {viewAddContact && (
+              <AddContact
+                contactLogger={contactLogger}
+                mode={mode}
+                handleContactChange={handleContactChange}
+                handleContactDateChange={handleContactDateChange}
+                handleAddAndSave={handleAddAndSave}
+                handleDeleteContact={handleDeleteContact}
+                handleEditContact={handleEditContact}
+              />
+            )}
+          </MainCenter>
+          <MainBottom>
+            {message && <Message>{message}</Message>}
+
+            {mode === 'new' && (
+              <Button type="button" onClick={handleSubmitNew} primary>
+                speichern
               </Button>
-              <Button type="button" onClick={handleCancelChanges}>
-                Änderungen verwerfen
+            )}
+            {mode === 'view' && (
+              <Button type="button" onClick={handleSwitchToEdit} primary>
+                bearbeiten
               </Button>
-              <Button type="button" onClick={handleDeleteMangel}>
-                Mangel löschen
-              </Button>
-            </div>
-          )}
+            )}
+            {mode === 'edit' && (
+              <div>
+                <Button type="button" onClick={handleSubmitChanges} primary>
+                  Änderungen speichern
+                </Button>
+                <Button type="button" onClick={handleCancelChanges}>
+                  Abbrechen
+                </Button>
+                <Button type="button" onClick={handleDeleteMangel}>
+                  <Icon src={trash} alt="red trash" />
+                </Button>
+              </div>
+            )}
+          </MainBottom>
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
+      <Navbar user={user} />
     </Page>
   )
 }

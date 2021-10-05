@@ -3,3 +3,6 @@ profile:
     url: postgresql://localhost:5432/maengelDB
     user: admin
     pass: 12345
+
+mapbox-client:
+  access-token: ${MAPBOX-TOKEN}

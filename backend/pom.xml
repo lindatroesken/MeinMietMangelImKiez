@@ -20,6 +20,15 @@
         <java.version>16</java.version>
     </properties>
 
+
+    <repositories>
+        <repository>
+            <id>google-repo</id>
+            <name>google repo</name>
+            <url>https://maven.google.com/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -58,6 +67,52 @@
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
         </dependency>
+
+        <!-- Feign Client -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+            <version>10.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-gson</artifactId>
+            <version>10.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-slf4j</artifactId>
+            <version>10.11</version>
+        </dependency>
+
+        <!-- Mapbox dependency -->
+        <dependency>
+            <groupId>com.mapbox.mapboxsdk</groupId>
+            <!-- Replace `DESIRED_JAVA_SDK_PACKAGE` with the name of an available package:
+                 https://docs.mapbox.com/android/java/guides/#available-packages -->
+            <artifactId>mapbox-sdk-geojson</artifactId>
+            <version>5.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mapbox.mapboxsdk</groupId>
+            <!-- Replace `DESIRED_JAVA_SDK_PACKAGE` with the name of an available package:
+                 https://docs.mapbox.com/android/java/guides/#available-packages -->
+            <artifactId>mapbox-sdk-services</artifactId>
+            <version>5.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>androidx.annotation</groupId>
+            <artifactId>annotation</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- CSV export -->
+        <dependency>
+            <groupId>net.sf.supercsv</groupId>
+            <artifactId>super-csv</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
 
         <!-- Testing -->
         <dependency>

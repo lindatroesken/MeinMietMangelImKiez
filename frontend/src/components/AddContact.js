@@ -25,7 +25,7 @@ export default function AddContact({
       />
       <DateField
         type="date"
-        name="dateNoticed"
+        name="dateContacted"
         value={contactLogger.dateContacted}
         onChange={handleContactDateChange}
         title="Kontaktiert am"
@@ -58,8 +58,13 @@ export default function AddContact({
 }
 
 const ContactForm = styled.div`
-  background-color: var(--background-dark);
-  border: solid var(--neutral-dark);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  grid-gap: var(--size-s);
+  width: 100%;
+  background-color: var(--light-shades);
+  border: 0.1px solid var(--light-accent);
   border-radius: var(--size-s);
   padding: var(--size-s);
 `

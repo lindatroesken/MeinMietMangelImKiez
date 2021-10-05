@@ -1,9 +1,6 @@
 package de.lindatroesken.backend.controller;
 
-import de.lindatroesken.backend.api.Address;
-import de.lindatroesken.backend.api.ContactLogger;
-import de.lindatroesken.backend.api.Mangel;
-import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.api.*;
 import de.lindatroesken.backend.model.*;
 
 import java.time.Instant;
@@ -118,6 +115,24 @@ abstract class ControllerMapper {
                 .build();
     }
 
+    public MangelStatistics mapMangelToStatistics(MangelEntity mangelEntity){
+        return MangelStatistics.builder()
+                .id(mangelEntity.getId())
+                .latitude(mangelEntity.getAddressEntity().getLatitude())
+                .longitude(mangelEntity.getAddressEntity().getLongitude())
+                .category(mangelEntity.getCategory())
+                .dateNoticed(convertZonedDateTimeToLong(mangelEntity.getDateNoticed()))
+                .status(mangelEntity.getStatus().toString())
+                .build();
+    }
+
+    public List<MangelStatistics> mapMangelToStatisticsList(List<MangelEntity> mangelEntityList){
+        List<MangelStatistics> mangelStatisticsList = new LinkedList<>();
+        for (MangelEntity mangelEntity : mangelEntityList) {
+            mangelStatisticsList.add(mapMangelToStatistics(mangelEntity));
+        }
+        return mangelStatisticsList;
+    }
 
 
     public MangelEntity mapMangel(Mangel mangel){
@@ -128,6 +143,7 @@ abstract class ControllerMapper {
                 .status(stringToStatus(mangel.getStatus()))
                 .dateNoticed(convertLongToZonedDateTime(mangel.getDateNoticed()))
                 .dateReminder(intToDateReminder(mangel.getRemindMeInDays()))
+                .dateFixed(convertLongToZonedDateTime(mangel.getDateFixed()))
                 .isDue(checkDue(Status.valueOf(mangel.getStatus()), intToDateReminder(mangel.getRemindMeInDays())))
                 .addressEntity(mapAddress(mangel.getAddress()))
                 .build();
@@ -135,13 +151,14 @@ abstract class ControllerMapper {
     public Mangel mapMangel(MangelEntity mangelEntity) {
         return Mangel.builder()
                 .dateNoticed(convertZonedDateTimeToLong(mangelEntity.getDateNoticed()))
+                .dateFixed(convertZonedDateTimeToLong(mangelEntity.getDateFixed()))
                 .description(mangelEntity.getDescription())
                 .details(mangelEntity.getDetails())
                 .category(mangelEntity.getCategory())
                 .status(mangelEntity.getStatus().toString())
                 .id(mangelEntity.getId())
                 .contactLoggerList(mapContactLoggerListFromEntity(mangelEntity.getContactLoggerList()))
-                .isDue(checkDue(mangelEntity.getStatus(), mangelEntity.getDateReminder()))
+                .isDue(mangelEntity.isDue())
                 .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
                 .address(mapAddress(mangelEntity.getAddressEntity()))
                 .build();
@@ -174,6 +191,9 @@ abstract class ControllerMapper {
     }
 
     public ZonedDateTime convertLongToZonedDateTime(Long date){
+        if (date == null){
+            return null;
+        }
         try {
             return ZonedDateTime.ofInstant(Instant.ofEpochMilli(date),
                     ZoneId.systemDefault());
@@ -183,6 +203,9 @@ abstract class ControllerMapper {
     }
 
     public Long convertZonedDateTimeToLong(ZonedDateTime date){
+        if (date == null){
+            return null;
+        }
         try {
             return date.toInstant().toEpochMilli();
         } catch (IllegalArgumentException e) {

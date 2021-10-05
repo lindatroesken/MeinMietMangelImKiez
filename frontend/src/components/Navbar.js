@@ -5,31 +5,33 @@ export default function Navbar({ user, ...props }) {
   return (
     <Wrapper {...props}>
       <NavLink exact to="/">
-        {' '}
-        Home{' '}
+        Übersicht
       </NavLink>
-      {!user && <NavLink to="/login"> Login </NavLink>}
-      {user && <NavLink to="/logout"> Logout </NavLink>}
-      {user && <NavLink to="/profile/view"> Profil </NavLink>}
-      {user && <NavLink to="/mangel/new"> Neu </NavLink>}
-      {user && <NavLink to="/mangel/list"> Liste </NavLink>}
+      {user && (
+        <>
+          <NavLink to="/map/view"> Karte </NavLink>
+          <NavLink to="/mangel/new"> Neu </NavLink>
+          <NavLink to="/mangel/list"> Liste </NavLink>
+        </>
+      )}
     </Wrapper>
   )
 }
 
 const Wrapper = styled.nav`
-  border-bottom: 1px solid var(--neutral-dark);
+  border-top: 1px solid var(--dark-accent);
   width: 100%;
   padding: var(--size-m);
   display: flex;
   overflow-y: scroll;
+  background-color: var(--dark-shades);
 
   a {
     flex-grow: 1;
     margin: 0 var(--size-l);
     text-align: center;
     text-decoration: none;
-    color: var(--neutral-dark);
+    color: var(--dark-accent);
   }
 
   a.active {

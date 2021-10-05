@@ -31,5 +31,11 @@ public class Address {
     @ApiModelProperty(notes = "country")
     private String country;
 
+    @ApiModelProperty(notes = "latitude")
+    private double latitude;
+
+    @ApiModelProperty(notes = "longitude")
+    private double longitude;
+
 
 }

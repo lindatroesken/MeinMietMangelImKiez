@@ -15,11 +15,6 @@ export default function Table({ columns, data, handleOnListItemClick }) {
     data,
   })
 
-  // const handleOnListItemClick = listItem => {
-  //   const path = `/mangel/details/${listItem.original.id}`
-  //   history.push(path)
-  // }
-
   return (
     <StyledTable {...getTableProps()}>
       <thead>
@@ -51,10 +46,16 @@ export default function Table({ columns, data, handleOnListItemClick }) {
 }
 
 const StyledTable = styled.table`
-  background-color: var(--background-dark);
+  justify-self: center;
+  background-color: var(--light-shades);
+  text-align: center;
   padding: var(--size-l);
-
-  thead {
+  font-weight: normal;
+  border: none;
+  width: 100%;
+  color: var(--dark-shades);
+  th {
+    text-align: center;
   }
   tbody {
     tr {

@@ -5,15 +5,17 @@ import Error from '../components/Error'
 import Main from '../components/Main'
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
-import AddressForm from '../components/AddressForm'
-import { initialAddressState } from '../services/profile-service'
-import {
-  addNewAddress,
-  getUserAddress,
-  updateUserAddress,
-} from '../services/api-service'
+import { getUserAddressList } from '../services/api-service'
 import { useHistory, useParams } from 'react-router-dom'
 import Button from '../components/Button'
+import Addresses from '../components/Addresses'
+import TextField from '../components/TextField'
+import Navbar from '../components/Navbar'
+import MainTop from '../components/MainTop'
+import MainCenter from '../components/MainCenter'
+import MainBottom from '../components/MainBottom'
+import styled from 'styled-components/macro'
+import save from '../images/save-32.png'
 
 export default function Profile() {
   const { mode, id } = useParams()
@@ -21,82 +23,40 @@ export default function Profile() {
   const history = useHistory()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
-  const [address, setAddress] = useState(initialAddressState)
   const [addressList, setAddressList] = useState([])
+  const [username, setUsername] = useState(user.username)
 
   const loadDataOnlyOnce = useCallback(() => {
     setLoading(true)
     setError()
-    getUserAddress(token, user.username)
+    getUserAddressList(token, user.username)
       .then(response => {
         setAddressList(response)
-        if (mode === 'new') {
-          setAddress(initialAddressState)
-        } else if (mode === 'edit') {
-          setEditAddress(response, id)
-        }
       })
       .catch(setError)
       .finally(() => {
         setLoading(false)
-        console.log(addressList)
-        console.log(address)
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode])
+  }, [token, user.username])
 
   useEffect(() => {
     loadDataOnlyOnce()
   }, [loadDataOnlyOnce])
 
-  const setEditAddress = (addressList, id) => {
-    const selectedAddress = addressList.filter(address => address.id === id)
-    setAddress(selectedAddress)
-    console.log(addressList.findIndex(address => address.id === id))
+  const handleEditAddress = id => {
+    history.push(`/address/edit/${id}`)
   }
 
-  const handleAddressNew = event => {
-    event.preventDefault()
-    console.log('save new address: ', address)
-    setLoading(true)
-    setError()
-    addNewAddress(token, user.username, address)
-      .then(response => {
-        setAddress(response)
-        console.log([...addressList, response])
-        setAddressList([...addressList, response])
-      })
-      .catch(setError)
-      .finally(() => {
-        setLoading(false)
-        history.push(`/profile/view/${address.id}`)
-      })
+  const handleNewAddress = () => {
+    history.push(`/address/new`)
   }
 
-  const handleAddressInputChange = event => {
-    setAddress({ ...address, [event.target.name]: event.target.value })
+  const handleChangeUsername = event => {
+    setUsername(event.target.value)
   }
 
-  const handleEnableEdit = id => {
-    setEditAddress(addressList, id)
-    history.push(`/profile/edit/${id}`)
-  }
-
-  const handleSetModeNew = () => {
-    history.push(`/profile/new`)
-  }
-
-  const handleAddressEdit = id => {
-    setLoading(true)
-    setError()
-    updateUserAddress(token, id, address)
-      .then(setAddress)
-      .catch(setError)
-      .finally(() => {
-        setLoading(false)
-        history.push(`/profile/view/${address.id}`)
-      })
-    console.log('updated')
+  const handleSubmitUserName = () => {
+    console.log('submit new username, tbd.')
   }
 
   return (
@@ -105,40 +65,60 @@ export default function Profile() {
       {loading && <Loading />}
       {!loading && (
         <Main>
-          {user &&
-            mode !== 'edit' &&
-            addressList.length > 0 &&
-            addressList.map(address => (
-              <AddressForm
-                id={id}
-                mode={mode}
-                address={address}
-                handleEnableEdit={handleEnableEdit}
-                handleAddressNew={handleAddressNew}
-                handleAddressEdit={handleAddressEdit}
-                handleAddressInputChange={handleAddressInputChange}
+          <MainTop>
+            {error && <Error>{error.response.data.message}</Error>}
+          </MainTop>
+          <MainCenter>
+            <User>
+              <TextField
+                name="username"
+                value={username}
+                onChange={handleChangeUsername}
+                title="Username"
+                type="text"
+                disabled={true}
               />
-            ))}
-          {user && mode === 'edit' && address && (
-            <AddressForm
-              id={id}
+              <Button type="button" onClick={handleSubmitUserName}>
+                <Icon src={save} />
+              </Button>
+            </User>
+            <Addresses
+              user={user}
               mode={mode}
-              address={address}
-              handleEnableEdit={handleEnableEdit}
-              handleAddressNew={handleAddressNew}
-              handleAddressEdit={handleAddressEdit}
-              handleAddressInputChange={handleAddressInputChange}
+              addressList={addressList}
+              id={id}
+              handleEditAddress={handleEditAddress}
+              handleNewAddress={handleNewAddress}
             />
-          )}
-
-          {user && addressList.length === 0 && (
-            <div>
-              <Button onClick={handleSetModeNew}> neue Adresse </Button>
-            </div>
-          )}
+          </MainCenter>
+          <MainBottom />
         </Main>
       )}
-      {error && <Error>{error.response.data.message}</Error>}
+
+      <Navbar user={user} />
     </Page>
   )
 }
+
+const Icon = styled.img`
+  width: var(--size-l);
+  height: var(--size-l);
+  padding: 0;
+`
+
+const User = styled.div`
+  display: grid;
+  width: 100%;
+  padding: 0;
+  grid-template-columns: 1fr min-content;
+  justify-content: space-between;
+  align-items: end;
+  label {
+    margin: 0;
+    width: 100%;
+  }
+  button {
+    margin-bottom: 0;
+    height: min-content;
+  }
+`

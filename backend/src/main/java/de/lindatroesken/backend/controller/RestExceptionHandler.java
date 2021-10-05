@@ -3,6 +3,7 @@ package de.lindatroesken.backend.controller;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,10 +15,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 
+@Slf4j
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
-
 
 
     @ExceptionHandler({
@@ -51,11 +53,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return createRestException(e, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler({
+            CSVException.class
+    })
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<RestException> handle500CSV(Throwable e) {
+        return createRestException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private ResponseEntity<RestException> createRestException(Throwable e, HttpStatus httpStatus){
         RestException restException = new RestException(e.getMessage(), httpStatus);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        log.info("Handled Exception: " + restException.message);
 
         return new ResponseEntity<>(restException, httpHeaders, httpStatus);
     }

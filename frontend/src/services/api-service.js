@@ -60,17 +60,40 @@ export const deleteMangel = (token, mangelId) =>
     .delete(`/api/mangel/delete/${mangelId}`, headers(token))
     .then(response => response.data)
 
+export const exportMangelAsCSV = token =>
+  axios.get(`/api/mangel/export/csv/all`, {
+    responseType: 'blob',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
 export const addNewAddress = (token, username, address) =>
   axios
     .post(`/api/user/address/new/${username}`, address, headers(token))
     .then(response => response.data)
 
-export const getUserAddress = (token, username) =>
+export const getUserAddressList = (token, username) =>
   axios
     .get(`/api/user/address/find/${username}`, headers(token))
+    .then(response => response.data)
+
+export const getUserAddressById = (token, username, addressId) =>
+  axios
+    .get(`/api/user/address/find/${username}/${addressId}`, headers(token))
     .then(response => response.data)
 
 export const updateUserAddress = (token, addressId, address) =>
   axios
     .put(`/api/user/address/edit/${addressId}`, address, headers(token))
+    .then(response => response.data)
+
+export const deleteUserAddress = (token, addressId) =>
+  axios
+    .delete(`/api/user/address/delete/${addressId}`, headers(token))
+    .then(response => response.data)
+
+export const getMangelStatisticsAll = token =>
+  axios
+    .get(`/api/mangel/statistics/all`, headers(token))
     .then(response => response.data)

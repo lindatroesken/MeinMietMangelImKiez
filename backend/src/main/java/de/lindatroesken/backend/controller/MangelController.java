@@ -2,6 +2,7 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.ContactLogger;
 import de.lindatroesken.backend.api.Mangel;
+import de.lindatroesken.backend.api.MangelStatistics;
 import de.lindatroesken.backend.model.ContactLoggerEntity;
 import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
@@ -14,7 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.supercsv.io.CsvBeanWriter;
+import org.supercsv.io.ICsvBeanWriter;
+import org.supercsv.prefs.CsvPreference;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -134,5 +143,48 @@ public class MangelController extends ControllerMapper {
     public ResponseEntity<Mangel> deleteMangel(@AuthenticationPrincipal UserEntity authUser, @PathVariable Long mangelId){
         MangelEntity deletedMangel = mangelService.deleteMangel(authUser.getUsername(), mangelId);
         return ok(mapMangel(deletedMangel));
+    }
+
+    @GetMapping(value = "statistics/all", produces = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only delete own mangel")
+    })
+    public ResponseEntity<List<MangelStatistics>> getAllLocations(@AuthenticationPrincipal UserEntity authUser){
+        List<MangelEntity> mangelEntityList = mangelService.findAllForAllUser();
+        return ok(mapMangelToStatisticsList(mangelEntityList));
+    }
+
+    @GetMapping(value = "export/csv/all", produces = "text/csv")
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "A user with role 'user' can only export own mangel list")
+    })
+    public void exportToCSV(HttpServletResponse response, @AuthenticationPrincipal UserEntity authUser){
+        response.setContentType("text/csv");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=mangellist_" + currentDateTime + ".csv";
+        response.setHeader(headerKey, headerValue);
+
+        List<MangelEntity> mangelEntityList = mangelService.findAllForUser(authUser.getUsername());
+
+
+        try {
+           ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
+            String[] csvHeader = {"Mangel ID", "Kategorie", "Beschreibung", "Status", "Date Noticed", "Date Fixed", "Vermieter kontaktiert"};
+            String[] nameMapping = {"id", "category", "description", "status", "dateNoticed", "dateFixed", "contactLoggerList"};
+
+            csvWriter.writeHeader(csvHeader);
+
+            for (MangelEntity mangelEntity : mangelEntityList) {
+                csvWriter.write(mangelEntity, nameMapping);
+            }
+
+            csvWriter.close();
+        } catch (IOException e){
+            throw new CSVException(e.getMessage());
+        }
+
     }
 }

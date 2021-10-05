@@ -7,20 +7,22 @@ import PersonalMaengelList from './pages/PersonalMaengelList'
 import AuthProvider from './auth/AuthProvider'
 import Logout from './pages/Logout'
 import Profile from './pages/Profile'
+import MangelMap from './pages/MangelMap'
+import NewAddress from './pages/NewAddress'
+import EditAddress from './pages/EditAddress'
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Switch>
           <Route path="/login" component={Login} />
           <Route exact path="/" component={Home} />
-          <ProtectedRoute path="/profile/:mode/:id">
-            <Profile />
-          </ProtectedRoute>
-          <ProtectedRoute path="/profile/:mode">
-            <Profile />
-          </ProtectedRoute>
+          <ProtectedRoute path="/profile/:mode" component={Profile} />
+          <ProtectedRoute path="/profile/:mode/:id" component={Profile} />
+          <ProtectedRoute path="/address/edit/:id" component={EditAddress} />
+          <ProtectedRoute path="/address/new" component={NewAddress} />
+          <Route path="/map/view" component={MangelMap} />
           <ProtectedRoute path="/logout" component={Logout} />
           <ProtectedRoute path="/mangel/new">
             <MaengelForm
@@ -38,7 +40,7 @@ export default function App() {
           </ProtectedRoute>
           <ProtectedRoute path="/mangel/list" component={PersonalMaengelList} />
         </Switch>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   )
 }
