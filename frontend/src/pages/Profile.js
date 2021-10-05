@@ -37,8 +37,7 @@ export default function Profile() {
       .finally(() => {
         setLoading(false)
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode])
+  }, [token, user.username])
 
   useEffect(() => {
     loadDataOnlyOnce()
