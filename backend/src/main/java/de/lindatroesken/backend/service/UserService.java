@@ -1,9 +1,5 @@
 package de.lindatroesken.backend.service;
 
-import com.mapbox.api.geocoding.v5.MapboxGeocoding;
-import com.mapbox.api.geocoding.v5.models.CarmenFeature;
-import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
-import de.lindatroesken.backend.config.MapboxClientConfigProperties;
 import de.lindatroesken.backend.controller.UnauthorizedUserException;
 import de.lindatroesken.backend.model.AddressEntity;
 import de.lindatroesken.backend.model.UserEntity;
@@ -14,9 +10,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -31,13 +24,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
-    private final MapboxClientConfigProperties mapboxClientConfigProperties;
+    private final MapboxService mapboxService;
+
 
     @Autowired
-    public UserService(UserRepository userRepository, AddressRepository addressRepository, MapboxClientConfigProperties mapboxClientConfigProperties) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, MapboxService mapboxService) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
-        this.mapboxClientConfigProperties = mapboxClientConfigProperties;
+        this.mapboxService = mapboxService;
     }
 
 
@@ -55,61 +49,15 @@ public class UserService {
         if(addressExists(existingUserAddresses, addressEntity)){
             throw new EntityExistsException("Address already exists");
         }
-        AddressEntity createdAddress = userEntity.addAddress(addressEntity);
-        getGeoLocation(createdAddress);
+        addressEntity.setUserEntity(userEntity);
+        AddressEntity savedAddress = addressRepository.save(addressEntity);
+        mapboxService.getGeoLocation(savedAddress.getId(), addressEntity.toString());
 
-        return createdAddress;
+        return savedAddress;
 
     }
 
-    public void getGeoLocation(AddressEntity addressEntity){
-        String addressString = new StringBuilder()
-                .append(addressEntity.getStreet())
-                .append(" ")
-                .append(addressEntity.getNumber())
-                .append(", ")
-                .append(addressEntity.getZip())
-                .append(" ")
-                .append(addressEntity.getCity())
-                .append(", ")
-                .append(addressEntity.getCountry()).toString();
 
-        String mapboxToken = mapboxClientConfigProperties.getAccessToken();
-
-        MapboxGeocoding mapboxGeocoding = MapboxGeocoding.builder()
-                .accessToken(mapboxToken)
-                .query(addressString)
-                .build();
-
-        mapboxGeocoding.enqueueCall(new Callback<GeocodingResponse>() {
-            @Override
-            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
-                List<CarmenFeature> results = response.body().features();
-                double relevance = 0;
-                List<Double> coordinates;
-                if (results.size() > 0) {
-                    coordinates = results.get(0).center().coordinates();
-
-                    addressEntity.setLongitude(coordinates.get(0));
-                    addressEntity.setLatitude(coordinates.get(1));
-
-
-                    log.info("mapbox onResponse: coordinates saved to address");
-
-                } else {
-                    log.info("mapbox onResponse: No result found for this address");
-                }
-
-                addressRepository.save(addressEntity);
-            }
-
-            @Override
-            public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
-                log.info("mapbox onFailure: some problem....");
-                throwable.printStackTrace();
-            }
-        });
-    }
 
     public boolean addressExists(Set<AddressEntity> existingAddressList, AddressEntity addressToCheck){
         for (AddressEntity address : existingAddressList){
@@ -159,7 +107,7 @@ public class UserService {
         }
         addressRepository.save(existingAddressEntity);
 
-        getGeoLocation(existingAddressEntity);
+        mapboxService.getGeoLocation(existingAddressEntity.getId(), existingAddressEntity.toString());
 
         return existingAddressEntity;
 
