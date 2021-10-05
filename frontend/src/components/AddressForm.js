@@ -1,6 +1,8 @@
 import TextField from './TextField'
 import Button from './Button'
 import styled from 'styled-components/macro'
+import Icon from './Icon'
+import trash from '../images/trash-9-32.png'
 
 export default function AddressForm({
   mode,
@@ -60,19 +62,22 @@ export default function AddressForm({
         disabled={readOnly}
       />
       {mode === 'new' && (
-        <div>
+        <ButtonGroup>
+          <Button type="button" onClick={handleCancel}>
+            abbrechen
+          </Button>
           <Button onClick={handleSaveNewAddress}> speichern </Button>
-        </div>
+        </ButtonGroup>
       )}
       {readOnly && (
-        <div>
+        <ButtonGroup>
           <Button type="button" onClick={() => handleEditAddress(address.id)}>
             bearbeiten
           </Button>
-        </div>
+        </ButtonGroup>
       )}
       {mode === 'edit' && (
-        <div>
+        <ButtonGroup>
           <Button type="button" onClick={handleCancel}>
             abbrechen
           </Button>
@@ -83,9 +88,9 @@ export default function AddressForm({
             Änderungen speichern
           </Button>
           <Button type="button" onClick={handleDeleteAddress}>
-            löschen
+            <Icon src={trash} />
           </Button>
-        </div>
+        </ButtonGroup>
       )}
     </Address>
   )
@@ -95,10 +100,11 @@ const Address = styled.form`
   width: 100%;
   border-color: var(--dark-shades);
   border-radius: var(--size-s);
-  border: solid 0.5px;
-  //padding: var(--size-m);
   margin-bottom: var(--size-m);
-  //max-width: var(--max-content-width);
+`
+
+const ButtonGroup = styled.div`
+  text-align: center;
 `
 
 const StreetNumber = styled.div`
