@@ -56,8 +56,7 @@ public class UserService {
             throw new EntityExistsException("Address already exists");
         }
         AddressEntity createdAddress = userEntity.addAddress(addressEntity);
-        userRepository.save(userEntity);
-        getGeoLocation(addressEntity);
+        getGeoLocation(createdAddress);
 
         return createdAddress;
 
@@ -94,12 +93,14 @@ public class UserService {
                     addressEntity.setLongitude(coordinates.get(0));
                     addressEntity.setLatitude(coordinates.get(1));
 
-                    addressRepository.save(addressEntity);
+
                     log.info("mapbox onResponse: coordinates saved to address");
 
                 } else {
                     log.info("mapbox onResponse: No result found for this address");
                 }
+
+                addressRepository.save(addressEntity);
             }
 
             @Override
