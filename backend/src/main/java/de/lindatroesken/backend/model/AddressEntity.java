@@ -7,7 +7,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "address")
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -63,4 +64,10 @@ public class AddressEntity {
         return id.equals(that.id);
     }
 
+
+    @Override
+    public String toString() {
+        return street + " " + number + ", " +
+                zip + " " + city + ", " + country;
+    }
 }
