@@ -9,6 +9,7 @@ export default createGlobalStyle`
   html, body {
     margin: 0;
     font-family: "Gill Sans", sans-serif;
+    height: 100vh;
   }
 
   :root {
