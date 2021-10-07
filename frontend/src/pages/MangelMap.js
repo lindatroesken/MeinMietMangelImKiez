@@ -10,6 +10,7 @@ import { useAuth } from '../auth/AuthProvider'
 import Navbar from '../components/Navbar'
 import MainTop from '../components/MainTop'
 import MainBottom from '../components/MainBottom'
+import Error from '../components/Error'
 
 const apiToken = process.env.REACT_APP_MAPBOX_TOKEN
 
@@ -17,6 +18,7 @@ export default function MangelMap() {
   const [viewport, setViewport] = useState(initialViewport)
   const [selectedMangel, setSelectedMangel] = useState(null)
   const [mangelLocations, setMangelLocations] = useState()
+  const [error, setError] = useState()
   const { token, user } = useAuth()
 
   useEffect(() => {
@@ -44,11 +46,12 @@ export default function MangelMap() {
   }
 
   useEffect(() => {
+    setError()
     getMangelStatisticsAll(token)
       .then(mangelLocations => {
         setMangelLocations(mangelWithColor(mangelLocations))
       })
-      .catch(console.log)
+      .catch(setError)
   }, [token])
 
   const handleSetSelectedMangel = (event, mangel) => {
@@ -60,7 +63,10 @@ export default function MangelMap() {
     <Page>
       <Header title="Kiezübersicht" />
       <Main>
-        <MainTop>Alle offenen Mängel</MainTop>
+        <MainTop>
+          Alle offenen Mängel
+          {error && <Error>{error.response.data.message}</Error>}
+        </MainTop>
         <ReactMapGL
           {...viewport}
           mapboxApiAccessToken={apiToken}

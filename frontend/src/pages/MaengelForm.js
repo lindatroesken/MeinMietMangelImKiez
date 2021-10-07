@@ -118,9 +118,6 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const handleStatusChange = event => {
-    console.log('clicked')
-    console.log(event.target.name)
-    console.log(event.target.value)
     if (event.target.value === 'DONE') {
       setMangel({
         ...mangel,
@@ -130,11 +127,6 @@ export default function MaengelForm({ initialMode, title }) {
     } else {
       setMangel({ ...mangel, [event.target.name]: event.target.value })
     }
-    // handleMangelChange(event)
-    // if (event.target.value === 'DONE') {
-    // } else {
-    //   setMangel({ ...mangel, dateFixed: null })
-    // }
   }
 
   const handleAddressChange = event => {
@@ -167,7 +159,6 @@ export default function MaengelForm({ initialMode, title }) {
     setMangel({ ...mangel, contactLoggerList: contactLoggerList })
 
     if (mode === 'new') {
-      console.log('add contactLog to Mangel...')
       setViewAddContact(false)
     } else if (mode === 'view') {
       setLoading(true)
@@ -180,7 +171,6 @@ export default function MaengelForm({ initialMode, title }) {
           setLoading(false)
         })
     } else if (mode === 'edit') {
-      console.log('add contactLog to Mangel...')
       setViewAddContact(false)
     } else {
       console.log('unknown mode')
@@ -192,12 +182,8 @@ export default function MaengelForm({ initialMode, title }) {
     setLoading(true)
     setError()
     deleteContactLog(token, id, contactLogger.id)
-      .then(r => {
-        console.log(r, ' deleted. Do something with deleted mangel?')
-        getMangelById(token, id).then(dto => {
-          setMangel(dto)
-        })
-      })
+      .then(() => getMangelById(token, id))
+      .then(dto => setMangel(dto))
       .catch(setError)
       .finally(() => {
         setViewAddContact(false)
@@ -244,7 +230,6 @@ export default function MaengelForm({ initialMode, title }) {
   const handleSubmitChanges = event => {
     event.preventDefault()
     if (isValidInputFields()) {
-      console.log('save clicked')
       setLoading(true)
       setError()
       putMangel(token, id, mangel)
@@ -258,7 +243,6 @@ export default function MaengelForm({ initialMode, title }) {
   }
 
   const isValidInputFields = () => {
-    console.log(mangel)
     if (mangel.status === 'DONE' && mangel.dateFixed === null) {
       setMessage('Es muss ein Datum gewählt werden ')
       return false

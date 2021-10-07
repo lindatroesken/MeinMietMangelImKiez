@@ -40,7 +40,6 @@ export default function Home() {
     history.push(path)
   }
 
-  console.log(error)
   return (
     <Page>
       <Header title="Meine Mängelapp" />

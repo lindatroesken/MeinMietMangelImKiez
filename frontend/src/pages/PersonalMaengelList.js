@@ -44,7 +44,6 @@ export default function PersonalMaengelList() {
       .then(response => {
         const fileName =
           response.headers['content-disposition'].split('filename=')[1]
-        console.log(fileName)
         const blob = new Blob([response.data])
         const link = document.createElement('a')
         link.href = window.URL.createObjectURL(blob)
