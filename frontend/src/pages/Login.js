@@ -39,7 +39,6 @@ export default function Login() {
     login(credentials)
       .then(() => history.push('/'))
       .catch(error => {
-        console.log({ error })
         setError(error)
         setLoading(false)
       })

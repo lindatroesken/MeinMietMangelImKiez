@@ -28,7 +28,6 @@ export default function EditAddress() {
   useEffect(() => {
     setLoading(true)
     setError()
-    console.log(id)
     getUserAddressById(token, user.username, id)
       .then(setAddress)
       .catch(setError)
