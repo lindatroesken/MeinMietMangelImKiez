@@ -40,14 +40,18 @@ public class UserControllerTest {
         return "http://localhost:"+port+"/user";
     }
 
-    @Autowired
-    TestRestTemplate restTemplate;
+    private final TestRestTemplate restTemplate;
+    private final UserRepository userRepository;
+    private final JwtConfig jwtConfig;
+
+
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private JwtConfig jwtConfig;
+    public UserControllerTest(TestRestTemplate restTemplate, UserRepository userRepository, JwtConfig jwtConfig) {
+        this.restTemplate = restTemplate;
+        this.userRepository = userRepository;
+        this.jwtConfig = jwtConfig;
+    }
 
     @BeforeEach
     public void initializeDB(){
