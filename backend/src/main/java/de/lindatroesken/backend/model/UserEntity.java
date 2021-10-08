@@ -36,6 +36,8 @@ public class UserEntity {
     public UserEntity removeMangel(MangelEntity mangelEntity){
         mangelList.remove(mangelEntity);
         mangelEntity.setUserEntity(null);
+        mangelEntity.setAddressEntity(null);
+        mangelEntity.setContactLoggerList(null);
         return this;
     }
 
