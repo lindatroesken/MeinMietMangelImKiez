@@ -158,8 +158,8 @@ public class MangelService {
         if (!deleteMangelEntity.getUserEntity().getUsername().equals(username)){
             throw new UnauthorizedUserException("User can only delete own mangel");
         }
-        userRepository.save(userEntity.removeMangel(deleteMangelEntity));
         mangelRepository.delete(deleteMangelEntity);
+        userRepository.save(userEntity.removeMangel(deleteMangelEntity));
         deleteMangelEntity.setId(null);
         return deleteMangelEntity;
 
