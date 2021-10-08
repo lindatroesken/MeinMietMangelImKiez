@@ -134,6 +134,28 @@ class MangelControllerTest {
 
     }
 
+    @Test
+    @DisplayName("DELETE mangel with valid credentials should remove mangel from database")
+    void testDeleteMangelOK() {
+        //GIVEN
+        String username = "testuser";
+        String role = "user";
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(username, role));
+        MangelEntity mangelToDelete = userRepository.findByUsername(username).get().getMangelList().stream().findFirst().orElseThrow();
+        String url = getUrl() + "/delete/" + mangelToDelete.getId();
+        int sizeBefore = mangelRepository.findAll().size();
+
+        //WHEN
+        ResponseEntity<Mangel> response = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, Mangel.class);
+
+        //THEN
+        Optional<MangelEntity> mangelOptionalShouldBeEmpty = mangelRepository.findById(mangelToDelete.getId());
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(mangelOptionalShouldBeEmpty, is(Optional.empty()));
+        assertThat(mangelRepository.findAll().size(), is(sizeBefore-1));
+
+    }
+
     private HttpHeaders authorizedHeader(String username, String role){
         Map<String,Object> claims = new HashMap<>();
         claims.put("role", role);
