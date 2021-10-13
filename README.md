@@ -35,21 +35,21 @@ Die App wird stetig weiterentwickelt.
 
 ## Run Project 
 - clone project from github by execute:
-``` 
+```shell 
 git clone git@github.com:lindatroesken/MeinMietMangelImKiez.git
 ```
 - start docker with postgreSQL database by: 
-``` 
+```shell 
 docker-compose up -d 
 ```
 ### React in folder *frontend*
 - rename .env-template to .env and enter mapbox token and cloudinary access data
 - build the frontend by:
-``` 
+```shell 
 npm install
 ```
 - run the frontend by:
-``` 
+```shell 
 npm run start
 ```
 
@@ -60,10 +60,37 @@ npm run start
     - MAPBOX-TOKEN
     - JWT-SECRET
 - build the backend by:
-```
+```shell
 mvn clean package
 ```
 - run the backend by:
-```
+```shell
 mvn spring-boot run
+```
+
+### Alternative: run backend in docker container
+to run the backend and the database in a docker container:
+- run docker-build.sh
+```shell
+./bin/docker-build.sh
+```
+- run docker-compose:
+```shell
+docker-compose -f docker-compose-backend.yml up
+```
+- to stop docker with database and backend application:
+```shell
+docker-compose -f docker-compose-backend.yml stop
+```
+- to view running docker container:
+```shell
+docker ps
+```
+- to view all docker container:
+```shell
+docker ps -a
+```
+- to view running docker container with memory usage:
+```shell
+docker stats
 ```
