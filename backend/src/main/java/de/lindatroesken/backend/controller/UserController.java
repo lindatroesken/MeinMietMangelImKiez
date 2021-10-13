@@ -79,7 +79,7 @@ public class UserController extends ControllerMapper{
             @ApiResponse(code = SC_BAD_REQUEST, message = "Unable to create User with blank name"),
             @ApiResponse(code = SC_CONFLICT, message = "Unable to create User, user already exists")
     })
-    public ResponseEntity<User> register(@AuthenticationPrincipal UserEntity authUser, @RequestBody UserRegister user) {
+    public ResponseEntity<User> register(@RequestBody UserRegister user) {
 
         UserEntity createdUser = userService.createUser(mapUser(user), user.getPassword());
         return ok(mapUser(createdUser));
