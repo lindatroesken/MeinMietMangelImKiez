@@ -18,10 +18,10 @@ public class MangelStatistics {
     private Long id;
 
     @ApiModelProperty(notes = "latitude")
-    private double latitude;
+    private Double latitude;
 
     @ApiModelProperty(notes = "longitude")
-    private double longitude;
+    private Double longitude;
 
     @ApiModelProperty(notes = "category")
     private String category;
