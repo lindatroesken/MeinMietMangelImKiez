@@ -68,7 +68,7 @@ mvn clean package
 mvn spring-boot run
 ```
 
-### Alternative: run backend in docker container
+## Alternative: run backend in docker container
 to run the backend and the database in a docker container:
 - run docker-build.sh
 ```shell
@@ -82,6 +82,8 @@ docker-compose -f docker-compose-backend.yml up
 ```shell
 docker-compose -f docker-compose-backend.yml stop
 ```
+
+### Some helpful docker commands
 - to view running docker container:
 ```shell
 docker ps
@@ -94,3 +96,25 @@ docker ps -a
 ```shell
 docker stats
 ```
+- to view docker images:
+```shell
+docker images
+```
+- to remove docker images:
+```shell
+docker rmi image_name_or_id
+```
+- to stop docker container:
+```shell
+docker stop container_id
+```
+- to remove docker container:
+```shell
+docker rm container_id
+```
+- to remove docker container and then remove image:
+```shell
+docker rm container_id
+docker rmi image_id
+```
+and some more helpful tipps [https://linuxhandbook.com/remove-docker-images/](https://linuxhandbook.com/remove-docker-images/)
