@@ -20,6 +20,12 @@ abstract class ControllerMapper {
                 .build();
     }
 
+    public UserEntity mapUser(UserRegister user) {
+        return UserEntity.builder()
+                .username(user.getUsername())
+                .build();
+    }
+
     public List<User> mapUser(List<UserEntity> userEntityList) {
         List<User> userList = new LinkedList<>();
         for(UserEntity userEntity: userEntityList){
