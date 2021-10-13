@@ -6,6 +6,7 @@ import MaengelForm from './pages/MaengelForm'
 import PersonalMaengelList from './pages/PersonalMaengelList'
 import AuthProvider from './auth/AuthProvider'
 import Logout from './pages/Logout'
+import Register from './pages/Register'
 import Profile from './pages/Profile'
 import MangelMap from './pages/MangelMap'
 import NewAddress from './pages/NewAddress'
@@ -17,6 +18,7 @@ export default function App() {
       <AuthProvider>
         <Switch>
           <Route path="/login" component={Login} />
+          <Route path="/register" component={Register} />
           <Route exact path="/" component={Home} />
           <ProtectedRoute path="/profile/:mode" component={Profile} />
           <ProtectedRoute path="/profile/:mode/:id" component={Profile} />
