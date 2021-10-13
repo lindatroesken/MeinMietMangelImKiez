@@ -40,7 +40,7 @@ git clone git@github.com:lindatroesken/MeinMietMangelImKiez.git
 ```
 - start docker with postgreSQL database by: 
 ```shell 
-docker-compose up -d 
+docker-compose up -d --remove-orphans
 ```
 ### React in folder *frontend*
 - rename .env-template to .env and enter mapbox token and cloudinary access data
@@ -73,6 +73,10 @@ to run the backend and the database in a docker container:
 - run docker-build.sh
 ```shell
 ./bin/docker-build.sh
+```
+- if file is not executable: 
+```shell
+chmod +x docker-build.sh
 ```
 - run docker-compose:
 ```shell
