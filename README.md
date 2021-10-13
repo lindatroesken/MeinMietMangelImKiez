@@ -25,3 +25,45 @@ Die App wird stetig weiterentwickelt.
  </tr>
 </table>
 
+## Requirements
+- Java 16
+- maven
+- mapbox-token ([https://www.mapbox.com/](https://www.mapbox.com/))
+- Docker to run postgreSQL database
+- npm
+
+
+## Run Project 
+- clone project from github by execute:
+``` 
+git clone git@github.com:lindatroesken/MeinMietMangelImKiez.git
+```
+- start docker with postgreSQL database by: 
+``` 
+docker-compose up -d 
+```
+### React in folder *frontend*
+- rename .env-template to .env and enter mapbox token and cloudinary access data
+- build the frontend by:
+``` 
+npm install
+```
+- run the frontend by:
+``` 
+npm run start
+```
+
+### Spring Boot in folder *backend*
+- edit configurations:
+  - set active profiles: local
+  - add environment variables:
+    - MAPBOX-TOKEN
+    - JWT-SECRET
+- build the backend by:
+```
+mvn clean package
+```
+- run the backend by:
+```
+mvn spring-boot run
+```
