@@ -1,0 +1,5 @@
+profile:
+  datasource:
+    url: postgresql://mietmangelmanager-postgres:5432/mangelDB
+    user: admin
+    pass: 12345
