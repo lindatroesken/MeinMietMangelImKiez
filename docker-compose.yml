@@ -23,20 +23,6 @@ services:
     networks:
       - local-bridge
 
-#  mietmangelmanager-backend:
-#    image: mietmangelmanager-backend:junit
-#    build: .
-#    container_name: mietmangelmanager-backend
-#    mem_limit: 512m
-#    depends_on:
-#      - mietmangelmanager-postgres
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - local-bridge
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=docker
-
 networks:
   local-bridge: # default network
     driver: bridge
