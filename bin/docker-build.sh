@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT="$(dirname "$DIR/../..")"
 MAVEN="${ROOT}/backend"
 
-CONTAINER_NAME="mietmangelmanager-backend"
+CONTAINER_NAME="mietmangelmanager"
 IMAGE_NAME=${1-${CONTAINER_NAME}:junit}
 
 # https://docs.docker.com/edge/engine/reference/commandline/rmi/
