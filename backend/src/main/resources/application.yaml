@@ -2,7 +2,7 @@ spring:
   profiles:
     active: @spring.profiles.active@
   application:
-    name: maengelDB
+    name: mietmangelmanager
   datasource:
     url: jdbc:${profile.datasource.url}
     username: ${profile.datasource.user}
@@ -28,5 +28,8 @@ server:
 
 security:
   jwt:
-    secret: "super-secret"
+    secret: ${JWT-SECRET}
     expiresAfterMinutes: 30
+
+mapbox-client:
+  access-token: ${MAPBOX-TOKEN}

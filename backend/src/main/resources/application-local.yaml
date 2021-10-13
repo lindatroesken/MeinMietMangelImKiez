@@ -1,8 +1,6 @@
 profile:
   datasource:
-    url: postgresql://localhost:5432/maengelDB
+    url: postgresql://localhost:5432/mangelDB
     user: admin
     pass: 12345
 
-mapbox-client:
-  access-token: ${MAPBOX-TOKEN}

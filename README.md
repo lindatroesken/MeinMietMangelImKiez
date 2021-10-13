@@ -25,3 +25,100 @@ Die App wird stetig weiterentwickelt.
  </tr>
 </table>
 
+## Requirements
+- Java 16
+- maven
+- mapbox-token ([https://www.mapbox.com/](https://www.mapbox.com/))
+- Docker to run postgreSQL database
+- npm
+
+
+## Run Project 
+- clone project from github by execute:
+```shell 
+git clone git@github.com:lindatroesken/MeinMietMangelImKiez.git
+```
+- start docker with postgreSQL database by: 
+```shell 
+docker-compose up -d --remove-orphans
+```
+### React in folder *frontend*
+- rename .env-template to .env and enter mapbox token and cloudinary access data
+- build the frontend by:
+```shell 
+npm install
+```
+- run the frontend by:
+```shell 
+npm run start
+```
+
+### Spring Boot in folder *backend*
+- edit configurations:
+  - set active profiles: local
+  - add environment variables:
+    - MAPBOX-TOKEN
+    - JWT-SECRET
+- build the backend by:
+```shell
+mvn clean package
+```
+- run the backend by:
+```shell
+mvn spring-boot run
+```
+
+## Alternative: run backend in docker container
+to run the backend and the database in a docker container:
+- run docker-build.sh
+```shell
+./bin/docker-build.sh
+```
+- if file is not executable: 
+```shell
+chmod +x docker-build.sh
+```
+- run docker-compose:
+```shell
+docker-compose -f docker-compose-backend.yml up
+```
+- to stop docker with database and backend application:
+```shell
+docker-compose -f docker-compose-backend.yml stop
+```
+
+### Some helpful docker commands
+- to view running docker container:
+```shell
+docker ps
+```
+- to view all docker container:
+```shell
+docker ps -a
+```
+- to view running docker container with memory usage:
+```shell
+docker stats
+```
+- to view docker images:
+```shell
+docker images
+```
+- to remove docker images:
+```shell
+docker rmi image_name_or_id
+```
+- to stop docker container:
+```shell
+docker stop container_id
+```
+- to remove docker container:
+```shell
+docker rm container_id
+```
+- to remove docker container and then remove image:
+```shell
+docker rm container_id
+docker rmi image_id
+```
+and some more helpful tipps [https://linuxhandbook.com/remove-docker-images/](https://linuxhandbook.com/remove-docker-images/)

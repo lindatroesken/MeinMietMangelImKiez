@@ -118,8 +118,8 @@ abstract class ControllerMapper {
     public MangelStatistics mapMangelToStatistics(MangelEntity mangelEntity){
         return MangelStatistics.builder()
                 .id(mangelEntity.getId())
-                .latitude(mangelEntity.getAddressEntity().getLatitude())
-                .longitude(mangelEntity.getAddressEntity().getLongitude())
+                .latitude(getLatitude(mangelEntity.getAddressEntity()))
+                .longitude(getLongitude(mangelEntity.getAddressEntity()))
                 .category(mangelEntity.getCategory())
                 .dateNoticed(convertZonedDateTimeToLong(mangelEntity.getDateNoticed()))
                 .status(mangelEntity.getStatus().toString())
@@ -162,6 +162,20 @@ abstract class ControllerMapper {
                 .remindMeInDays(dateToIntReminder(mangelEntity.getDateReminder()))
                 .address(mapAddress(mangelEntity.getAddressEntity()))
                 .build();
+    }
+
+    private Double getLatitude(AddressEntity addressEntity){
+        if (addressEntity != null){
+            return addressEntity.getLatitude();
+        }
+        return null;
+    }
+
+    private Double getLongitude(AddressEntity addressEntity){
+        if (addressEntity != null){
+            return addressEntity.getLongitude();
+        }
+        return null;
     }
 
     public boolean checkDue(Status status, ZonedDateTime dueDate){
