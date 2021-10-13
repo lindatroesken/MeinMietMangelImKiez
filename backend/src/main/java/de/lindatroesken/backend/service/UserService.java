@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -25,13 +26,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final MapboxService mapboxService;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Autowired
-    public UserService(UserRepository userRepository, AddressRepository addressRepository, MapboxService mapboxService) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, MapboxService mapboxService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.mapboxService = mapboxService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -134,5 +137,15 @@ public class UserService {
         return existingAddressEntity;
     }
 
+    public UserEntity createUser(UserEntity newUser, String password) {
+        if(userRepository.findByUsername(newUser.getUsername()).isPresent()){
+            log.info("User not created, because username already exists");
+            throw new EntityExistsException("User not created, because username already exists");
+        }
+        String hashedPassword = passwordEncoder.encode(password);
+        newUser.setPassword(hashedPassword);
+        newUser.setRole("user");
+        return userRepository.save(newUser);
+    }
 }
 

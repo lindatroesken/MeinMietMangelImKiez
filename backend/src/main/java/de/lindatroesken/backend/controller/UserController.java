@@ -2,6 +2,7 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.Address;
 import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.api.UserRegister;
 import de.lindatroesken.backend.model.AddressEntity;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.service.UserService;
@@ -21,8 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static de.lindatroesken.backend.controller.UserController.CONTROLLER_TAG;
-import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static javax.servlet.http.HttpServletResponse.*;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
@@ -72,6 +72,17 @@ public class UserController extends ControllerMapper{
         UserEntity userEntity = userService.findByUsername(username);
 
         return ok(mapUser(userEntity));
+    }
+
+    @PostMapping(value = "register", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_BAD_REQUEST, message = "Unable to create User with blank name"),
+            @ApiResponse(code = SC_CONFLICT, message = "Unable to create User, user already exists")
+    })
+    public ResponseEntity<User> register(@RequestBody UserRegister user) {
+
+        UserEntity createdUser = userService.createUser(mapUser(user), user.getPassword());
+        return ok(mapUser(createdUser));
     }
 
     @GetMapping(value="address/find/{username}", produces = APPLICATION_JSON_VALUE)
