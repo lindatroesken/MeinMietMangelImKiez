@@ -27,9 +27,12 @@ export const postMangel = (token, username, mangel) =>
     .post(`/api/mangel/new/${username}`, mangel, headers(token))
     .then(response => response.data)
 
-export const postNewUser = (credentials) =>
+export const postNewUser = credentials =>
+  axios.post(`/api/user/register`, credentials).then(response => response.data)
+
+export const putEditUsername = (token, newusername) =>
   axios
-    .post(`/api/user/register`, credentials)
+    .put(`/api/user/username/edit`, { username: newusername }, headers(token))
     .then(response => response.data)
 
 export const putMangel = (token, mangelId, mangel) =>

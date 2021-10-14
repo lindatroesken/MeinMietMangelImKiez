@@ -5,7 +5,7 @@ import Error from '../components/Error'
 import Main from '../components/Main'
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
-import { getUserAddressList } from '../services/api-service'
+import { getUserAddressList, putEditUsername } from '../services/api-service'
 import { useHistory, useParams } from 'react-router-dom'
 import Button from '../components/Button'
 import Addresses from '../components/Addresses'
@@ -19,7 +19,7 @@ import save from '../images/save-32.png'
 
 export default function Profile() {
   const { mode, id } = useParams()
-  const { user, token } = useAuth()
+  const { user, token, logout } = useAuth()
   const history = useHistory()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
@@ -55,8 +55,13 @@ export default function Profile() {
     setUsername(event.target.value)
   }
 
-  const handleSubmitUserName = () => {
-    console.log('submit new username, tbd.')
+  const handleSubmitUserName = event => {
+    setLoading(true)
+    setError()
+    putEditUsername(token, username)
+      .then(() => logout())
+      .catch(setError)
+      .finally(() => setLoading(false))
   }
 
   return (
@@ -76,9 +81,12 @@ export default function Profile() {
                 onChange={handleChangeUsername}
                 title="Username"
                 type="text"
-                disabled={true}
               />
-              <Button type="button" onClick={handleSubmitUserName}>
+              <Button
+                type="button"
+                onClick={handleSubmitUserName}
+                disabled={username === user.username}
+              >
                 <Icon src={save} />
               </Button>
             </User>
