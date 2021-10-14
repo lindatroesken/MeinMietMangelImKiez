@@ -113,7 +113,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("POST for already existing username should return ")
+    @DisplayName("POST for already existing username should return 409 CONFLICT")
     public void testPostRegisterUsernameExistsShouldReturnError409(){
         //GIVEN
         String username = "testuser";
@@ -129,6 +129,45 @@ public class UserControllerTest {
         assertThat(response.getStatusCode(), is(HttpStatus.CONFLICT));
 
     }
+
+    @Test
+    @DisplayName("PUT should update username")
+    public void testPutEditUsernameShouldUpdateUsername(){
+        //GIVEN
+        String username = "newusername";
+        String authName = "testuser";
+        String authRole = "user";
+        User updateUser = User.builder().username(username).build();
+        String url = getUrl() + "/username/edit";
+        HttpEntity<User> httpEntity = new HttpEntity<>(updateUser, authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(), is(notNullValue()));
+        assertThat(response.getBody().getUsername(),is(username));
+    }
+
+    @Test
+    @DisplayName("PUT should update username")
+    public void testPutEditUsernameAlreadyExistsShouldReturnError409(){
+        //GIVEN
+        String username = "testadmin";
+        String authName = "testuser";
+        String authRole = "user";
+        User updateUser = User.builder().username(username).build();
+        String url = getUrl() + "/username/edit";
+        HttpEntity<User> httpEntity = new HttpEntity<>(updateUser, authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.CONFLICT));
+    }
+
 
     @Test
     @DisplayName("GET for unauthorized user should return http status 401 UNAUTHORIZED")

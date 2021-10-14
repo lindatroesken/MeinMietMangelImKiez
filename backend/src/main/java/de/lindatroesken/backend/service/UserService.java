@@ -147,5 +147,15 @@ public class UserService {
         newUser.setRole("user");
         return userRepository.save(newUser);
     }
+
+    public UserEntity editUsername(String oldUsername, String newUsername) {
+        if(userRepository.findByUsername(newUsername).isPresent()){
+            log.info("Username not changed, because username already exists");
+            throw new EntityExistsException("Username not changed, because username already exists");
+        }
+        UserEntity existingUser = userRepository.findByUsername(oldUsername).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        existingUser.setUsername(newUsername);
+        return userRepository.save(existingUser);
+    }
 }
 

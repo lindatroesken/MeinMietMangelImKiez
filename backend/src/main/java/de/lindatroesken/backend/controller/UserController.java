@@ -85,6 +85,15 @@ public class UserController extends ControllerMapper{
         return ok(mapUser(createdUser));
     }
 
+    @PutMapping(value="username/edit", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_CONFLICT, message = "New username already exists")
+    })
+    public ResponseEntity<User> editUsername(@AuthenticationPrincipal UserEntity authUser, @RequestBody User user){
+        UserEntity updatedUser = userService.editUsername(authUser.getUsername(), user.getUsername());
+        return ok(mapUser(updatedUser));
+    }
+
     @GetMapping(value="address/find/{username}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Address>> findAllAddressesForUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
         if(!authUser.getUsername().equals(username)){
