@@ -157,5 +157,13 @@ public class UserService {
         existingUser.setUsername(newUsername);
         return userRepository.save(existingUser);
     }
+
+    public UserEntity updatePassword(String username, String password) {
+        UserEntity user = findByUsername(username);
+        String hashedPassword = passwordEncoder.encode(password);
+        user.setPassword(hashedPassword);
+        log.info("New password set");
+        return userRepository.save(user);
+    }
 }
 
