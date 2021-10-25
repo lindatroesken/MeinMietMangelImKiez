@@ -17,12 +17,14 @@ abstract class ControllerMapper {
     public User mapUser(UserEntity userEntity) {
         return User.builder()
                 .username(userEntity.getUsername())
+                .email(userEntity.getEmail())
                 .build();
     }
 
     public UserEntity mapUser(UserRegister user) {
         return UserEntity.builder()
                 .username(user.getUsername())
+                .email(user.getEmail())
                 .build();
     }
 

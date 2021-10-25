@@ -165,5 +165,12 @@ public class UserService {
         log.info("New password set");
         return userRepository.save(user);
     }
+
+    public UserEntity editEmail(String username, String email) {
+        UserEntity user = findByUsername(username);
+        user.setEmail(email);
+        log.info("Email changed");
+        return userRepository.save(user);
+    }
 }
 

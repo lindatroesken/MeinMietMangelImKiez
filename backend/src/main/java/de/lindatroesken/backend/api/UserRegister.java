@@ -27,4 +27,7 @@ public class UserRegister {
     @ApiModelProperty(notes = "The address of the user")
     private Address address;
 
+    @ApiModelProperty(notes = "The email address for the user. Is needed for password reset")
+    private String email;
+
 }

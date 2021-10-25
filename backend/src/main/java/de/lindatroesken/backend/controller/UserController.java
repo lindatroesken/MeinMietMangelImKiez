@@ -67,12 +67,11 @@ public class UserController extends ControllerMapper{
             @ApiResponse(code = SC_UNAUTHORIZED, message = "Only logged in user with role 'admin' can view any user")
     })
     public ResponseEntity<User> findUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
-        if (!authUser.getRole().equals("admin")){
-            throw new UnauthorizedUserException("Only admins are allowed to find a user");
+        if (authUser.getUsername().equals(username) || authUser.getRole().equals("admin")) {
+            UserEntity userEntity = userService.findByUsername(username);
+            return ok(mapUser(userEntity));
         }
-        UserEntity userEntity = userService.findByUsername(username);
-
-        return ok(mapUser(userEntity));
+        throw new UnauthorizedUserException("Only admins are allowed to find any user");
     }
 
     @PostMapping(value = "register", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
@@ -92,6 +91,15 @@ public class UserController extends ControllerMapper{
     })
     public ResponseEntity<User> editUsername(@AuthenticationPrincipal UserEntity authUser, @RequestBody User user){
         UserEntity updatedUser = userService.editUsername(authUser.getUsername(), user.getUsername());
+        return ok(mapUser(updatedUser));
+    }
+
+    @PutMapping(value="email/edit", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_CONFLICT, message = "New username already exists")
+    })
+    public ResponseEntity<User> editEmail(@AuthenticationPrincipal UserEntity authUser, @RequestBody User user){
+        UserEntity updatedUser = userService.editEmail(authUser.getUsername(), user.getEmail());
         return ok(mapUser(updatedUser));
     }
 
