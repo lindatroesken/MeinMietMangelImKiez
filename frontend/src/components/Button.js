@@ -20,4 +20,11 @@ export default styled.button`
       background-color: var(--dark-shades);
       color: var(--light-shades);
     `}
+  ${props =>
+    props.disabled &&
+    css`
+      background-color: var(--light-shades);
+      color: var(--accent);
+      border-color: var(--accent);
+    `}
 `

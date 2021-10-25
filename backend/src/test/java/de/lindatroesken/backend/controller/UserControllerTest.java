@@ -1,9 +1,7 @@
 package de.lindatroesken.backend.controller;
 
 
-import de.lindatroesken.backend.api.Address;
-import de.lindatroesken.backend.api.Credentials;
-import de.lindatroesken.backend.api.User;
+import de.lindatroesken.backend.api.*;
 import de.lindatroesken.backend.config.JwtConfig;
 import de.lindatroesken.backend.model.UserEntity;
 import de.lindatroesken.backend.repo.UserRepository;
@@ -94,6 +92,82 @@ public class UserControllerTest {
         assertThat(response.getBody(),is(notNullValue()));
         assertThat(response.getBody().length, is(2));
     }
+
+    @Test
+    @DisplayName("POST should create a new user in database")
+    public void testPostRegisterShouldCreateUser(){
+        //GIVEN
+        String username = "newuser";
+        String password = "1234";
+        UserRegister newUser = UserRegister.builder().username(username).password(password).build();
+        String url = getUrl() + "/register";
+        HttpEntity<UserRegister> httpEntity = new HttpEntity<>(newUser);
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(), is(notNullValue()));
+        assertThat(response.getBody().getUsername(),is(username));
+    }
+
+    @Test
+    @DisplayName("POST for already existing username should return 409 CONFLICT")
+    public void testPostRegisterUsernameExistsShouldReturnError409(){
+        //GIVEN
+        String username = "testuser";
+        String password = "1234";
+        UserRegister newUser = UserRegister.builder().username(username).password(password).build();
+        String url = getUrl() + "/register";
+        HttpEntity<UserRegister> httpEntity = new HttpEntity<>(newUser);
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.CONFLICT));
+
+    }
+
+    @Test
+    @DisplayName("PUT should update username")
+    public void testPutEditUsernameShouldUpdateUsername(){
+        //GIVEN
+        String username = "newusername";
+        String authName = "testuser";
+        String authRole = "user";
+        User updateUser = User.builder().username(username).build();
+        String url = getUrl() + "/username/edit";
+        HttpEntity<User> httpEntity = new HttpEntity<>(updateUser, authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(), is(notNullValue()));
+        assertThat(response.getBody().getUsername(),is(username));
+    }
+
+    @Test
+    @DisplayName("PUT should update username")
+    public void testPutEditUsernameAlreadyExistsShouldReturnError409(){
+        //GIVEN
+        String username = "testadmin";
+        String authName = "testuser";
+        String authRole = "user";
+        User updateUser = User.builder().username(username).build();
+        String url = getUrl() + "/username/edit";
+        HttpEntity<User> httpEntity = new HttpEntity<>(updateUser, authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.CONFLICT));
+    }
+
 
     @Test
     @DisplayName("GET for unauthorized user should return http status 401 UNAUTHORIZED")

@@ -12,6 +12,7 @@ import Navbar from '../components/Navbar'
 import MainTop from '../components/MainTop'
 import MainBottom from '../components/MainBottom'
 import MainCenter from '../components/MainCenter'
+import styled from 'styled-components/macro'
 
 const initialState = {
   username: '',
@@ -43,6 +44,9 @@ export default function Login() {
         setLoading(false)
       })
   }
+  const handleToRegister = () => {
+    history.push('/register')
+  }
 
   return (
     <Page>
@@ -67,12 +71,19 @@ export default function Login() {
               title="Password"
               type="password"
             />
+            <ButtonGroup>
+              <Button
+                disabled={!credentials.username || !credentials.password}
+                primary
+              >
+                Anmelden
+              </Button>
+              <Button type="button" onClick={handleToRegister}>
+                Neuer Account
+              </Button>
+            </ButtonGroup>
           </MainCenter>
-          <MainBottom>
-            {credentials.username && credentials.password && (
-              <Button> login </Button>
-            )}
-          </MainBottom>
+          <MainBottom />
         </Main>
       )}
 
@@ -80,3 +91,8 @@ export default function Login() {
     </Page>
   )
 }
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+`

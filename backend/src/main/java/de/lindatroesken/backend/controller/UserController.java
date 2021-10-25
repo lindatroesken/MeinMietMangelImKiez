@@ -1,10 +1,9 @@
 package de.lindatroesken.backend.controller;
 
-import de.lindatroesken.backend.api.Address;
-import de.lindatroesken.backend.api.User;
-import de.lindatroesken.backend.api.UserRegister;
+import de.lindatroesken.backend.api.*;
 import de.lindatroesken.backend.model.AddressEntity;
 import de.lindatroesken.backend.model.UserEntity;
+import de.lindatroesken.backend.service.AuthService;
 import de.lindatroesken.backend.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiResponse;
@@ -35,10 +34,12 @@ public class UserController extends ControllerMapper{
 
     public static final String CONTROLLER_TAG = "User Controller";
     private final UserService userService;
+    private final AuthService authService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthService authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
 
@@ -83,6 +84,23 @@ public class UserController extends ControllerMapper{
 
         UserEntity createdUser = userService.createUser(mapUser(user), user.getPassword());
         return ok(mapUser(createdUser));
+    }
+
+    @PutMapping(value="username/edit", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_CONFLICT, message = "New username already exists")
+    })
+    public ResponseEntity<User> editUsername(@AuthenticationPrincipal UserEntity authUser, @RequestBody User user){
+        UserEntity updatedUser = userService.editUsername(authUser.getUsername(), user.getUsername());
+        return ok(mapUser(updatedUser));
+    }
+
+    @PutMapping(value="updatePassword", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+        public ResponseEntity<User> updatePassword(@AuthenticationPrincipal UserEntity authUser, @RequestBody Password password){
+        authService.checkPassword(password.getPassword());
+        authService.validateCredentials(authUser.getUsername(), password.getOldPassword());
+        UserEntity updatedUserEntity = userService.updatePassword(authUser.getUsername(), password.getPassword());
+        return ok(mapUser(updatedUserEntity));
     }
 
     @GetMapping(value="address/find/{username}", produces = APPLICATION_JSON_VALUE)

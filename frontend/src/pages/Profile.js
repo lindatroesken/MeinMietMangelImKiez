@@ -5,7 +5,11 @@ import Error from '../components/Error'
 import Main from '../components/Main'
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
-import { getUserAddressList } from '../services/api-service'
+import {
+  getUserAddressList,
+  putEditUsername,
+  updatePassword,
+} from '../services/api-service'
 import { useHistory, useParams } from 'react-router-dom'
 import Button from '../components/Button'
 import Addresses from '../components/Addresses'
@@ -17,14 +21,22 @@ import MainBottom from '../components/MainBottom'
 import styled from 'styled-components/macro'
 import save from '../images/save-32.png'
 
+const initialPW = {
+  oldPassword: '',
+  newPassword: '',
+  retypePassword: '',
+}
 export default function Profile() {
   const { mode, id } = useParams()
-  const { user, token } = useAuth()
+  const { user, token, login, logout } = useAuth()
   const history = useHistory()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [addressList, setAddressList] = useState([])
   const [username, setUsername] = useState(user.username)
+  const [passwords, setPasswords] = useState(initialPW)
+
+  const [viewPW, setViewPW] = useState(false)
 
   const loadDataOnlyOnce = useCallback(() => {
     setLoading(true)
@@ -56,8 +68,40 @@ export default function Profile() {
   }
 
   const handleSubmitUserName = () => {
-    console.log('submit new username, tbd.')
+    setLoading(true)
+    setError()
+    putEditUsername(token, username)
+      .then(() => logout())
+      .catch(setError)
+      .finally(() => setLoading(false))
   }
+
+  const togglePasswordChange = () => {
+    setViewPW(!viewPW)
+  }
+
+  const handleChange = event => {
+    setPasswords({ ...passwords, [event.target.name]: event.target.value })
+  }
+
+  const submitNewPassword = () => {
+    setLoading(true)
+    setError()
+    updatePassword(token, passwords)
+      .then(() => {
+        login({ username: user.username, password: passwords.newPassword })
+        setPasswords(initialPW)
+        setViewPW(false)
+      })
+      .catch(setError)
+      .finally(() => {
+        setLoading(false)
+      })
+  }
+
+  const passwordMatch =
+    passwords.newPassword.length &&
+    passwords.newPassword === passwords.retypePassword
 
   return (
     <Page>
@@ -76,12 +120,51 @@ export default function Profile() {
                 onChange={handleChangeUsername}
                 title="Username"
                 type="text"
-                disabled={true}
               />
-              <Button type="button" onClick={handleSubmitUserName}>
+              <Button
+                type="button"
+                onClick={handleSubmitUserName}
+                disabled={username === user.username}
+              >
                 <Icon src={save} />
               </Button>
             </User>
+            <div>
+              <Button type="button" onClick={togglePasswordChange}>
+                Passwort ändern
+              </Button>
+            </div>
+            {viewPW && (
+              <Password>
+                <TextField
+                  name="oldPassword"
+                  value={passwords.oldPassword}
+                  onChange={handleChange}
+                  title="Altes Passwort"
+                  type="password"
+                  autocomplete="off"
+                />
+                <TextField
+                  name="newPassword"
+                  value={passwords.newPassword}
+                  onChange={handleChange}
+                  title="Neues Passwort (wiederholen)"
+                  type="password"
+                  autocomplete="off"
+                />
+                <TextField
+                  name="retypePassword"
+                  value={passwords.retypePassword}
+                  onChange={handleChange}
+                  title="Neues Passwort"
+                  type="password"
+                  autocomplete="off"
+                />
+                <Button disabled={!passwordMatch} onClick={submitNewPassword}>
+                  speichern
+                </Button>
+              </Password>
+            )}
             <Addresses
               user={user}
               mode={mode}
@@ -106,13 +189,14 @@ const Icon = styled.img`
   padding: 0;
 `
 
-const User = styled.div`
+const User = styled.form`
   display: grid;
   width: 100%;
   padding: 0;
   grid-template-columns: 1fr min-content;
   justify-content: space-between;
   align-items: end;
+  margin-bottom: var(--size-l);
   label {
     margin: 0;
     width: 100%;
@@ -122,3 +206,4 @@ const User = styled.div`
     height: min-content;
   }
 `
+const Password = styled.form``
