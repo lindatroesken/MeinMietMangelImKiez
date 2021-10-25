@@ -23,40 +23,43 @@ export default function Addresses({
     )
   }
   return (
-    <Wrapper>
+    <div>
       {user && (
-        <div>
-          <p>Meine Adressen</p>
-          <Button onClick={handleNewAddress}>
-            {' '}
-            <Icon src={add} alt="add" />{' '}
-          </Button>
-        </div>
-      )}
-      {user &&
-        addressList.length > 0 &&
-        addressList.map(address => (
-          <AddressListItem key={address.id}>
-            <TextField
-              disabled={true}
-              key={address.id}
-              name={`address${id}`}
-              value={addressToString(address)}
-              readOnly={true}
-            />
-            <Button type="button" onClick={() => handleEditAddress(address.id)}>
-              <Icon src={edit} />
+        <Wrapper>
+          <div>
+            Meine Adressen
+            <Button onClick={handleNewAddress}>
+              <Icon src={add} alt="add" />
             </Button>
-          </AddressListItem>
-        ))}
-    </Wrapper>
+          </div>
+          {addressList.length > 0 &&
+            addressList.map(address => (
+              <AddressListItem key={address.id}>
+                <TextField
+                  disabled={true}
+                  key={address.id}
+                  name={`address${id}`}
+                  value={addressToString(address)}
+                  readOnly={true}
+                />
+                <Button
+                  type="button"
+                  onClick={() => handleEditAddress(address.id)}
+                >
+                  <Icon src={edit} />
+                </Button>
+              </AddressListItem>
+            ))}
+        </Wrapper>
+      )}
+    </div>
   )
 }
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   max-width: var(--max-content-width);
   div {
@@ -66,6 +69,7 @@ const Wrapper = styled.div`
     display: grid;
     grid-template-columns: 1fr min-content;
     white-space: nowrap;
+    align-items: center;
   }
 `
 
