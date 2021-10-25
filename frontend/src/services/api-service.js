@@ -35,6 +35,15 @@ export const putEditUsername = (token, newusername) =>
     .put(`/api/user/username/edit`, { username: newusername }, headers(token))
     .then(response => response.data)
 
+export const updatePassword = (token, passwords) =>
+  axios
+    .put(
+      `/api/user/updatePassword`,
+      { password: passwords.newPassword, oldPassword: passwords.oldPassword },
+      headers(token)
+    )
+    .then(response => response.data)
+
 export const putMangel = (token, mangelId, mangel) =>
   axios
     .put(`/api/mangel/update/${mangelId}`, mangel, headers(token))

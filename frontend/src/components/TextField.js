@@ -8,6 +8,7 @@ export default function TextField({
   title,
   readOnly = false,
   disabled = false,
+  autocomplete = 'on',
   ...props
 }) {
   return (
@@ -19,7 +20,8 @@ export default function TextField({
         onChange={onChange}
         name={name}
         readOnly={readOnly}
-        disabled={readOnly}
+        disabled={disabled}
+        autocomplete={autocomplete}
       />
     </Label>
   )
