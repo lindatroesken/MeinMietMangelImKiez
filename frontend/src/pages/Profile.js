@@ -5,7 +5,12 @@ import Error from '../components/Error'
 import Main from '../components/Main'
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
-import { getUserAddressList, putEditUsername } from '../services/api-service'
+import {
+  getUser,
+  getUserAddressList,
+  putEditEmail,
+  putEditUsername,
+} from '../services/api-service'
 import { useHistory, useParams } from 'react-router-dom'
 import Button from '../components/Button'
 import Addresses from '../components/Addresses'
@@ -25,6 +30,7 @@ export default function Profile() {
   const [error, setError] = useState()
   const [addressList, setAddressList] = useState([])
   const [username, setUsername] = useState(user.username)
+  const [email, setEmail] = useState()
 
   const loadDataOnlyOnce = useCallback(() => {
     setLoading(true)
@@ -33,6 +39,8 @@ export default function Profile() {
       .then(response => {
         setAddressList(response)
       })
+      .then(() => getUser(token, user.username))
+      .then(response => setEmail(response.email))
       .catch(setError)
       .finally(() => {
         setLoading(false)
@@ -54,12 +62,24 @@ export default function Profile() {
   const handleChangeUsername = event => {
     setUsername(event.target.value)
   }
+  const handleChangeEmail = event => {
+    setEmail(event.target.value)
+  }
 
   const handleSubmitUserName = () => {
     setLoading(true)
     setError()
     putEditUsername(token, username)
       .then(() => logout())
+      .catch(setError)
+      .finally(() => setLoading(false))
+  }
+
+  const handleSubmitEmail = () => {
+    setLoading(true)
+    setError()
+    putEditEmail(token, username, email)
+      .then(console.log)
       .catch(setError)
       .finally(() => setLoading(false))
   }
@@ -91,6 +111,16 @@ export default function Profile() {
                 onClick={handleSubmitUserName}
                 disabled={username === user.username}
               >
+                <Icon src={save} />
+              </Button>
+              <TextField
+                name="email"
+                value={email}
+                onChange={handleChangeEmail}
+                title="Email"
+                type="email"
+              />
+              <Button type="button" onClick={handleSubmitEmail}>
                 <Icon src={save} />
               </Button>
             </User>
@@ -129,6 +159,7 @@ const User = styled.form`
   width: 100%;
   padding: 0;
   grid-template-columns: 1fr min-content;
+  grid-row-gap: var(--size-m);
   justify-content: space-between;
   align-items: end;
   margin-bottom: var(--size-l);
