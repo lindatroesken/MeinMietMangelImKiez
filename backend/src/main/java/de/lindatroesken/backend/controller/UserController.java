@@ -9,6 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javassist.tools.web.BadHttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -83,6 +84,19 @@ public class UserController extends ControllerMapper{
 
         UserEntity createdUser = userService.createUser(mapUser(user), user.getPassword());
         return ok(mapUser(createdUser));
+    }
+
+    @DeleteMapping(value = "{username}/delete", produces = APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = SC_NO_CONTENT, message = "No user found for request"),
+            @ApiResponse(code = SC_UNAUTHORIZED, message = "User can only delete own account")
+    })
+    public ResponseEntity<User> deleteUser(@AuthenticationPrincipal UserEntity authUser, @PathVariable String username){
+        if(authUser.getUsername().equals(username) || authUser.getRole().equalsIgnoreCase("admin")){
+            UserEntity deletedUser = userService.deleteUser(username);
+            return ok(mapUser(deletedUser));
+        }
+        throw new UnauthorizedUserException("User can only delete own account or must be admin");
     }
 
     @PutMapping(value="username/edit", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)

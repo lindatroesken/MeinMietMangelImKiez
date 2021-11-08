@@ -77,7 +77,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("GET should return a list of all users in database (2 users), if logged in as admin")
-    public void TestGetListOfUsersShouldReturnTwoUsersForAdmin(){
+    public void testGetListOfUsersShouldReturnTwoUsersForAdmin(){
         //GIVEN
         String authName = "testadmin";
         String authRole = "admin";
@@ -151,7 +151,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("PUT should update username")
+    @DisplayName("PUT with existing username should return error 409")
     public void testPutEditUsernameAlreadyExistsShouldReturnError409(){
         //GIVEN
         String username = "testadmin";
@@ -168,6 +168,68 @@ public class UserControllerTest {
         assertThat(response.getStatusCode(), is(HttpStatus.CONFLICT));
     }
 
+    @Test
+    @DisplayName("Delete should delete own user account")
+    public void testDeleteOwnAccount(){
+        //GIVEN
+        String username = "testuser";
+        String authName = "testuser";
+        String authRole = "user";
+        String url = getUrl() + "/" + username + "/delete";
+        int sizeBefore = userRepository.findAll().size();
+
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(userRepository.findAll().size(), is(sizeBefore-1));
+        assertThat(userRepository.findByUsername(username), is(Optional.empty()));
+    }
+
+    @Test
+    @DisplayName("Delete of other username should return Error 401")
+    public void testDeleteOtherAccountShouldReturnError401(){
+        //GIVEN
+        String username = "testadmin";
+        String authName = "testuser";
+        String authRole = "user";
+        String url = getUrl() + "/" + username + "/delete";
+        int sizeBefore = userRepository.findAll().size();
+
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.UNAUTHORIZED));
+        assertThat(userRepository.findAll().size(), is(sizeBefore));
+        assertThat(userRepository.findByUsername(username), is(notNullValue()));
+    }
+
+    @Test
+    @DisplayName("Delete as admin should return ok")
+    public void testDeleteAsAdminShouldReturnOk(){
+        //GIVEN
+        String username = "testuser";
+        String authName = "testadmin";
+        String authRole = "admin";
+        String url = getUrl() + "/" + username + "/delete";
+        int sizeBefore = userRepository.findAll().size();
+
+        HttpEntity<Credentials> httpEntity = new HttpEntity<>(authorizedHeader(authName, authRole));
+
+        //WHEN
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity, User.class);
+
+        //THEN
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(userRepository.findAll().size(), is(sizeBefore-1));
+        assertThat(userRepository.findByUsername(username), is(Optional.empty()));
+    }
 
     @Test
     @DisplayName("GET for unauthorized user should return http status 401 UNAUTHORIZED")

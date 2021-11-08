@@ -148,6 +148,13 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    public UserEntity deleteUser(String username) {
+        UserEntity userToDelete = findByUsername(username);
+        userRepository.delete(userToDelete);
+        log.info("User deleted");
+        return userToDelete;
+    }
+
     public UserEntity editUsername(String oldUsername, String newUsername) {
         if(userRepository.findByUsername(newUsername).isPresent()){
             log.info("Username not changed, because username already exists");
