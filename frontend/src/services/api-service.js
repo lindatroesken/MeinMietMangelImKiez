@@ -54,6 +54,11 @@ export const updatePassword = (token, passwords) =>
     )
     .then(response => response.data)
 
+export const deleteAccount = (token, username) =>
+  axios
+    .delete(`/api/user/${username}/delete`, headers(token))
+    .then(response => response.data)
+
 export const putMangel = (token, mangelId, mangel) =>
   axios
     .put(`/api/mangel/update/${mangelId}`, mangel, headers(token))

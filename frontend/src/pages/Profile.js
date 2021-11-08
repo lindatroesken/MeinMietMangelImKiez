@@ -6,6 +6,7 @@ import Main from '../components/Main'
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
 import {
+  deleteAccount,
   getUser,
   getUserAddressList,
   putEditEmail,
@@ -21,6 +22,7 @@ import MainCenter from '../components/MainCenter'
 import MainBottom from '../components/MainBottom'
 import styled from 'styled-components/macro'
 import save from '../images/save-32.png'
+import trash from '../images/trash-9-32.png'
 
 export default function Profile() {
   const { mode, id } = useParams()
@@ -88,6 +90,23 @@ export default function Profile() {
     history.push(`/password/change`)
   }
 
+  const handleDeleteAccount = () => {
+    if (
+      window.confirm(
+        'Soll der Account dauerhaft gelöscht werden? Der Vorgang kann nicht rückgängig gemacht werden'
+      )
+    ) {
+      setLoading(true)
+      setError()
+      deleteAccount(token, username)
+        .then(() => logout())
+        .catch(setError)
+        .finally(() => setLoading(false))
+    } else {
+      console.log('cancelled')
+    }
+  }
+
   return (
     <Page>
       <Header title="Mein Profil" />
@@ -127,6 +146,9 @@ export default function Profile() {
             <div>
               <Button type="button" onClick={handleChangePassword}>
                 Passwort ändern
+              </Button>
+              <Button type="button" onClick={handleDeleteAccount} primary>
+                <Icon src={trash} /> Account löschen
               </Button>
             </div>
 
