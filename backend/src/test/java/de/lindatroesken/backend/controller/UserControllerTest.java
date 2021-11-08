@@ -287,7 +287,7 @@ public class UserControllerTest {
     @DisplayName("GET /{username} for unauthorized user should return http status 401 UNAUTHORIZED")
     public void testGetUserByUserNameShouldReturnError401(){
         //GIVEN
-        String username = "testuser";
+        String username = "testadmin";
         String authName = "testuser";
         String authRole = "user";
         String url = getUrl() + "/" + username;
