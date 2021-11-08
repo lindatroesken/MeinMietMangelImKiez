@@ -3,7 +3,9 @@ package de.lindatroesken.backend.controller;
 
 import de.lindatroesken.backend.api.*;
 import de.lindatroesken.backend.config.JwtConfig;
+import de.lindatroesken.backend.model.MangelEntity;
 import de.lindatroesken.backend.model.UserEntity;
+import de.lindatroesken.backend.repo.MangelRepository;
 import de.lindatroesken.backend.repo.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,6 +21,7 @@ import org.springframework.http.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 
@@ -40,14 +43,16 @@ public class UserControllerTest {
 
     private final TestRestTemplate restTemplate;
     private final UserRepository userRepository;
+    private final MangelRepository mangelRepository;
     private final JwtConfig jwtConfig;
 
 
 
     @Autowired
-    public UserControllerTest(TestRestTemplate restTemplate, UserRepository userRepository, JwtConfig jwtConfig) {
+    public UserControllerTest(TestRestTemplate restTemplate, UserRepository userRepository, MangelRepository mangelRepository, JwtConfig jwtConfig) {
         this.restTemplate = restTemplate;
         this.userRepository = userRepository;
+        this.mangelRepository = mangelRepository;
         this.jwtConfig = jwtConfig;
     }
 
@@ -67,6 +72,14 @@ public class UserControllerTest {
                 .role("admin")
                 .build();
         userRepository.save(user2);
+
+        MangelEntity mangel1 = MangelEntity.builder()
+                .userEntity(user1)
+                .category("Heizung")
+                .description("kaputt")
+                .dateNoticed(ZonedDateTime.now())
+                .build();
+        mangelRepository.save(mangel1);
 
     }
 
