@@ -33,6 +33,9 @@ public class UserEntity {
     @Column(name = "user_role")
     private String role;
 
+    @Column(name = "email")
+    private String email;
+
     public UserEntity removeMangel(MangelEntity mangelEntity){
         mangelList.remove(mangelEntity);
         mangelEntity.setUserEntity(null);

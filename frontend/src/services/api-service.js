@@ -27,12 +27,22 @@ export const postMangel = (token, username, mangel) =>
     .post(`/api/mangel/new/${username}`, mangel, headers(token))
     .then(response => response.data)
 
+export const getUser = (token, username) =>
+  axios
+    .get(`/api/user/${username}`, headers(token))
+    .then(response => response.data)
+
 export const postNewUser = credentials =>
   axios.post(`/api/user/register`, credentials).then(response => response.data)
 
 export const putEditUsername = (token, newusername) =>
   axios
     .put(`/api/user/username/edit`, { username: newusername }, headers(token))
+    .then(response => response.data)
+
+export const putEditEmail = (token, username, email) =>
+  axios
+    .put(`/api/user/email/edit`, { email: email }, headers(token))
     .then(response => response.data)
 
 export const updatePassword = (token, passwords) =>
@@ -42,6 +52,11 @@ export const updatePassword = (token, passwords) =>
       { password: passwords.newPassword, oldPassword: passwords.oldPassword },
       headers(token)
     )
+    .then(response => response.data)
+
+export const deleteAccount = (token, username) =>
+  axios
+    .delete(`/api/user/${username}/delete`, headers(token))
     .then(response => response.data)
 
 export const putMangel = (token, mangelId, mangel) =>

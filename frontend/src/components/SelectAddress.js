@@ -51,4 +51,5 @@ const SelectStyled = styled.select`
   border: 0.1px solid var(--light-accent);
   color: var(--dark-shades);
   border-radius: var(--size-s);
+  background-color: white;
 `

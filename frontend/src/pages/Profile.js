@@ -6,9 +6,11 @@ import Main from '../components/Main'
 import { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../auth/AuthProvider'
 import {
+  deleteAccount,
+  getUser,
   getUserAddressList,
+  putEditEmail,
   putEditUsername,
-  updatePassword,
 } from '../services/api-service'
 import { useHistory, useParams } from 'react-router-dom'
 import Button from '../components/Button'
@@ -20,23 +22,17 @@ import MainCenter from '../components/MainCenter'
 import MainBottom from '../components/MainBottom'
 import styled from 'styled-components/macro'
 import save from '../images/save-32.png'
+import trash from '../images/trash-9-32.png'
 
-const initialPW = {
-  oldPassword: '',
-  newPassword: '',
-  retypePassword: '',
-}
 export default function Profile() {
   const { mode, id } = useParams()
-  const { user, token, login, logout } = useAuth()
+  const { user, token, logout } = useAuth()
   const history = useHistory()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [addressList, setAddressList] = useState([])
   const [username, setUsername] = useState(user.username)
-  const [passwords, setPasswords] = useState(initialPW)
-
-  const [viewPW, setViewPW] = useState(false)
+  const [email, setEmail] = useState()
 
   const loadDataOnlyOnce = useCallback(() => {
     setLoading(true)
@@ -45,6 +41,8 @@ export default function Profile() {
       .then(response => {
         setAddressList(response)
       })
+      .then(() => getUser(token, user.username))
+      .then(response => setEmail(response.email))
       .catch(setError)
       .finally(() => {
         setLoading(false)
@@ -66,6 +64,9 @@ export default function Profile() {
   const handleChangeUsername = event => {
     setUsername(event.target.value)
   }
+  const handleChangeEmail = event => {
+    setEmail(event.target.value)
+  }
 
   const handleSubmitUserName = () => {
     setLoading(true)
@@ -76,32 +77,35 @@ export default function Profile() {
       .finally(() => setLoading(false))
   }
 
-  const togglePasswordChange = () => {
-    setViewPW(!viewPW)
-  }
-
-  const handleChange = event => {
-    setPasswords({ ...passwords, [event.target.name]: event.target.value })
-  }
-
-  const submitNewPassword = () => {
+  const handleSubmitEmail = () => {
     setLoading(true)
     setError()
-    updatePassword(token, passwords)
-      .then(() => {
-        login({ username: user.username, password: passwords.newPassword })
-        setPasswords(initialPW)
-        setViewPW(false)
-      })
+    putEditEmail(token, username, email)
+      .then(console.log)
       .catch(setError)
-      .finally(() => {
-        setLoading(false)
-      })
+      .finally(() => setLoading(false))
   }
 
-  const passwordMatch =
-    passwords.newPassword.length &&
-    passwords.newPassword === passwords.retypePassword
+  const handleChangePassword = () => {
+    history.push(`/password/change`)
+  }
+
+  const handleDeleteAccount = () => {
+    if (
+      window.confirm(
+        'Soll der Account dauerhaft gelöscht werden? Der Vorgang kann nicht rückgängig gemacht werden'
+      )
+    ) {
+      setLoading(true)
+      setError()
+      deleteAccount(token, username)
+        .then(() => logout())
+        .catch(setError)
+        .finally(() => setLoading(false))
+    } else {
+      console.log('cancelled')
+    }
+  }
 
   return (
     <Page>
@@ -128,43 +132,26 @@ export default function Profile() {
               >
                 <Icon src={save} />
               </Button>
+              <TextField
+                name="email"
+                value={email}
+                onChange={handleChangeEmail}
+                title="Email"
+                type="email"
+              />
+              <Button type="button" onClick={handleSubmitEmail}>
+                <Icon src={save} />
+              </Button>
             </User>
             <div>
-              <Button type="button" onClick={togglePasswordChange}>
+              <Button type="button" onClick={handleChangePassword}>
                 Passwort ändern
               </Button>
+              <Button type="button" onClick={handleDeleteAccount} primary>
+                <Icon src={trash} /> Account löschen
+              </Button>
             </div>
-            {viewPW && (
-              <Password>
-                <TextField
-                  name="oldPassword"
-                  value={passwords.oldPassword}
-                  onChange={handleChange}
-                  title="Altes Passwort"
-                  type="password"
-                  autocomplete="off"
-                />
-                <TextField
-                  name="newPassword"
-                  value={passwords.newPassword}
-                  onChange={handleChange}
-                  title="Neues Passwort (wiederholen)"
-                  type="password"
-                  autocomplete="off"
-                />
-                <TextField
-                  name="retypePassword"
-                  value={passwords.retypePassword}
-                  onChange={handleChange}
-                  title="Neues Passwort"
-                  type="password"
-                  autocomplete="off"
-                />
-                <Button disabled={!passwordMatch} onClick={submitNewPassword}>
-                  speichern
-                </Button>
-              </Password>
-            )}
+
             <Addresses
               user={user}
               mode={mode}
@@ -194,6 +181,7 @@ const User = styled.form`
   width: 100%;
   padding: 0;
   grid-template-columns: 1fr min-content;
+  grid-row-gap: var(--size-m);
   justify-content: space-between;
   align-items: end;
   margin-bottom: var(--size-l);
@@ -206,4 +194,3 @@ const User = styled.form`
     height: min-content;
   }
 `
-const Password = styled.form``

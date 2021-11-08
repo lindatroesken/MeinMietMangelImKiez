@@ -11,6 +11,7 @@ import Profile from './pages/Profile'
 import MangelMap from './pages/MangelMap'
 import NewAddress from './pages/NewAddress'
 import EditAddress from './pages/EditAddress'
+import PasswordChange from './pages/PasswordChange'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route exact path="/" component={Home} />
           <ProtectedRoute path="/profile/:mode" component={Profile} />
           <ProtectedRoute path="/profile/:mode/:id" component={Profile} />
+          <ProtectedRoute path="/password/change" component={PasswordChange} />
           <ProtectedRoute path="/address/edit/:id" component={EditAddress} />
           <ProtectedRoute path="/address/new" component={NewAddress} />
           <Route path="/map/view" component={MangelMap} />
