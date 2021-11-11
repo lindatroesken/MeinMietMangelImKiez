@@ -4,7 +4,7 @@ spring:
   application:
     name: mietmangelmanager
   datasource:
-    url: jdbc:${profile.datasource.url}
+    url: ${profile.datasource.url}
     username: ${profile.datasource.user}
     password: ${profile.datasource.pass}
     driver-class-name: org.postgresql.Driver

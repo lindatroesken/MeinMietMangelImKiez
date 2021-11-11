@@ -1,5 +1,5 @@
 profile:
   datasource:
-    url: h2:mem:db;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
     user: sa
     pass: sa
